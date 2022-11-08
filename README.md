@@ -27,7 +27,7 @@ Total score is determined by adding together the scores of each of the four item
 
 ## Modifications for the Refined version
 
-In order to better capture potential mild mood inflections without altering the scale scoring or structure, we added the **"Once or twice"** option in between not at all and several (see [Dobson et al., 1979](https://journals.sagepub.com/doi/abs/10.2466/pms.1979.49.2.575), for the choice of the label). The new response scale is:
+The gap between "Not at all" and "Several days" is quite large and leaves out the possibility of a more subtle occurence. While this is not necessarily an issue (especially in clinical and diagnostic contexts), it might lead to a low discrimination on the lower end of the spectrum. In order to better capture potential mild mood inflections without altering the scale scoring or structure, we added the **"Once or twice"** option in between **Not at all** and **Several** (see [Dobson et al., 1979](https://journals.sagepub.com/doi/abs/10.2466/pms.1979.49.2.575), for the choice of the label). The new response scale is:
 
 - 0: "Not at all"
 - 0.5: "Once or twice"
@@ -36,6 +36,8 @@ In order to better capture potential mild mood inflections without altering the 
 - 3: "Nearly every day"
 
 
-## Factor Structure
+## Results
 
-Data is being collected.
+Data is being collected. 
+
+We will plot the frequency of responses for each question, and the new item should have a frequency in between that of its surrounding items.
