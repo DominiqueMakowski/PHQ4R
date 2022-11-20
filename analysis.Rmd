@@ -1,0 +1,185 @@
+---
+title: "PHQ-4-R: Adaptation of the 4-item screening for Anxiety and Depression for a subclinical sensitivity"
+subtitle: "Analysis"
+author: "Dominique Makowski et al."
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: paper
+    code_folding: hide
+date: "`r Sys.Date()`"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+options(
+  digits = 3,
+  mc.cores = 4,
+  brms.algorithm = "sampling",
+  brms.backend = "cmdstanr",
+  dplyr.summarise.inform = FALSE,
+  knitr.kable.NA = ""
+)
+
+fig.width <- see::golden_ratio(7)
+fig.height <- 7
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  dpi = 450,
+  fig.path = "./figures/",
+  fig.width = fig.width,
+  fig.height = fig.height
+)
+```
+
+See [**tutorial**](https://bookdown.org/bean_jerry/using_r_for_social_work_research/item-response-theory.html) on Item Response Theory (IRT).
+
+
+# Data
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggside)
+library(easystats)
+library(patchwork)
+library(mirt)
+
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/IllusionGameReliability/main/data/preprocessed_questionnaires.csv") |> 
+  select(starts_with("Item_PHQ4")) |> 
+  datawizard::remove_empty_rows() 
+
+names(df) <- str_remove_all(names(df), "Item_PHQ4_")
+```
+
+# Depression
+
+```{r message=FALSE, warning=FALSE}
+# s <- 'Anxiety = 1,2
+#       Depression = 3,4
+#       COV = Anxiety*Depression'
+# mod1 <- mirt(df, model = mirt.model(s), itemtype = 'graded', SE = TRUE)
+
+
+data <- select(df, contains("Depression"))
+
+mod1 <- mirt(data, model = 1, itemtype = 'graded', SE = TRUE)
+
+# M2(mod1, type = "C2", calcNULL = FALSE)
+
+itemfit(mod1)
+
+# IRT parameters
+IRT_parms <- coef(mod1, IRTpars = TRUE, simplify = TRUE)
+IRT_parms$items
+
+# Factor
+summary(mod1)
+
+# Plots
+plot(mod1, type = 'trace', theta_lim = c(-3, 3))
+plot(mod1, type = 'infotrace', theta_lim = c(-3, 3))
+plot(mod1, type = 'score', theta_lim = c(-3, 3))
+plot(mod1, type = 'infoSE', theta_lim = c(-3, 3))
+plot(mod1, type = 'rxx', theta_lim = c(-3, 3))
+```
+
+## Category Characteristic Curves (CRC) and Item Information Curves
+
+Typically, an optimally informative item will have a large location and broad category coverage (as indicated by location parameters) over theta.
+
+
+```{r message=FALSE, warning=FALSE}
+crc <- function(mod, data, x = c(-1.25, 2.25)) {
+  Theta <- matrix(seq(-3, 3, by = .01))
+  rez <- data.frame()
+  for(i in 1:2) {
+    dat <- as.data.frame(probtrace(extract.item(mod1, i), Theta))
+    dat$Theta <- Theta[,1]
+    dat$Information <- normalize(iteminfo(extract.item(mod1, i), Theta))
+    dat <- pivot_longer(dat, -one_of(c("Theta", "Information")), names_to = "Answer", values_to = "Probability")
+    dat$Item <- names(data)[i]
+    rez <- rbind(rez, dat)
+  }
+  
+  rez <- rez |> 
+    mutate(
+      Answer = case_when(
+      Answer == "P.1" ~ "Not at all",
+      Answer == "P.2" ~ "Once or twice",
+      Answer == "P.3" ~ "Several days",
+      Answer == "P.4" ~ "More than half the days",
+      TRUE ~ "Nearly every day"
+      )) |> 
+    mutate(
+      Answer = fct_relevel(Answer, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day")))
+  
+  
+  p <- rez |> 
+    ggplot(aes(x = Theta, y = Probability)) +
+    geom_line(aes(y = Information), linetype = "dotted", color = "grey") + 
+    geom_line(aes(color = Answer)) + 
+    geom_vline(xintercept = x, linetype = "dashed") +
+    facet_grid(~Item) + 
+    theme_modern() 
+  list(p = p, rez = rez)
+}
+
+out <- crc(mod1, data, x = c(-1.25, 2.25))
+out$p + labs(x = expression(Depression~(theta))) 
+```
+
+## Normalized scoring
+
+```{r message=FALSE, warning=FALSE}
+item4 <- out$rez |> 
+  filter(Item == "Depression_4") |> 
+  filter(Theta >= -1.5 & Theta <= 2.25) |> 
+  mutate(Theta = normalize(Theta))
+
+scores <- item4 |> 
+  group_by(Answer) |> 
+  filter(Probability == max(Probability)) |> 
+  ungroup()
+
+item4 |> 
+  ggplot(aes(x = Theta, y = Probability, color = Answer)) +
+  geom_line() + 
+  theme_modern() 
+```
+
+
+
+# Anxiety
+
+```{r message=FALSE, warning=FALSE}
+data <- select(df, contains("Anxiety"))
+
+m_anxiety <- mirt(data, model = 1, itemtype = 'graded', SE = TRUE)
+
+# M2(m_anxiety, type = "C2", calcNULL = FALSE)
+
+itemfit(m_anxiety)
+
+# IRT parameters
+IRT_parms <- coef(m_anxiety, IRTpars = TRUE, simplify = TRUE)
+IRT_parms$items
+
+# Factor
+summary(m_anxiety)
+
+# Plots
+plot(m_anxiety, type = 'score', theta_lim = c(-3, 3))
+plot(m_anxiety, type = 'infoSE', theta_lim = c(-3, 3))
+plot(m_anxiety, type = 'rxx', theta_lim = c(-3, 3))
+```
+
+## Category Characteristic Curves (CRC) and Item Information Curves
+
+
+```{r message=FALSE, warning=FALSE}
+out <- crc(m_anxiety, data, x = c(-1.25, 2.25))
+out$p + labs(x = expression(Anxiety~(theta))) 
+```
