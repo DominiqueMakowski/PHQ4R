@@ -108,7 +108,7 @@ In order to better capture potential mild mood inflections without altering the 
 
 ## Participants
 
-The sample consists of 500 English-speaking participants (**stats**) who were administered the revised PHQ-4 online as part of another study, which data is available in open-access at https://github.com/RealityBending/IllusionGameReliability.
+The sample consists of 500 English-speaking participants (**stats**) who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at https://github.com/RealityBending/IllusionGameReliability.
 
 This study was approved by the NTU Institutional Review Board (NTU **NUMBER**). All participants provided their informed consent prior to participation and were incentivized after completing the study.
 
@@ -155,13 +155,12 @@ papaja::apa_table(
     Basic_Scoring = rep(c("0", "0.5", "1", "2", "3"), 4),
     Normalized_Scoring = rep(c("0", "0.5", "0.7", "0.8", "1"), 4)
     ),
-  caption = "Revised Patient Health Questionnaire-4 (PHQ-4R). The instructions are \"Over the last 2 weeks, how often have you been bothered by the following problems?\". The 0.5 scoring is introduced to preserve the compatibility with the original version, and enables to use its norms and cut-offs. The normalized scoring takes into account the non-linear spacing between item responses.",  
+  caption = "Refined Patient Health Questionnaire-4 (PHQ-4R). The instructions are \"Over the last 2 weeks, how often have you been bothered by the following problems?\". The 0.5 scoring is introduced to preserve the compatibility with the original version, and enables to use its norms and cut-offs. The normalized scoring takes into account the non-linear spacing between item responses.",  
   escape = FALSE,
   font_size = "scriptsize",
   col.names = c("Facet", "Item", "Response", 
                 "Basic Scoring", 
-                "Normalized Scoring",
-                "Scoring"),
+                "Normalized Scoring"),
   midrules = c(5, 10, 15))
 ```
 

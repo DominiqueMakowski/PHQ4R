@@ -39,9 +39,9 @@ knitr::opts_chunk$set(
 
 
 
-See [**tutorial**](https://bookdown.org/bean_jerry/using_r_for_social_work_research/item-response-theory.html) on Item Response Theory (IRT).
+<!-- See [**tutorial**](https://bookdown.org/bean_jerry/using_r_for_social_work_research/item-response-theory.html) on Item Response Theory (IRT). -->
 
-https://aidenloe.github.io/introToIRT.html
+<!-- https://aidenloe.github.io/introToIRT.html -->
 
 
 # Data
