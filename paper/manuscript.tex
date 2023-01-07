@@ -233,7 +233,7 @@ In order to better capture potential mild mood inflections without altering the 
 \hypertarget{participants}{%
 \subsection{Participants}\label{participants}}
 
-The sample consists of 500 English-speaking participants (\textbf{stats}) who were administered the revised PHQ-4 online as part of another study, which data is available in open-access at \url{https://github.com/RealityBending/IllusionGameReliability}.
+The sample consists of 500 English-speaking participants (\textbf{stats}) who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at \url{https://github.com/RealityBending/IllusionGameReliability}.
 
 This study was approved by the NTU Institutional Review Board (NTU \textbf{NUMBER}). All participants provided their informed consent prior to participation and were incentivized after completing the study.
 
@@ -250,30 +250,32 @@ The reliability of the anxiety (\(Cronbach's~\alpha = 0.892\); RMSEA = 0.032) an
 \hypertarget{item-response-theory}{%
 \subsection{Item Response Theory}\label{item-response-theory}}
 
-Item Response Theory (IRT) provides insights into how well items and responses capture the underlying latent trait \(\theta\). For each of the subscales, we fitted a unidimensional graded response model (GRM, Samejima, 1997). For anxiety, the two items captured 88.1\% of the variance of the latent anxiety dimension (\(\theta_{anxiety}\)). The discrimination parameters suggested that the first item was less precise (\(\alpha = 3.20\)) than the second item (\(\alpha = 12.53\)) in its ability to discriminate between various levels of anxiety (i.e., each response on item 1 covers a larger range of \(\theta_{anxiety}\), as can be seen in \textbf{Figure 1B}). The two depression items captured 80.6\% of the variance of its latent trait (\(\theta_{depression}\)), and the opposite pattern was found: the first item had a higher precision (\(\alpha = 15.69\)) than the first (\(\alpha = 2.19\)).
-
-Importantly to our objective,
+Item Response Theory (IRT) provides insights into how well items and responses capture the underlying latent trait \(\theta\). For each of the subscales, we fitted a unidimensional graded response model (GRM, Samejima, 1997). For anxiety, the two items captured 88.1\% of the variance of the latent anxiety dimension (\(\theta_{anxiety}\)). The discrimination parameters suggested that the first item was less precise (\(\alpha = 3.20\)) than the second item (\(\alpha = 12.53\)) in its ability to discriminate between various levels of anxiety (i.e., each response on item 1 covers a larger range of \(\theta_{anxiety}\), as can be seen in \textbf{Figure 1B}). The two depression items captured 80.6\% of the variance of its latent trait (\(\theta_{depression}\)), and the opposite pattern was found: the first item had a higher precision (\(\alpha = 15.69\)) than the first (\(\alpha = 2.19\)). Importantly to our objective, it seems that the added ``Once or twice'' option does cover a selective portion of the latent space.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{../figures/figure1} \caption{A. Proportion of answers of each type. B. Item Information Curves from IRT showing the coverage by each item and response of the latent dimension. Typically, an optimally informative item would display a large coverage over theta, with each response presenting a narrow coverage (high discrimination between different levels).}\label{fig:unnamed-chunk-2}
 \end{figure}
 
-\hypertarget{normalized-scoring}{%
-\subsection{Normalized Scoring}\label{normalized-scoring}}
+\hypertarget{scoring}{%
+\subsection{Scoring}\label{scoring}}
 
-\hypertarget{discussion}{%
-\section{Discussion}\label{discussion}}
+We propose two types of scoring procedures. The first aims at
+minimally disrupting the original scale and making its scores comparable, enabling comparisons across studies and the usage of developed cut-offs and norms. We suggest to score the new option, ``Once or twice'', as 0.5, occupying the middle space between 0 and 1 (preserving this way the total score range of 0 - 8 per dimension).
 
-The objective of this study was to test the introduction of a ``Once or twice'' response option to the PHQ-4 to make it more sensitive to milder fluctuations.
+The second scoring method we propose takes into account the non-linear spacing between responses, as indicated by the peak of their measurement information. To develop it, we found for each dimension the lower and higher value of the latent trait \(\theta\) for which the probability lower and higher probability of identification is 95\%. We considered these points at 0 and 1, and normalized the location of the peaks of each response in between.
 
-The fact that the new response option was the most prevalent is in itself a testimony to its usefuleness, suggesting an increased potential to discriminate a ``normal'' mood level from lower-end extremes (the true zero scores).
+To illustrate, a person answering ``Several days'' and ``Once or twice'' ro the first and second item of the anxiety subscale would have a score of 1.5 (1 + 0.5 following the basic scoring) and a normalized score of 0.50 (\((0.56 + 0.45) / 2\)).
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{../figures/figure2} \caption{Normalized scoring of the items taking into account the non-linear spacing between responses (based on the peak of their measurement information).}\label{fig:unnamed-chunk-3}
+\end{figure}
 
 \begin{table}[tbp]
 
 \begin{center}
 \begin{threeparttable}
 
-\caption{\label{tab:unnamed-chunk-3}Revised Patient Health Questionnaire-4 (PHQ-4R). The instructions are "Over the last 2 weeks, how often have you been bothered by the following problems?". The basic scoring is introduced to preserve the compatibility with the original version, and enables to use its norms and cut-offs. The normalized scoring takes into account the non-linear spacing between items.}
+\caption{\label{tab:unnamed-chunk-4}Refined Patient Health Questionnaire-4 (PHQ-4R). The instructions are "Over the last 2 weeks, how often have you been bothered by the following problems?". The 0.5 scoring is introduced to preserve the compatibility with the original version, and enables to use its norms and cut-offs. The normalized scoring takes into account the non-linear spacing between item responses.}
 
 \scriptsize{
 
@@ -310,6 +312,11 @@ Facet & Item & Response & Basic Scoring & Normalized Scoring\\
 \end{center}
 
 \end{table}
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+The objective of this study was to test the introduction of a ``Once or twice'' response option to the PHQ-4 to make it more sensitive to milder fluctuations. The fact that this new response option was the most prevalent is in itself evidence for its usefulness, and IRT analysis further revealed how this response captures with precision a unique portion of anxiety and depression. Our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero).
 
 \hypertarget{data-availability}{%
 \section{Data Availability}\label{data-availability}}
