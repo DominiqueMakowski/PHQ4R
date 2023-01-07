@@ -9,7 +9,7 @@ The original Patient Health Questionnaire-4 (PHQ-4) was developed and validated 
 It consists of two validated ultra-brief screeners for depression (PHQ–2) and anxiety (GAD–2). Each of the items corresponds to the DSM-IV Diagnostic Criterion A symptoms for major depressive disorder and generalized anxiety disorder, respectively. The items are:
 
 > Over the **last 2 weeks**, how often have you been bothered by the following problems?
-> 
+>
 >   - **Feeling nervous, anxious or on edge**
 >   - **Not being able to stop or control worrying**
 >   - **Little interest or pleasure in doing things**
@@ -17,17 +17,14 @@ It consists of two validated ultra-brief screeners for depression (PHQ–2) and 
 
 The traditional 4 response options are:
 
-- 0: "Not at all"
-- 1: "Several days"
-- 2: "More than half the days"
-- 3: "Nearly every day"
+0: **"Not at all"**, 1: **"Several days"**, 2: **"More than half the days"**, 3: **"Nearly every day"**
 
-Total score is determined by adding together the scores of each of the four items. Scores are rated as normal (0-2), mild (3-5), moderate (6-8), and severe (9-12). Total score >= 3 for first 2 questions suggests possible anxiety. Total score >= 3 for last 2 questions suggests possible depression. 
+The total score is determined by adding together the scores of each of the four items. Scores can be rated as **normal** (0-2), **mild** (3-5), **moderate** (6-8), and **severe** (9-12).
 
 
 ## Modifications for the Refined version
 
-The gap between "Not at all" and "Several days" is quite large and leaves out the possibility of a more subtle occurence. While this is not necessarily an issue (especially in clinical and diagnostic contexts), it might lead to a low discrimination on the lower end of the spectrum. In order to better capture potential mild mood inflections without altering the scale scoring or structure, we added the **"Once or twice"** option in between **Not at all** and **Several** (see [Dobson et al., 1979](https://journals.sagepub.com/doi/abs/10.2466/pms.1979.49.2.575), for the choice of the label). The new response scale is:
+The gap between "Not at all" and "Several days" is quite large and leaves out the possibility of more subtle occurrences. While this is not necessarily an issue (especially in clinical and diagnostic contexts), it might lead to a low discrimination on the lower end of the spectrum, for instance in the context of general population subclinical quantifications. In order to better capture potential mild mood inflections without altering the scale scoring or structure, we added the **"Once or twice"** option between **Not at all** and **Several** (see [Dobson et al., 1979](https://journals.sagepub.com/doi/abs/10.2466/pms.1979.49.2.575), for the choice of the label). The new response scale is:
 
 - 0: "Not at all"
 - 0.5: "Once or twice"
@@ -38,6 +35,4 @@ The gap between "Not at all" and "Several days" is quite large and leaves out th
 
 ## Results
 
-Data is being collected. 
-
-We will plot the frequency of responses for each question, and the new item should have a frequency in between that of its surrounding items.
+Data is being collected.

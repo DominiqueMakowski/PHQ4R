@@ -35,10 +35,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+
+
+
 See [**tutorial**](https://bookdown.org/bean_jerry/using_r_for_social_work_research/item-response-theory.html) on Item Response Theory (IRT).
+
+https://aidenloe.github.io/introToIRT.html
 
 
 # Data
+
+The data has been collected during the study of . The dataset is available in open-access at ...
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -47,130 +55,90 @@ library(easystats)
 library(patchwork)
 library(mirt)
 
-df <- read.csv("https://raw.githubusercontent.com/RealityBending/IllusionGameReliability/main/data/preprocessed_questionnaires.csv") |> 
+df <- read.csv("../IllusionGameReliability/data/preprocessed_questionnaires.csv") |> 
+# df <- read.csv("https://raw.githubusercontent.com/RealityBending/IllusionGameReliability/main/data/preprocessed_questionnaires.csv") |> 
   select(starts_with("Item_PHQ4")) |> 
   datawizard::remove_empty_rows() 
 
 names(df) <- str_remove_all(names(df), "Item_PHQ4_")
 ```
 
-# Depression
+# Distribution 
 
-```{r message=FALSE, warning=FALSE}
-# s <- 'Anxiety = 1,2
-#       Depression = 3,4
-#       COV = Anxiety*Depression'
-# mod1 <- mirt(df, model = mirt.model(s), itemtype = 'graded', SE = TRUE)
-
-
-data <- select(df, contains("Depression"))
-
-mod1 <- mirt(data, model = 1, itemtype = 'graded', SE = TRUE)
-
-# M2(mod1, type = "C2", calcNULL = FALSE)
-
-itemfit(mod1)
-
-# IRT parameters
-IRT_parms <- coef(mod1, IRTpars = TRUE, simplify = TRUE)
-IRT_parms$items
-
-# Factor
-summary(mod1)
-
-# Plots
-plot(mod1, type = 'trace', theta_lim = c(-3, 3))
-plot(mod1, type = 'infotrace', theta_lim = c(-3, 3))
-plot(mod1, type = 'score', theta_lim = c(-3, 3))
-plot(mod1, type = 'infoSE', theta_lim = c(-3, 3))
-plot(mod1, type = 'rxx', theta_lim = c(-3, 3))
-```
-
-## Category Characteristic Curves (CRC) and Item Information Curves
-
-Typically, an optimally informative item will have a large location and broad category coverage (as indicated by location parameters) over theta.
-
-
-```{r message=FALSE, warning=FALSE}
-crc <- function(mod, data, x = c(-1.25, 2.25)) {
-  Theta <- matrix(seq(-3, 3, by = .01))
-  rez <- data.frame()
-  for(i in 1:2) {
-    dat <- as.data.frame(probtrace(extract.item(mod1, i), Theta))
-    dat$Theta <- Theta[,1]
-    dat$Information <- normalize(iteminfo(extract.item(mod1, i), Theta))
-    dat <- pivot_longer(dat, -one_of(c("Theta", "Information")), names_to = "Answer", values_to = "Probability")
-    dat$Item <- names(data)[i]
-    rez <- rbind(rez, dat)
-  }
-  
-  rez <- rez |> 
-    mutate(
-      Answer = case_when(
-      Answer == "P.1" ~ "Not at all",
-      Answer == "P.2" ~ "Once or twice",
-      Answer == "P.3" ~ "Several days",
-      Answer == "P.4" ~ "More than half the days",
+```{r distribution, message=FALSE, warning=FALSE, fig.width=fig.height}
+data <- df |> 
+  pivot_longer(everything(), names_to = "Item", values_to = "Answer") |> 
+  group_by(Item, Answer) |> 
+  summarise(n = n() / nrow(df)) |> 
+  mutate(
+    Facet = str_split_fixed(Item, "_", 2)[, 1],
+    # Item = str_split_fixed(Item, "_", 2)[,2],
+    Answer = case_when(
+      Answer == 0 ~ "Not at all",
+      Answer == 1 ~ "Once or twice",
+      Answer == 2 ~ "Several days",
+      Answer == 3 ~ "More than half the days",
       TRUE ~ "Nearly every day"
-      )) |> 
-    mutate(
-      Answer = fct_relevel(Answer, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day")))
-  
-  
-  p <- rez |> 
-    ggplot(aes(x = Theta, y = Probability)) +
-    geom_line(aes(y = Information), linetype = "dotted", color = "grey") + 
-    geom_line(aes(color = Answer)) + 
-    geom_vline(xintercept = x, linetype = "dashed") +
-    facet_grid(~Item) + 
-    theme_modern() 
-  list(p = p, rez = rez)
-}
+    ),
+    Answer = fct_relevel(Answer, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day")),
+    Item = case_when(
+      Item == "Anxiety_1" ~ "A1: Feeling nervous, anxious or on edge",
+      Item == "Anxiety_2" ~ "A2: Not being able to stop or control worrying",
+      Item == "Depression_3" ~ "D1: Little interest or pleasure in doing things",
+      TRUE ~ "D2: Feeling down, depressed, or hopeless"
+    ))
 
-out <- crc(mod1, data, x = c(-1.25, 2.25))
-out$p + labs(x = expression(Depression~(theta))) 
+p1 <- data |> 
+  ggplot(aes(x = Answer, fill=Facet)) +
+  geom_bar(aes(y = n), stat = "identity") +
+  scale_y_continuous(labels=scales::percent, expand = c(0, 0)) +
+  scale_fill_manual(values = c("Depression" = "#3F51B5", "Anxiety" = "#E91E63"), guide = "none") +
+  labs(y = "Proportion of Answers", title = "A. Proportion of answers per item") +
+  theme_modern(axis.title.space = 10) +
+  theme(axis.text.x = element_text(angle = 45, hjust=1),
+        axis.title.x = element_blank(),
+        plot.title = element_text(face = "bold"),
+        strip.background=element_rect(fill="#EEEEEE", colour="white")) +
+  facet_wrap(~Item)
+p1
 ```
 
-## Normalized scoring
-
-```{r message=FALSE, warning=FALSE}
-item4 <- out$rez |> 
-  filter(Item == "Depression_4") |> 
-  filter(Theta >= -1.5 & Theta <= 2.25) |> 
-  mutate(Theta = normalize(Theta))
-
-scores <- item4 |> 
-  group_by(Answer) |> 
-  filter(Probability == max(Probability)) |> 
-  ungroup()
-
-item4 |> 
-  ggplot(aes(x = Theta, y = Probability, color = Answer)) +
-  geom_line() + 
-  theme_modern() 
-```
-
+The "Once or twice" answer was selected in `r insight::format_percent(mean(filter(data, Answer == "Once or twice")$n))`
 
 
 # Anxiety
 
+## Descriptive
 ```{r message=FALSE, warning=FALSE}
-data <- select(df, contains("Anxiety"))
+df_anx <- select(df, contains("Anxiety"))
 
-m_anxiety <- mirt(data, model = 1, itemtype = 'graded', SE = TRUE)
+performance::cronbachs_alpha(df_anx)
+```
 
-# M2(m_anxiety, type = "C2", calcNULL = FALSE)
 
-itemfit(m_anxiety)
+## Model
 
-# IRT parameters
-IRT_parms <- coef(m_anxiety, IRTpars = TRUE, simplify = TRUE)
-IRT_parms$items
+```{r message=FALSE, warning=FALSE}
+m_anxiety <- mirt(df_anx, model = 1, itemtype = 'graded', SE = TRUE)
 
-# Factor
+m_anxiety
+
+# Factor loadings
 summary(m_anxiety)
 
+# Alpha
+a <- coef(m_anxiety)
+a <- data.frame(
+  Item = c("Anxiety 1", "Anxiety 2"),
+  Discrimination = c(paste0(format_value(a$Anxiety_1[1, 1]), ", ", format_ci(a$Anxiety_1[2, 1], a$Anxiety_1[3, 1])), paste0(format_value(a$Anxiety_2[1, 1]), ", ", format_ci(a$Anxiety_2[2, 1], a$Anxiety_2[3, 1]))
+))
+knitr::kable(a)
+```
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
 # Plots
+plot(m_anxiety, type = 'trace', theta_lim = c(-3, 3))
+plot(m_anxiety, type = 'infotrace', theta_lim = c(-3, 3))
 plot(m_anxiety, type = 'score', theta_lim = c(-3, 3))
 plot(m_anxiety, type = 'infoSE', theta_lim = c(-3, 3))
 plot(m_anxiety, type = 'rxx', theta_lim = c(-3, 3))
@@ -178,8 +146,232 @@ plot(m_anxiety, type = 'rxx', theta_lim = c(-3, 3))
 
 ## Category Characteristic Curves (CRC) and Item Information Curves
 
+Typically, an optimally informative item will have a large location and broad category coverage (as indicated by location parameters) over theta.
+
+```{r CRC_anxiety, message=FALSE, warning=FALSE}
+crc <- function(mod, data) {
+  Theta <- matrix(seq(-3.5, 3.5, by = .01))
+  rez <- data.frame()
+  for(i in 1:2) {
+    dat <- as.data.frame(probtrace(extract.item(mod, i), Theta))
+    dat$Theta <- Theta[,1]
+    dat$Information <- normalize(iteminfo(extract.item(mod, i), Theta))
+    dat <- pivot_longer(dat, -one_of(c("Theta", "Information")), names_to = "Answer", values_to = "Probability")
+    dat$Item <- names(data)[i]
+    rez <- rbind(rez, dat)
+  }
+
+  rez <- rez |>
+    mutate(
+      Answer = case_when(
+      Answer == "P.1" ~ "Not at all",
+      Answer == "P.2" ~ "Once or twice",
+      Answer == "P.3" ~ "Several days",
+      Answer == "P.4" ~ "More than half the days",
+      TRUE ~ "Nearly every day"
+      ),
+      Answer = fct_relevel(Answer, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day")),
+    Item = case_when(
+      Item == "Anxiety_1" ~ "A1: Feeling nervous, anxious or on edge",
+      Item == "Anxiety_2" ~ "A2: Not being able to stop or control worrying",
+      Item == "Depression_3" ~ "D1: Little interest or pleasure in doing things",
+      TRUE ~ "D2: Feeling down, depressed, or hopeless"
+    ))
+  
+  # Get close to 0.95
+  i1 <- rez[rez$Item == unique(rez$Item)[1],]
+  i2 <- rez[rez$Item == unique(rez$Item)[2],]
+  minmax <- rbind(
+    rbind(
+      i1[i1$Answer == "Not at all", ][which.min(abs(i1[i1$Answer == "Not at all", ]$Probability - 0.95)), ],
+      i1[i1$Answer == "Nearly every day", ][which.min(abs(i1[i1$Answer == "Nearly every day", ]$Probability - 0.95)), ]
+      ),
+    rbind(
+      i2[i2$Answer == "Not at all", ][which.min(abs(i2[i2$Answer == "Not at all", ]$Probability - 0.95)), ],
+      i2[i2$Answer == "Nearly every day", ][which.min(abs(i2[i2$Answer == "Nearly every day", ]$Probability - 0.95)), ]
+      )
+  )
+
+  p <- rez |>
+    ggplot(aes(x = Theta, y = Probability)) +
+    geom_line(aes(y = Information), linetype = "dotted", color = "grey") +
+    geom_line(aes(color = Answer), size=1) +
+    # geom_vline(data = minmax, aes(xintercept = Theta), linetype = "dashed") +
+    scale_y_continuous(labels=scales::percent, expand = c(0, 0.005)) +
+    scale_color_flat_d("rainbow") +
+    facet_grid(~Item) +
+    theme_modern(axis.title.space = 5) +
+    theme(strip.background=element_rect(fill="#EEEEEE", colour="white"))
+  list(p = p, rez = rez, minmax=minmax)
+}
+
+out <- crc(m_anxiety, df_anx)
+p2a <- out$p + labs(x = expression(Anxiety~(theta)))
+p2a
+```
+
+
+## Normalized scoring
 
 ```{r message=FALSE, warning=FALSE}
-out <- crc(m_anxiety, data, x = c(-1.25, 2.25))
-out$p + labs(x = expression(Anxiety~(theta))) 
+normalize_scores <- function(data, minmax) {
+
+  minmax <- minmax[minmax$Theta %in% range(minmax$Theta), ]
+  
+  item <- data.frame()
+  scores <- data.frame()
+  for(i in unique(data$Item)) {
+    item <- data[data$Item == i, ] |>
+      filter(Theta >= min(minmax$Theta) & Theta <= max(minmax$Theta)) |>
+      mutate(Theta_n = normalize(Theta)) |> 
+      rbind(item)
+
+    scores <- item[item$Item == i, ] |>
+      group_by(Answer) |>
+      filter(Probability == max(Probability)) |>
+      ungroup() |>
+      mutate(label = insight::format_value(Theta_n)) |> 
+      rbind(scores)
+  }
+  
+  item |>
+    ggplot(aes(x = Theta, y = Probability, color = Answer)) +
+    geom_line(size = 1) +
+    geom_segment(data=scores, aes(x=Theta, xend = Theta, y=0, yend=Probability, color = Answer), linetype = "dashed") +
+    geom_label(data=scores, aes(x=Theta, y=Probability, label=label), show.legend = FALSE) +
+    scale_y_continuous(labels=scales::percent, expand = c(0, 0.01)) +
+    scale_color_viridis_d(option = "D") +
+    facet_grid(~Item) +
+    theme_modern(axis.title.space = 5) +
+    theme(strip.background=element_rect(fill="#EEEEEE", colour="white"))
+}
+
+p3a <- normalize_scores(data=out$rez, out$minmax) + labs(x = expression(Anxiety~(theta)))
+p3a 
 ```
+
+
+
+# Depression
+
+## Descriptive
+```{r message=FALSE, warning=FALSE}
+df_dep <- select(df, contains("Depression"))
+
+performance::cronbachs_alpha(df_dep)
+```
+
+
+## Model
+
+```{r message=FALSE, warning=FALSE}
+m_depression <- mirt(df_dep, model = 1, itemtype = 'graded', SE = TRUE)
+
+m_depression
+
+# Factor loadings
+summary(m_depression)
+
+# Alpha
+a2 <- coef(m_depression)
+a2 <- data.frame(
+  Item = c("Depression 1", "Depression 2"),
+  Discrimination = c(paste0(format_value(a2$Depression_3[1, 1]), ", ", format_ci(a2$Depression_3[2, 1], a2$Depression_3[3, 1])), paste0(format_value(a2$Depression_4[1, 1]), ", ", format_ci(a2$Depression_4[2, 1], a2$Depression_4[3, 1]))
+))
+knitr::kable(a2)
+```
+
+
+## Category Characteristic Curves (CRC) and Item Information Curves
+
+
+
+```{r message=FALSE, warning=FALSE}
+out <- crc(m_depression, df_dep)
+p2b <- out$p + labs(x = expression(Depression~(theta)))
+p2b
+```
+
+
+## Normalized scoring
+
+```{r message=FALSE, warning=FALSE}
+p3b <- normalize_scores(out$rez, out$minmax) + labs(x = expression(Depression~(theta)))
+p3b 
+```
+
+
+```{r message=FALSE, warning=FALSE}
+fig1 <- wrap_elements(p1) + wrap_elements(p2a / p2b + plot_annotation(title = "B. Information Curves per Response Type", theme = list(plot.title = element_text(face = "bold"))) + plot_layout(guides = "collect")) + plot_layout(widths = c(1, 1.5))
+
+ggsave("figures/figure1.png", fig1, width = fig.width*1.43, height=fig.height*1.43)
+
+fig2 <- p3a / p3b + plot_annotation(title = "Normalized Scoring", theme = list(plot.title = element_text(face = "bold"))) + plot_layout(guides = "collect")
+
+ggsave("figures/figure2.png", fig2, width = fig.width*1.43, height=fig.height*1.43)
+```
+
+# Correlation
+
+
+```{r message=FALSE, warning=FALSE}
+df$Depression <- mirt::fscores(m_depression)[, 1]
+df$Anxiety <- mirt::fscores(m_anxiety)[, 1]
+
+correlation::correlation(df) |>
+  summary() |> 
+  export_table(caption = "Correlation Matrix")
+```
+
+
+
+<!-- # Multifactor model -->
+
+
+<!-- ```{r message=FALSE, warning=FALSE, eval=FALSE} -->
+<!-- s <- 'Anxiety = 1,2 -->
+<!--       Depression = 3,4 -->
+<!--       COV = Anxiety*Depression' -->
+<!-- mod <- mirt(df, model = mirt.model(s), itemtype = 'graded', SE = TRUE) -->
+<!-- mod <- mirt(df, model = 2, itemtype = 'graded', SE = TRUE) -->
+
+<!-- summary(mod) -->
+
+<!-- # Plots -->
+<!-- plot(mod, type = 'trace', theta_lim = c(-3, 3)) -->
+<!-- plot(mod, type = 'infotrace', theta_lim = c(-3, 3)) -->
+<!-- plot(mod, type = 'score', theta_lim = c(-3, 3)) -->
+
+<!-- Theta <- as.matrix(expand.grid(seq(-3, 3, by = 1), seq(-3, 3, by = 1))) -->
+<!-- rez <- data.frame() -->
+<!-- for(i in 1:4) { -->
+<!--   dat <- as.data.frame(probtrace(extract.item(mod, i), Theta)) -->
+<!--   dat$Theta_F1 <- Theta[, 1] -->
+<!--   dat$Theta_F2 <- Theta[, 2] -->
+<!--   # dat$Information <- normalize(iteminfo(extract.item(mod, i), Theta)) -->
+<!--   dat <- pivot_longer(dat, -one_of(c("Theta_F1", "Theta_F2")), names_to = "Answer", values_to = "Probability") -->
+<!--   dat$Item <- names(df)[i] -->
+<!--   rez <- rbind(rez, dat) -->
+<!-- } -->
+
+<!-- rez <- rez |> -->
+<!--   separate(Item, into = c("Dimension", "Item_Number")) |> -->
+<!--   mutate( -->
+<!--     Answer = case_when( -->
+<!--     Answer == "P.1" ~ "Not at all", -->
+<!--     Answer == "P.2" ~ "Once or twice", -->
+<!--     Answer == "P.3" ~ "Several days", -->
+<!--     Answer == "P.4" ~ "More than half the days", -->
+<!--     TRUE ~ "Nearly every day" -->
+<!--     )) |> -->
+<!--   mutate( -->
+<!--     Answer = fct_relevel(Answer, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day"))) -->
+
+<!-- rez |> -->
+<!--   ggplot(aes(x = Theta_F1, y = Probability)) + -->
+<!--   # geom_line(aes(y = Information), linetype = "dotted", color = "grey") + -->
+<!--   geom_line(aes(color = Answer)) + -->
+<!--   geom_vline(xintercept = c(-1.25, 2.25), linetype = "dashed") + -->
+<!--   facet_grid(Dimension~Item_Number) + -->
+<!--   theme_modern() -->
+<!-- ``` -->
