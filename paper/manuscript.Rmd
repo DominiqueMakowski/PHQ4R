@@ -89,9 +89,9 @@ cache <- TRUE
 
 # Introduction
 
-The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety [@kroenke2009ultra]. It consists of two items for depression (PHQ–2; @kroenke2003patient) and anxiety (GAD–2; @kroenke2007anxiety), each corresponding to DSM-V Diagnostic Criterion A symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and different populations [@christodoulaki2022validation, @mendoza2022factor, @materu2020psychometric], becoming one of the most popular screening instruments for depression and anxiety [@maurer2018depression].
+The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety [@kroenke2009ultra]. It consists of two items for depression [PHQ–2, @kroenke2003patient] and anxiety [GAD–2, @kroenke2007anxiety], each corresponding to DSM-V Diagnostic Criterion A symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and populations [@christodoulaki2022validation, @mendoza2022factor, @materu2020psychometric], becoming one of the most popular screening instruments for depression and anxiety [@maurer2018depression].
 
-While the scale has been validated and used in the general population [@lowe20104, @hajek2020prevalence], its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, but in doing so, limits its sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, "Not at all" and "Several days", is quite large and leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of psychological distress on the lower end of the spectrum, important for instance in the context of subclinical variability quantifications. The goal of this study is hence to enhance, with minimal changes to the original scale, the sensitivity to mild mood level inflections.
+While the scale has been validated and used in the general population [@lowe20104, @hajek2020prevalence], its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, which does not necessary entail a strong sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, "Not at all" and "Several days", is quite large and leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of affective levels on the lower end of the spectrum, important for instance in the context of subclinical variability quantifications. The goal of this study is hence to enhance, with minimal changes to the original scale, the sensitivity to mild mood level inflections.
 
 # Methods
 
@@ -107,14 +107,14 @@ In order to better capture potential mild mood inflections without altering the 
 
 The sample consists of 497 English-speaking participants (Mean age = 30.0, SD = 10.1, range: [18, 73]; Sex: 49.9\% females, 50.1\% males) from the general population who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at https://github.com/RealityBending/IllusionGameReliability.
 
-This study was approved by the NTU Institutional Review Board (NTU IRB-2022-187) and all procedures performed were in accordance with the ethical standards of the institutional board and with the 1964 Helsinki Declaration. All participants provided their informed consent prior to participation and were incentivized after completing the study.
+This study was approved by the NTU Institutional Review Board (NTU IRB-2022-187). All participants provided their informed consent prior to participation and were incentivized after completing the study.
 
 # Results
 
 
 ## Descriptive
 
-The reliability of the anxiety ($Cronbach's~\alpha = 0.903$; RMSEA = 0.031) and depression ($Cronbach's~\alpha = 0.841$; RMSEA = 0.044) subscales are excellent (>0.8). The proportion of response types stratified by item (see **Figure 1A**) shows that the new "Once or twice" option we added was the most prevalent response for all items (on average selected in **29.12\%** of cases).
+The reliability of the anxiety ($Cronbach's~\alpha = 0.903$; RMSEA = 0.031) and depression ($Cronbach's~\alpha = 0.841$; RMSEA = 0.044) subscales is excellent. The proportion of response types stratified by item (see **Figure 1A**) shows that the new "Once or twice" option was the most prevalent response for all items (on average selected in **29.12\%** of cases).
 
 
 ## Item Response Theory
@@ -132,7 +132,7 @@ We propose two types of scoring procedures. The first aims at
 <!-- In order to  -->
 minimally disrupting the original scale and making its scores comparable, enabling comparisons across studies and the usage of developed cut-offs and norms. We suggest to score the new option, "Once or twice", as 0.5, occupying the middle space between 0 and 1 (preserving in this way the total score range of 0 - 8 per dimension).
 
-The second scoring method we propose takes into account the non-linear spacing between responses, as indicated by the peak of their measurement information. To develop this measurement, we found for each dimension the lower and higher values of the latent trait $\theta$ for which the probability of identification is 95\%. **In other words, the probability that an individual responds in a particular category given a trait level is 95%. (not sure if this is what this means?)** We considered these points at 0 and 1, and normalized the location of the peaks of each response in between.
+The second scoring method we propose takes into account the non-linear spacing between responses, as indicated by the peak of their measurement information. Specifically, we found for each dimension the lower and higher values of the latent trait $\theta$ for which the probability of identification is 95\%. We considered these points as the 0 and 1 ends, and normalized the location of the peaks of each response in between.
 
 To illustrate, a person answering "Several days" and "Once or twice" to the first and second item of the anxiety subscale would have a score of 1.5 (1 + 0.5 following the basic scoring) and a normalized score of `r insight::format_value(mean(c(0.55, 0.44)))` ($(0.55 + 0.44) / 2$).
 
@@ -165,7 +165,7 @@ papaja::apa_table(
 
 # Discussion
 
-The objective of this study was to test the introduction of a "Once or twice" response option to the PHQ-4 to enhance its sensitivity to milder mood fluctuations. The fact that this new response option was the most prevalent response made by participants in our study is in itself evidence for its usefulness. IRT analysis further revealed that this response captures with precision a unique portion of anxiety and depression. Our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero). Future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations) and by cross-validating it with other more comprehensive measures.
+The objective of this study was to test the introduction of a "Once or twice" response option to the PHQ-4 to enhance its sensitivity to milder mood fluctuations. The fact that this new response option was the most prevalent response made by participants in our study is in itself evidence for its usefulness. IRT analysis further revealed that this response captures with precision a unique portion of anxiety and depression. Taken together, our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero). Future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations) and by cross-validating it with other more comprehensive measures.
 
 
 
