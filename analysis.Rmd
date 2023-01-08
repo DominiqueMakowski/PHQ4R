@@ -55,17 +55,25 @@ library(easystats)
 library(patchwork)
 library(mirt)
 
-df <- read.csv("../IllusionGameReliability/data/preprocessed_questionnaires.csv") |> 
-# df <- read.csv("https://raw.githubusercontent.com/RealityBending/IllusionGameReliability/main/data/preprocessed_questionnaires.csv") |> 
-  select(starts_with("Item_PHQ4")) |> 
+df <- read.csv("https://raw.githubusercontent.com/RealityBending/IllusionGameReliability/main/data/preprocessed_questionnaires.csv") |>
+# df <- read.csv("../IllusionGameReliability/data/preprocessed_questionnaires.csv") |> 
+  select(Sex, Age, starts_with("Item_PHQ4")) |> 
   datawizard::remove_empty_rows() 
 
 names(df) <- str_remove_all(names(df), "Item_PHQ4_")
 ```
 
+# Participants
+
+```{r message=FALSE, warning=FALSE}
+report::report_participants(df)
+```
+
 # Distribution 
 
 ```{r distribution, message=FALSE, warning=FALSE, fig.width=fig.height}
+df <- select(df, -Sex, -Age)
+  
 data <- df |> 
   pivot_longer(everything(), names_to = "Item", values_to = "Answer") |> 
   group_by(Item, Answer) |> 

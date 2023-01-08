@@ -155,7 +155,7 @@
     {}{\InnerPatchFailed}%
   }
 {}{\PatchFailed}
-\keywords{visual illusions, illusion game, Pyllusion, personality, general factor\newline\indent Word count: 4085}
+\keywords{PHQ-4, depression, anxiety, brief questionnaire, short scale\newline\indent Word count: 1011}
 \usepackage{lineno}
 
 \linenumbers
@@ -178,7 +178,7 @@
   pdftitle={Adaptation of the PHQ-4 Short Screening for Depression and Anxiety to increase its Sensitivity to Subclinical Variability},
   pdfauthor={Dominique Makowski1, An Shu Te1, \& S.H. Annabel Chen1, 2, 3, 4},
   pdflang={en-EN},
-  pdfkeywords={visual illusions, illusion game, Pyllusion, personality, general factor},
+  pdfkeywords={PHQ-4, depression, anxiety, brief questionnaire, short scale},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
@@ -191,7 +191,7 @@
 
 \authornote{
 
-The authors made the following contributions. Dominique Makowski: Conceptualization, Data curation, Formal Analysis, Funding acquisition, Investigation, Methodology, Project administration, Resources, Software, Supervision, Validation, Visualization, Writing -- original draft; An Shu Te: Project administration, Resources, Investigation, Writing -- original draft; S.H. Annabel Chen: Project administration, Supervision, Writing -- review \& editing.
+The authors made the following contributions. Dominique Makowski: Conceptualization, Data curation, Formal Analysis, Funding acquisition, Investigation, Methodology, Project administration, Resources, Software, Supervision, Validation, Visualization, Writing -- original draft; An Shu Te: Project administration, Resources, Software, Investigation, Writing -- original draft; S.H. Annabel Chen: Project administration, Supervision, Writing -- review \& editing.
 
 Correspondence concerning this article should be addressed to Dominique Makowski, HSS 04-18, 48 Nanyang Avenue, Singapore. E-mail: \href{mailto:dom.makowski@gmail.com}{\nolinkurl{dom.makowski@gmail.com}}
 
@@ -200,7 +200,7 @@ Correspondence concerning this article should be addressed to Dominique Makowski
 \affiliation{\vspace{0.5cm}\textsuperscript{1} School of Social Sciences, Nanyang Technological University, Singapore\\\textsuperscript{2} LKC Medicine, Nanyang Technological University, Singapore\\\textsuperscript{3} National Institute of Education, Singapore\\\textsuperscript{4} Centre for Research and Development in Learning, Nanyang Technological University, Singapore}
 
 \abstract{%
-Something something
+The PHQ-4 is an ultra brief (4 items) screening questionnaire for depression and anxiety. We propose to add one aditional response option (``Once or twice'', in between ``Not at all'' and ``Several days'') to improve its sensitivity to milder alterations, and thus increase its usefulness in subclinical populations. Using Item Response Theory (IRT), we show that this new option does indeed capture specific portions of the measured constructs, and provide scoring procedure that preserve the compatability with past versions.
 
 \textbf{Significance Statement}. Developing reliable and sensitive instruments for mood disorders screening is critical in a global context marked by international crises (pandemics, wars), where more and more surveys as done online. In this study, we show that a small modification to the widely used PHQ-4 scale (adding the ``Once or twice'' response option) can increase its ability to capture the mild fluctuations prevalent in subclinical samples.
 }
@@ -215,7 +215,7 @@ Something something
 
 The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety (Kroenke et al., 2009). It consists of two items for depression (PHQ--2) and anxiety (GAD--2), each corresponding to DSM-IV Diagnostic Criterion A symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and samples Materu et al. (2020), becoming one of the most popular screening instrument (Maurer et al., 2018).
 
-While the scale has been validated and used in the general population Hajek \& König (2020), its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This diagnostic and discriminative goal materializes in the scale's design and the existence of categorical cut-offs. However, it might not be best suited to capture subclinical variability. In particular, the gap between the two lowest possible answers, ``Not at all'' and ``Several days'', is quite large and leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination on the lower end of the spectrum, important for instance in the context of variability quantifications. The goal of this study is to increase, with minimal changes to the scale, the sensitivity to very mild mood alterations.
+While the scale has been validated and used in the general population Hajek \& König (2020), its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, but does not necessarily entail a strong sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, ``Not at all'' and ``Several days'', is quite large and leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination on the lower end of the spectrum, important for instance in the context of subclinical variability quantifications. The goal of this study is increase, with minimal changes to the scale, the sensitivity to mild mood level inflections.
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
@@ -223,7 +223,7 @@ While the scale has been validated and used in the general population Hajek \& K
 \hypertarget{original-scale}{%
 \subsection{Original Scale}\label{original-scale}}
 
-The instructions ``Over the last 2 weeks, how often have you been bothered by the following problems?'' are followed with 4 items (A1 - Feeling nervous, anxious or on edge; A2 - Not being able to stop or control worrying; D1 - Little interest or pleasure in doing things; D2 - Feeling down, depressed, or hopeless). The original answer options are ``Not at all'' (0), ``Several days'' (1), ``More than half the days'' (2), ``Nearly every day'' (3). The total score is computed by summing the responses of each facet.
+The instructions \emph{``Over the last 2 weeks, how often have you been bothered by the following problems?''} are followed with 4 items (A1 - \emph{Feeling nervous, anxious or on edge}; A2 - \emph{Not being able to stop or control worrying}; D1 - \emph{Little interest or pleasure in doing things}; D2 - \emph{Feeling down, depressed, or hopeless}). The original answer options are ``Not at all'' (0), ``Several days'' (1), ``More than half the days'' (2), ``Nearly every day'' (3). The total score is computed by summing the responses of each facet.
 
 \hypertarget{revision}{%
 \subsection{Revision}\label{revision}}
@@ -233,24 +233,22 @@ In order to better capture potential mild mood inflections without altering the 
 \hypertarget{participants}{%
 \subsection{Participants}\label{participants}}
 
-The sample consists of 500 English-speaking participants (\textbf{stats}) who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at \url{https://github.com/RealityBending/IllusionGameReliability}.
+The sample consists of 497 English-speaking participants (Mean age = 30.0, SD = 10.1, range: {[}18, 73{]}; Sex: 49.9\% females, 50.1\% males) who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at \url{https://github.com/RealityBending/IllusionGameReliability}.
 
 This study was approved by the NTU Institutional Review Board (NTU \textbf{NUMBER}). All participants provided their informed consent prior to participation and were incentivized after completing the study.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-The fully reproducible analysis script is accessible at \url{https://github.com/DominiqueMakowski/PHQ4R}.
-
 \hypertarget{descriptive}{%
 \subsection{Descriptive}\label{descriptive}}
 
-The reliability of the anxiety (\(Cronbach's~\alpha = 0.892\); RMSEA = 0.032) and depression (\(Cronbach's~\alpha = 0.822\); RMSEA = 0.032) subscales was excellent. The proportion of response types stratified by item (see \textbf{Figure 1A}) shows that the new ``Once or twice'' option was the most prevalent response for almost all items (on average selected in \textbf{30.07\%} of cases).
+The reliability of the anxiety (\(Cronbach's~\alpha = 0.903\); RMSEA = 0.031) and depression (\(Cronbach's~\alpha = 0.841\); RMSEA = 0.044) subscales is excellent. The proportion of response types stratified by item (see \textbf{Figure 1A}) shows that the new ``Once or twice'' option was the most prevalent response for all items (on average selected in \textbf{29.12\%} of cases).
 
 \hypertarget{item-response-theory}{%
 \subsection{Item Response Theory}\label{item-response-theory}}
 
-Item Response Theory (IRT) provides insights into how well items and responses capture the underlying latent trait \(\theta\). For each of the subscales, we fitted a unidimensional graded response model (GRM, Samejima, 1997). For anxiety, the two items captured 88.1\% of the variance of the latent anxiety dimension (\(\theta_{anxiety}\)). The discrimination parameters suggested that the first item was less precise (\(\alpha = 3.20\)) than the second item (\(\alpha = 12.53\)) in its ability to discriminate between various levels of anxiety (i.e., each response on item 1 covers a larger range of \(\theta_{anxiety}\), as can be seen in \textbf{Figure 1B}). The two depression items captured 80.6\% of the variance of its latent trait (\(\theta_{depression}\)), and the opposite pattern was found: the first item had a higher precision (\(\alpha = 15.69\)) than the first (\(\alpha = 2.19\)). Importantly to our objective, it seems that the added ``Once or twice'' option does cover a selective portion of the latent space.
+Item Response Theory (IRT) provides insights into how well items and responses capture the underlying latent trait \(\theta\). For each of the subscales, we fitted a unidimensional graded response model (GRM, Samejima, 1997). For anxiety, the two items captured 89.2\% of the variance of the latent anxiety dimension (\(\theta_{anxiety}\)). The discrimination parameters suggested that the first item was less precise (\(\alpha = 3.42\)) than the second item (\(\alpha = 12.55\)) in its ability to discriminate between various levels of anxiety (i.e., each response on item 1 covers a more exclusive range of \(\theta_{anxiety}\), as can be seen in \textbf{Figure 1B}). The two depression items captured 82.8\% of the variance of its latent trait (\(\theta_{depression}\)), and the opposite pattern was found: the first item had a higher precision (\(\alpha = 16.46\)) than the first (\(\alpha = 2.41\)). However, it is important to note that the ``less precise'' items were also the ones covering a larger portion of the latent space (being more sensitive on the lower end of the spectrum), offering an interesting trade-off between sensitivity and precision. Importantly to our objective, it seems that the added ``Once or twice'' option does cover a selective and unique portion of the latent space.
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{../figures/figure1} \caption{A. Proportion of answers of each type. B. Item Information Curves from IRT showing the coverage by each item and response of the latent dimension. Typically, an optimally informative item would display a large coverage over theta, with each response presenting a narrow coverage (high discrimination between different levels).}\label{fig:unnamed-chunk-2}
@@ -264,7 +262,7 @@ minimally disrupting the original scale and making its scores comparable, enabli
 
 The second scoring method we propose takes into account the non-linear spacing between responses, as indicated by the peak of their measurement information. To develop it, we found for each dimension the lower and higher value of the latent trait \(\theta\) for which the probability lower and higher probability of identification is 95\%. We considered these points at 0 and 1, and normalized the location of the peaks of each response in between.
 
-To illustrate, a person answering ``Several days'' and ``Once or twice'' ro the first and second item of the anxiety subscale would have a score of 1.5 (1 + 0.5 following the basic scoring) and a normalized score of 0.50 (\((0.56 + 0.45) / 2\)).
+To illustrate, a person answering ``Several days'' and ``Once or twice'' to the first and second item of the anxiety subscale would have a score of 1.5 (1 + 0.5 following the basic scoring) and a normalized score of 0.49 (\((0.55 + 0.44) / 2\)).
 
 \begin{figure}
 \includegraphics[width=1\linewidth]{../figures/figure2} \caption{Normalized scoring of the items taking into account the non-linear spacing between responses (based on the peak of their measurement information).}\label{fig:unnamed-chunk-3}
@@ -284,24 +282,24 @@ To illustrate, a person answering ``Several days'' and ``Once or twice'' ro the 
 Facet & Item & Response & Basic Scoring & Normalized Scoring\\
 \midrule
 \textbf{Anxiety} & Feeling nervous, anxious or on edge & \textit{Not at all} & 0 & 0\\
- &  & \textit{Once or twice} & 0.5 & 0.5\\
- &  & \textit{Several days} & 1 & 0.7\\
- &  & \textit{More than half the days} & 2 & 0.8\\
+ &  & \textit{Once or twice} & 0.5 & 0.34\\
+ &  & \textit{Several days} & 1 & 0.55\\
+ &  & \textit{More than half the days} & 2 & 0.71\\
  &  & \textit{Nearly every day} & 3 & 1\\ \midrule
  & Not being able to stop or control worrying & \textit{Not at all} & 0 & 0\\
- &  & \textit{Once or twice} & 0.5 & 0.5\\
- &  & \textit{Several days} & 1 & 0.7\\
- &  & \textit{More than half the days} & 2 & 0.8\\
+ &  & \textit{Once or twice} & 0.5 & 0.44\\
+ &  & \textit{Several days} & 1 & 0.58\\
+ &  & \textit{More than half the days} & 2 & 0.71\\
  &  & \textit{Nearly every day} & 3 & 1\\ \midrule
 \textbf{Depression} & Little interest or pleasure in doing things & \textit{Not at all} & 0 & 0\\
- &  & \textit{Once or twice} & 0.5 & 0.5\\
- &  & \textit{Several days} & 1 & 0.7\\
- &  & \textit{More than half the days} & 2 & 0.8\\
+ &  & \textit{Once or twice} & 0.5 & 0.38\\
+ &  & \textit{Several days} & 1 & 0.51\\
+ &  & \textit{More than half the days} & 2 & 0.62\\
  &  & \textit{Nearly every day} & 3 & 1\\ \midrule
  & Feeling down, depressed, or hopeless & \textit{Not at all} & 0 & 0\\
- &  & \textit{Once or twice} & 0.5 & 0.5\\
- &  & \textit{Several days} & 1 & 0.7\\
- &  & \textit{More than half the days} & 2 & 0.8\\
+ &  & \textit{Once or twice} & 0.5 & 0.35\\
+ &  & \textit{Several days} & 1 & 0.52\\
+ &  & \textit{More than half the days} & 2 & 0.66\\
  &  & \textit{Nearly every day} & 3 & 1\\
 \bottomrule
 \end{tabular}
@@ -316,7 +314,7 @@ Facet & Item & Response & Basic Scoring & Normalized Scoring\\
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
 
-The objective of this study was to test the introduction of a ``Once or twice'' response option to the PHQ-4 to make it more sensitive to milder fluctuations. The fact that this new response option was the most prevalent is in itself evidence for its usefulness, and IRT analysis further revealed how this response captures with precision a unique portion of anxiety and depression. Our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero).
+The objective of this study was to test the introduction of a ``Once or twice'' response option to the PHQ-4 to make it more sensitive to milder fluctuations. The fact that this new response option was the most prevalent is in itself evidence for its usefulness, and IRT analysis further revealed how this response captures with precision a unique portion of anxiety and depression. Our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero). Future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations) and by comparing it with other more comprehensive measures.
 
 \hypertarget{data-availability}{%
 \section{Data Availability}\label{data-availability}}
