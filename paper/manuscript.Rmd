@@ -106,7 +106,7 @@ In order to better capture potential mild mood inflections without altering the 
 
 ## Participants
 
-The sample consists of 497 English-speaking participants (Mean age = 30.0, SD = 10.1, range: [18, 73]; Sex: 49.9\% females, 50.1\% males) who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at https://github.com/RealityBending/IllusionGameReliability.
+The sample consists of 497 English-speaking participants (Mean age = 30.0, SD = 10.1, range: [18, 73]; Sex: 49.9\% females, 50.1\% males) from the general population who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at https://github.com/RealityBending/IllusionGameReliability.
 
 This study was approved by the NTU Institutional Review Board (NTU **NUMBER**). All participants provided their informed consent prior to participation and were incentivized after completing the study.
 
