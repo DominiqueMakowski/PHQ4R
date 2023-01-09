@@ -58,7 +58,7 @@ library(mirt)
 df <- read.csv("https://raw.githubusercontent.com/RealityBending/IllusionGameReliability/main/data/preprocessed_questionnaires.csv") |>
 # df <- read.csv("../IllusionGameReliability/data/preprocessed_questionnaires.csv") |> 
   select(Sex, Age, starts_with("Item_PHQ4")) |> 
-  datawizard::remove_empty_rows() 
+  filter(!is.na(Item_PHQ4_Anxiety_1))
 
 names(df) <- str_remove_all(names(df), "Item_PHQ4_")
 ```
@@ -68,6 +68,7 @@ names(df) <- str_remove_all(names(df), "Item_PHQ4_")
 ```{r message=FALSE, warning=FALSE}
 report::report_participants(df)
 ```
+
 
 # Distribution 
 
@@ -319,6 +320,48 @@ fig2 <- p3a / p3b + plot_annotation(title = "Normalized Scoring", theme = list(p
 ggsave("figures/figure2.png", fig2, width = fig.width*1.43, height=fig.height*1.43)
 ```
 
+# Scores 
+
+```{r message=FALSE, warning=FALSE}
+data <- sapply(cbind(df_anx, df_dep), function(x) {
+  case_when(
+      x == 0 ~ "Not at all",
+      x == 1 ~ "Once or twice",
+      x == 2 ~ "Several days",
+      x == 3 ~ "More than half the days",
+      TRUE ~ "Nearly every day"
+    )
+}) |> 
+  as.data.frame()
+
+source("score_PHQ4.R")
+
+data <- score_PHQ4(A1=data$Anxiety_1, A2=data$Anxiety_2, D1=data$Depression_3, D2=data$Depression_4, method="basic") |> 
+  datawizard::data_addsuffix("_Basic") |> 
+  cbind(
+    score_PHQ4(A1=data$Anxiety_1, A2=data$Anxiety_2, D1=data$Depression_3, D2=data$Depression_4, method="normalized") |> 
+      datawizard::data_addsuffix("_Normalized")) |> 
+  select(matches("Depression|Anxiety")) |> 
+  pivot_longer(everything()) |> 
+  separate(name, into = c("Dimension", "Scoring")) 
+
+data |> 
+  ggplot(aes(x=value)) + 
+  geom_area(data=estimate_density(data, at = c("Dimension", "Scoring"), method = "KernSmooth") |> 
+              group_by(Scoring) |> 
+              normalize(select = "y"),
+            aes(x = x, y = y, fill=Dimension), alpha = 0.05, position="identity") +
+  geom_hline(yintercept = 0.5, linetype = "dotted") +
+  stat_ecdf(aes(color=Dimension), geom = "step", size=1) +
+  facet_wrap(~Scoring, scales = "free") +
+  scale_y_continuous(labels=scales::percent, expand = c(0, 0)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values = c("Depression" = "#3F51B5", "Anxiety" = "#E91E63"), guide = "none") +
+  scale_color_manual(values = c("Depression" = "#3F51B5", "Anxiety" = "#E91E63")) +
+  theme_modern(axis.title.space = 5) +
+  labs(title = "Distribution and Cumulative Density of the Sample", x = "Score", y = "Cumulative Proportion")
+```
+
 # Correlation
 
 
@@ -330,6 +373,7 @@ correlation::correlation(df) |>
   summary() |> 
   export_table(caption = "Correlation Matrix")
 ```
+
 
 
 
