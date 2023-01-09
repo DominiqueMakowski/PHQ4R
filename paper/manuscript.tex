@@ -33,6 +33,46 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -155,7 +195,7 @@
     {}{\InnerPatchFailed}%
   }
 {}{\PatchFailed}
-\keywords{PHQ-4, depression, anxiety, brief questionnaire, short scale\newline\indent Word count: 1011}
+\keywords{PHQ-4, depression, anxiety, brief questionnaire, short scale\newline\indent Word count: 1158}
 \usepackage{lineno}
 
 \linenumbers
@@ -200,9 +240,9 @@ Correspondence concerning this article should be addressed to Dominique Makowski
 \affiliation{\vspace{0.5cm}\textsuperscript{1} School of Social Sciences, Nanyang Technological University, Singapore\\\textsuperscript{2} LKC Medicine, Nanyang Technological University, Singapore\\\textsuperscript{3} National Institute of Education, Singapore\\\textsuperscript{4} Centre for Research and Development in Learning, Nanyang Technological University, Singapore}
 
 \abstract{%
-The PHQ-4 is an ultra brief (4 items) screening questionnaire for depression and anxiety. We propose to add one aditional response option (``Once or twice'', in between ``Not at all'' and ``Several days'') to improve its sensitivity to milder alterations, and thus increase its usefulness in subclinical populations. Using Item Response Theory (IRT), we show that this new option does indeed capture specific portions of the measured constructs, and provide scoring procedure that preserve the compatability with past versions.
+The PHQ-4 is an ultra brief (4 items) screening questionnaire for depression and anxiety. We propose to add one aditional response option (``Once or twice'', in between ``Not at all'' and ``Several days'') to improve its sensitivity to milder alterations, and thus increase its usefulness in subclinical populations. Using Item Response Theory (IRT), we show that this new option does indeed capture specific portions of the measured constructs, and provide a scoring procedure that preserve the compatability with past versions.
 
-\textbf{Significance Statement}. Developing reliable and sensitive instruments for mood disorders screening is critical in a global context marked by international crises (pandemics, wars), where more and more surveys as done online. In this study, we show that a small modification to the widely used PHQ-4 scale (adding the ``Once or twice'' response option) can increase its ability to capture the mild fluctuations prevalent in subclinical samples.
+\textbf{Significance Statement}. Developing reliable and sensitive instruments for mood disorders screening is critical in a global context marked by international crises (pandemics, wars), where increasingly more surveys are done online. In this study, we show that a small modification to the widely used PHQ-4 scale (adding the ``Once or twice'' response option) can increase its ability to capture the mild fluctuations prevalent in subclinical samples.
 }
 
 
@@ -213,35 +253,30 @@ The PHQ-4 is an ultra brief (4 items) screening questionnaire for depression and
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety (Kroenke et al., 2009). It consists of two items for depression (PHQ--2, Kroenke et al., 2003) and anxiety (GAD--2, Kroenke et al., 2007), each corresponding to DSM-V Diagnostic Criterion A symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and populations (Christodoulaki et al., 2022; Materu et al., 2020; Mendoza et al., 2022), becoming one of the most popular screening instruments for depression and anxiety (Maurer et al., 2018).
+The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety (Kroenke et al., 2009). It consists of two items for depression (PHQ--2, Kroenke et al., 2003) and anxiety (GAD--2, Kroenke et al., 2007), each corresponding to DSM-5 diagnostic symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and populations (Christodoulaki et al., 2022; Materu et al., 2020; Mendoza et al., 2022), becoming one of the most popular screening instruments for depression and anxiety (Maurer et al., 2018).
 
 While the scale has been validated and used in the general population (Hajek \& König, 2020; Löwe et al., 2010), its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, which does not necessary entail a strong sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, ``Not at all'' and ``Several days'', is quite large and leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of affective levels on the lower end of the spectrum, important for instance in the context of subclinical variability quantifications. The goal of this study is hence to enhance, with minimal changes to the original scale, the sensitivity to mild mood level inflections.
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
 
-\hypertarget{original-scale}{%
-\subsection{Original Scale}\label{original-scale}}
+\hypertarget{original-scale-and-revision}{%
+\subsection{Original Scale and Revision}\label{original-scale-and-revision}}
 
 The instructions \emph{``Over the last 2 weeks, how often have you been bothered by the following problems?''} are followed with 4 items (A1 - \emph{Feeling nervous, anxious or on edge}; A2 - \emph{Not being able to stop or control worrying}; D1 - \emph{Little interest or pleasure in doing things}; D2 - \emph{Feeling down, depressed, or hopeless}). The original answer options are ``Not at all'' (0), ``Several days'' (1), ``More than half the days'' (2), ``Nearly every day'' (3). The total score is computed by summing the responses of each facet.
-
-\hypertarget{revision}{%
-\subsection{Revision}\label{revision}}
 
 In order to better capture potential mild mood inflections without altering the scale scoring or structure, we added a ``Once or twice'' option between ``Not at all'' and ``Several days'' (see Dobson \& Mothersill, 1979 for the choice of the label).
 
 \hypertarget{participants}{%
 \subsection{Participants}\label{participants}}
 
-The sample consists of 497 English-speaking participants (Mean age = 30.0, SD = 10.1, range: {[}18, 73{]}; Sex: 49.9\% females, 50.1\% males) from the general population who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at \url{https://github.com/RealityBending/IllusionGameReliability}.
-
-This study was approved by the NTU Institutional Review Board (NTU IRB-2022-187). All participants provided their informed consent prior to participation and were incentivized after completing the study.
+The sample consists of 485 English-speaking participants (Mean age = 30.1, SD = 10.1, range: {[}18, 73{]}; Sex: 50.3\% females, 49.7\% males) from the general population who were administered the refined PHQ-4 online as part of another study, which data is available in open-access at \url{https://github.com/RealityBending/IllusionGameReliability}. This study was approved by the NTU Institutional Review Board (NTU IRB-2022-187). All participants provided their informed consent prior to participation and were incentivized after completing the study.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-\hypertarget{descriptive}{%
-\subsection{Descriptive}\label{descriptive}}
+\hypertarget{descriptive-statistics}{%
+\subsection{Descriptive Statistics}\label{descriptive-statistics}}
 
 The reliability of the anxiety (\(Cronbach's~\alpha = 0.903\); RMSEA = 0.031) and depression (\(Cronbach's~\alpha = 0.841\); RMSEA = 0.044) subscales is excellent. The proportion of response types stratified by item (see \textbf{Figure 1A}) shows that the new ``Once or twice'' option was the most prevalent response for all items (on average selected in 29.12\% of cases).
 
@@ -314,12 +349,30 @@ Facet & Item & Response & Basic Scoring & Normalized Scoring\\
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
 
-The objective of this study was to test the introduction of a ``Once or twice'' response option to the PHQ-4 to enhance its sensitivity to milder mood fluctuations. The fact that this new response option was the most prevalent response made by participants in our study is in itself evidence for its usefulness. IRT analysis further revealed that this response captures with precision a unique portion of anxiety and depression. Taken together, our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero). Future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations) and by cross-validating it with other more comprehensive measures.
+The objective of this study was to test the introduction of a ``Once or twice'' response option to the PHQ-4 to enhance its sensitivity to milder mood fluctuations. The fact that this new response option was the most prevalent response made by participants in our study is in itself evidence for its usefulness. IRT analysis further revealed that this response captures with precision a unique portion of anxiety and depression. Taken together, our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero).
+
+The hypothesized added value in terms of finer sensitivity should be confirmed by cross-validating the PHQ-4R with more comprehensive measures of anxiety and depression. Additionally, evidence comparing the refined version against the original PHQ-4 would be useful to better understand whether the new ``Once or twice'' option pulls participants that would have otherwise answer ``Not at all'' or ``Several days''. Finally, future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations) to see if it affects the cut-offs proposed in the literature (and whether it allows for a better discrimination of mood disorders), and refine if need be the normalized scoring estimates in larger sample.
+
+\newpage
 
 \hypertarget{data-availability}{%
 \section{Data Availability}\label{data-availability}}
 
-The dataset analysed during the current study are available in the GitHub repository \url{https://github.com/DominiqueMakowski/PHQ4R}
+The dataset analysed during the current study are available in the GitHub repository \url{https://github.com/DominiqueMakowski/PHQ4R}. We have created an R function for easy scoring according to the two methods described, which can be used as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load the function}
+\FunctionTok{source}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/DominiqueMakowski/PHQ4R/main/score\_PHQ4.R"}\NormalTok{)}
+
+\CommentTok{\# Enter the responses}
+\FunctionTok{score\_PHQ4}\NormalTok{(}\AttributeTok{A1 =} \StringTok{"Not at all"}\NormalTok{, }\AttributeTok{A2 =} \StringTok{"Once or twice"}\NormalTok{,}
+           \AttributeTok{D1 =} \StringTok{"Once or twice"}\NormalTok{, }\AttributeTok{D2 =} \StringTok{"several days"}\NormalTok{,}
+           \AttributeTok{method =} \StringTok{"basic"}\NormalTok{)}
+\DocumentationTok{\#\#   A1  A2  D1 D2 Anxiety Depression}
+\DocumentationTok{\#\# 1  0 0.5 0.5  1     0.5        1.5}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{funding}{%
 \section{Funding}\label{funding}}
