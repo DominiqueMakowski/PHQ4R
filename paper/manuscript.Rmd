@@ -163,7 +163,9 @@ papaja::apa_table(
 
 The objective of this study was to test the introduction of a "Once or twice" response option to the PHQ-4 to enhance its sensitivity to milder mood fluctuations. The fact that this new response option was the most prevalent response made by participants in our study is in itself evidence for its usefulness. IRT analysis further revealed that this response captures with precision a unique portion of anxiety and depression. Taken together, our results suggest that adding this option response increases the scale's potential to discriminate average mood levels (which are superior to zero) from lower-end extremes (the true zero). 
 
-Future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations), cross-validate it with other more comprehensive measures, and refine the normalized scoring estimates in larger sample.
+The added value in terms of finer sensitivity that we hypothesize should be confirmed by cross-validating the PHQ-4R with more comprehensive measures of anxiety and depression. Additionally, evidence comparing the refined version against the original PHQ-4 would be useful to better understand whether the new "Once or twice" option pulls participants that would have otherwise answer "Not at all" or "Several days". Finally, future studies should further corroborate our statistical validation and test the usefulness of this revision on more targeted samples (e.g., clinical populations) to see if it affects the cut-offs proposed in the literature (and whether it allows for a better discrimination of mood disorders), and refine if need be the normalized scoring estimates in larger sample.
+
+
 
 
 
@@ -173,7 +175,11 @@ The dataset analysed during the current study are available in the GitHub reposi
 
 ```{r message=FALSE, warning=FALSE}
 # Load the function
-source()
+source("https://raw.githubusercontent.com/DominiqueMakowski/PHQ4R/main/score_PHQ4.R")
+
+score_PHQ4(A1 = "Not at all", A2 = "Once or twice",
+           D1 = "Once or twice", D2 = "several days",
+           method = "basic")
 ```
 
 
