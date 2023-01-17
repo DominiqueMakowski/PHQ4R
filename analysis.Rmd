@@ -25,6 +25,7 @@ options(
 
 fig.width <- see::golden_ratio(7)
 fig.height <- 7
+set.seed(333)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -72,6 +73,19 @@ report::report_participants(df)
 
 # Distribution 
 
+```{r message=FALSE, warning=FALSE}
+add_labels <- function(x) {
+  x <- case_when(
+      x == 0 ~ "Not at all",
+      x == 1 ~ "Once or twice",
+      x == 2 ~ "Several days",
+      x == 3 ~ "More than half the days",
+      TRUE ~ "Nearly every day"
+    )
+  fct_relevel(x, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day"))
+}
+```
+
 ```{r distribution, message=FALSE, warning=FALSE, fig.width=fig.height}
 df <- select(df, -Sex, -Age)
   
@@ -82,14 +96,7 @@ data <- df |>
   mutate(
     Facet = str_split_fixed(Item, "_", 2)[, 1],
     # Item = str_split_fixed(Item, "_", 2)[,2],
-    Answer = case_when(
-      Answer == 0 ~ "Not at all",
-      Answer == 1 ~ "Once or twice",
-      Answer == 2 ~ "Several days",
-      Answer == 3 ~ "More than half the days",
-      TRUE ~ "Nearly every day"
-    ),
-    Answer = fct_relevel(Answer, c("Not at all", "Once or twice", "Several days", "More than half the days",  "Nearly every day")),
+    Answer = add_labels(Answer),
     Item = case_when(
       Item == "Anxiety_1" ~ "A1: Feeling nervous, anxious or on edge",
       Item == "Anxiety_2" ~ "A2: Not being able to stop or control worrying",
@@ -102,18 +109,48 @@ p1 <- data |>
   geom_bar(aes(y = n), stat = "identity") +
   scale_y_continuous(labels=scales::percent, expand = c(0, 0)) +
   scale_fill_manual(values = c("Depression" = "#3F51B5", "Anxiety" = "#E91E63"), guide = "none") +
-  labs(y = "Proportion of Answers", title = "A. Proportion of answers per item") +
+  labs(y = "Proportion of Answers") +
   theme_modern(axis.title.space = 10) +
   theme(axis.text.x = element_text(angle = 45, hjust=1),
         axis.title.x = element_blank(),
         plot.title = element_text(face = "bold"),
+        strip.text = element_text(size=rel(0.7)),
         strip.background=element_rect(fill="#EEEEEE", colour="white")) +
   facet_wrap(~Item)
-p1
+p1 + ggtitle("Proportion of answers per item")
 ```
 
 The "Once or twice" answer was selected in `r insight::format_percent(mean(filter(data, Answer == "Once or twice")$n))`
 
+```{r joint_prevalence, message=FALSE, warning=FALSE, fig.width=fig.width}
+p1b <- rbind(
+  data.frame(Scores = paste0(df$Anxiety_1, "_", df$Anxiety_2),
+             Facet = "Anxiety"),
+  data.frame(Scores = paste0(df$Depression_3, "_", df$Depression_4),
+             Facet = "Depression")
+) |> 
+  group_by(Facet, Scores) |> 
+  summarize(n = n() / nrow(df)) |> 
+  separate(Scores, into = c("Q1", "Q2")) |> 
+  mutate(Label = ifelse(Q1 == Q2, format_percent(n), "")) |> 
+  mutate(Q1 = add_labels(as.numeric(Q1)),
+         Q2 = add_labels(as.numeric(Q2))) |> 
+  ggplot(aes(x = Q1, y = Q2)) +
+  geom_tile(aes(fill = n)) +
+  geom_text(aes(label = Label), size=2, color="white") +
+  scale_y_discrete(expand = c(0, 0)) +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_fill_gradientn(colors=c("white", "#2196F3", "#3F51B5", "#673AB7"), labels = scales::percent) +
+  labs(fill = "% Participants", x = "Item 1", y = "Item 2") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1),
+        panel.grid.major = element_blank(),
+        plot.title = element_text(face = "bold", hjust=0),
+        strip.background=element_rect(fill="#EEEEEE", colour="white"),
+        strip.text = element_text(face = "bold")) +
+  facet_wrap(~Facet) 
+p1b + ggtitle("Joint prevalence of responses")
+```
 
 # Anxiety
 
@@ -310,8 +347,12 @@ p3b
 ```
 
 
+# Figures
+
 ```{r message=FALSE, warning=FALSE}
-fig1 <- wrap_elements(p1) + wrap_elements(p2a / p2b + plot_annotation(title = "B. Information Curves per Response Type", theme = list(plot.title = element_text(face = "bold"))) + plot_layout(guides = "collect")) + plot_layout(widths = c(1, 1.5))
+fig1 <- wrap_elements(wrap_elements(p1 + plot_annotation(title = "A. Proportion of answers per item", theme = list(plot.title = element_text(face = "bold")))) / 
+                        wrap_elements(p1b + plot_annotation(title = "B. Joint prevalence of responses", theme = list(plot.title = element_text(face = "bold"))))) + 
+  wrap_elements(p2a / p2b + plot_annotation(title = "C. Information curves per response type", theme = list(plot.title = element_text(face = "bold"))) + plot_layout(guides = "collect")) + plot_layout(widths = c(1, 1.5))
 
 ggsave("figures/figure1.png", fig1, width = fig.width*1.43, height=fig.height*1.43)
 
