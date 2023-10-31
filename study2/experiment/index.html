@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Title shown in tab -->
+        <title>Illusion Game</title>
+
+        <!-- Load all necessary plugins -->
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugin-html-keyboard-response.js"></script>
+        <script src="jspsych/plugin-browser-check.js"></script>
+        <script src="jspsych/plugin-html-button-response.js"></script>
+        <script src="jspsych/plugin-fullscreen.js"></script>
+        <script src="jspsych/plugin-survey-text.js"></script>
+        <script src="jspsych/plugin-audio-button-response.js"></script>
+        <script src="jspsych/plugin-canvas-button-response.js"></script>
+        <script src="jspsych/plugin-preload.js"></script>
+        <script src="jspsych/multiple-slider.js"></script>
+        <script src="jspsych/extension-record-video.js"></script>
+        <script src="jspsych/plugin-initialize-camera.js"></script>
+        <script src="jspsych/plugin-survey-likert.js"></script>
+        <script src="jspsych/plugin-image-keyboard-response.js"></script>
+        <script src="jspsych/plugin-survey-multi-choice.js"></script>
+
+        <!-- To save data via DataPipe (for online experiments) -->
+        <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.3"></script>
+
+        <!-- Load parameters here (always below the loading of the JsPsych) -->
+        <script src="demographics.js"></script>
+        <script src="questionnaires.js"></script>
+
+        <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+        <style>
+            /* set canvas to be full screen */
+            .jspsych-content {
+                max-width: 100%;
+            }
+
+            /*Hide scrollbar while keeping it functional */
+            body {
+                overflow-y: scroll;
+            }
+
+            Body::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
+    </head>
+
+    <body></body>
+
+    <script>
+        // Initialize experiment =================================================
+        var timeline = []
+
+        var jsPsych = initJsPsych({
+            on_finish: function () {
+                // Display data in browser (useful for debugging)
+                jsPsych.data.displayData("json")
+                // // Save data based on the participant_id variable that gets created
+                // // in `demographics_participant_id`
+                // jsPsych.data
+                //     .get()
+                //     .localSave(
+                //         "json",
+                //         `${
+                //             jsPsych.data.get().values()[0]["participant_id"]
+                //         }.json`
+                //     )
+            },
+        })
+
+        // Session and Participant Info ----------------------------------------
+        timeline.push(demographics_browser_info)
+        timeline.push(demographics_consent)
+        timeline.push(demographics_basic)
+
+        // Questionnaires =======================================================
+        // Adding some characters in russian to force correct encoding: Введите
+        var Qs = [ipip6_questionaire, pid5_questionaire]
+        Qs = jsPsych.randomization.shuffle(Qs) // Randomize
+        for (var i = 0; i < Qs.length; i++) {
+            timeline.push(Qs[i]) // Push each element to timeline
+        }
+
+        // End =================================================================
+
+        // Save data via DataPipe
+        // timeline.push({
+        //     type: jsPsychPipe,
+        //     action: "save",
+        //     experiment_id: "KnBMjNNnvXFM", // This in generated in the DataPipe interface
+        //     filename: `${jsPsych.randomization.randomID(10)}.csv`,
+        //     data_string: () => jsPsych.data.get().csv(),
+        // })
+
+        /* ----------------- Run the timeline ----------------- */
+        jsPsych.run(timeline)
+    </script>
+</html>

@@ -14,6 +14,15 @@ The PHQ-4 consists of two validated ultra-brief screeners for depression (PHQ–
 
 In this brief study, we test the addition of the "Once or twice" response option to increase the scale's sensitivity to subclinical variability.
 
+- [**Paper**](https://dominiquemakowski.github.io/PHQ4R/study1/analysis.html)
+
+## Study 1
+
 - [**Data**](https://github.com/RealityBending/IllusionGameReliability/blob/main/data/preprocessed_questionnaires.csv)
-- [**Paper**](https://dominiquemakowski.github.io/PHQ4R/analysis.html)
 - [**Analysis**](https://dominiquemakowski.github.io/PHQ4R/paper/manuscript.pdf)
+
+## Study 2
+
+- **Experiment**
+
+
