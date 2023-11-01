@@ -52,19 +52,16 @@
         })
 
         // Session and Participant Info ----------------------------------------
-        // timeline.push(demographics_browser_info)
-        // timeline.push(demographics_consent)
-        // timeline.push(demographics_info)
-        timeline.push(bdi2)
+        timeline.push(demographics_browser_info)
+        timeline.push(demographics_consent)
+        timeline.push(demographics_info)
 
         // Questionnaires =======================================================
-        // timeline.push(phq4())
-
-        // var Qs = [ipip6_questionaire, pid5_questionaire]
-        // Qs = jsPsych.randomization.shuffle(Qs) // Randomize
-        // for (var i = 0; i < Qs.length; i++) {
-        //     timeline.push(Qs[i]) // Push each element to timeline
-        // }
+        var Qs = [phq4(), bdi2]
+        Qs = jsPsych.randomization.shuffle(Qs) // Randomize
+        for (var i = 0; i < Qs.length; i++) {
+            timeline.push(Qs[i]) // Push each element to timeline
+        }
 
         // End =================================================================
 
