@@ -1,4 +1,4 @@
-// Retrieve and save browser info
+// Retrieve and save browser info ========================================================
 var demographics_browser_info = {
     type: jsPsychBrowserCheck,
     data: {
@@ -31,7 +31,7 @@ var demographics_browser_info = {
     },
 }
 
-// Participant ID
+// Participant ID ========================================================================
 var demographics_participant_id = {
     type: jsPsychSurveyText,
     questions: [
@@ -54,7 +54,7 @@ var demographics_participant_id = {
     },
 }
 
-// Consent form
+// Consent form ========================================================================
 var demographics_consent = {
     type: jsPsychHtmlButtonResponse,
     stimulus:
@@ -62,7 +62,7 @@ var demographics_consent = {
         "<img src='https://blogs.brighton.ac.uk/sussexwrites/files/2019/06/University-of-Sussex-logo-transparent.png' width='150px' align='right'/><br><br><br><br><br>" +
         // Title
         "<h1>Informed Consent</h1>" +
-        "<p align='left'>Thank you for considering participating in our research 🤗 This study contains various questionnaires about your personality, feelings and current state of mind.</p>" +
+        "<p align='left'>Thank you for considering participating in our research. This study contains various questionnaires about your personality, feelings and current state of mind.</p>" +
         "<p align='left'>Your participation in this research will be kept completely confidential. Your responses are entirely anonymous, and no IP address or any identifiers is collected.</p>" +
         "<p align='left'><b>By participating, you agree to follow the instructions and provide honest answers.</b> If you do not wish to participate this survey, simply close your browser.</p>" +
         // "<p>Please note that various checks will be performed to ensure the validity of the data.<br>We reserve the right to return your participation or prorate reimbursement should we detect non-valid responses (e.g., random pattern of answers, instructions not read, ...).</p>"
@@ -71,17 +71,45 @@ var demographics_consent = {
 
     choices: ["I consent"],
     data: { screen: "consent" },
-    on_finish: function () {
-        jsPsych.data.addProperties({
-            participant_id: participant_id,
-            study_id: study_id,
-            session_id: session_id,
-        })
+}
+
+// Demographic info ========================================================================
+var demographics_multichoice = {
+    type: jsPsychSurveyMultiChoice,
+    questions: [
+        {
+            prompt: "What is your gender?",
+            options: ["Male", "Female", "Other"],
+            name: "gender",
+        },
+        // {
+        //     prompt: "Are you currently a student?",
+        //     options: ["Yes", "No"],
+        //     name: "student",
+        // },
+        {
+            prompt: "What is your highest completed education level?",
+            options: [
+                "University (doctorate)",
+                "University (master) <sub><sup>or equivalent</sup></sub>",
+                "University (bachelor) <sub><sup>or equivalent</sup></sub>",
+                "High school",
+                "Other",
+            ],
+            name: "education",
+        },
+        // {
+        //     prompt: "English level",
+        //     options: ["native", "fluent", "intermediate", "beginner"],
+        //     name: "english",
+        // },
+    ],
+    data: {
+        screen: "demographics_1",
     },
 }
 
-// Basic
-var demographics_basic = {
+var demographics_freetext = {
     type: jsPsychSurveyText,
     questions: [
         {
@@ -90,22 +118,16 @@ var demographics_basic = {
             name: "age",
         },
         {
-            prompt: "Please enter your gender",
-            placeholder: "e.g., Female",
-            name: "gender",
-        },
-        {
             prompt: "Please enter your ethnicity",
             placeholder: "e.g., Caucasian",
             name: "ethnicity",
         },
-        // {
-        //     prompt: "English level",
-        //     placeholder: "native, fluent, intermediate, beginner",
-        //     name: "english",
-        // },
     ],
     data: {
-        screen: "demographics",
+        screen: "demographics_2",
     },
+}
+
+var demographics_info = {
+    timeline: [demographics_multichoice, demographics_freetext],
 }
