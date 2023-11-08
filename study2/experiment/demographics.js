@@ -76,6 +76,7 @@ var demographics_consent = {
 // Demographic info ========================================================================
 var demographics_multichoice = {
     type: jsPsychSurveyMultiChoice,
+    preamble: "<b>Please answer the following questions:</b>",
     questions: [
         {
             prompt: "What is your gender?",
