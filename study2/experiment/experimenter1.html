@@ -38,7 +38,7 @@
         var jsPsych = initJsPsych({
             on_trial_finish: function () {
                 jsPsych.data.addProperties({
-                    experimenter: "experimenter1",
+                    experimenter: "TEST",
                 })
             },
             on_finish: function () {
@@ -61,7 +61,7 @@
         }
 
         // End =================================================================
-
+        timeline.push(demographics_endscreen)
         // Save data via DataPipe
         timeline.push({
             type: jsPsychPipe,
