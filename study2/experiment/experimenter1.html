@@ -54,7 +54,7 @@
         timeline.push(demographics_disorders)
 
         // Questionnaires =======================================================
-        var Qs = [phq4(), bdi2, stai5]
+        var Qs = [phq4(), bdi2, stai5, ias]
         Qs = jsPsych.randomization.shuffle(Qs) // Randomize
         for (var i = 0; i < Qs.length; i++) {
             timeline.push(Qs[i]) // Push each element to timeline
@@ -63,15 +63,16 @@
         // End =================================================================
 
         // Save data via DataPipe
-        // timeline.push({
-        //     type: jsPsychPipe,
-        //     action: "save",
-        //     experiment_id: "KnBMjNNnvXFM", // This in generated in the DataPipe interface
-        //     filename: `${jsPsych.randomization.randomID(10)}.csv`,
-        //     data_string: () => jsPsych.data.get().csv(),
-        // })
+        timeline.push({
+            type: jsPsychPipe,
+            action: "save",
+            experiment_id: "aFDUfulnpbUg", // This in generated in the DataPipe interface
+            filename: `${jsPsych.randomization.randomID(10)}.csv`,
+            data_string: () => jsPsych.data.get().csv(),
+        })
 
         /* ----------------- Run the timeline ----------------- */
         jsPsych.run(timeline)
+        // jsPsych.simulate(timeline, "data-only")
     </script>
 </html>

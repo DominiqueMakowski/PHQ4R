@@ -100,6 +100,84 @@ var stai5 = {
     },
 }
 
+// IAS questionnaire ========================================================================
+var IAS_items = [
+    "I can always accurately perceive when my heart is beating fast",
+    "I can always accurately perceive when I am hungry",
+    "I can always accurately perceive when I am breathing fast",
+    "I can always accurately perceive when I am thirsty",
+    "I can always accurately perceive when I need to urinate",
+    "I can always accurately perceive when I need to defecate",
+    "I can always accurately perceive when I encounter different tastes",
+    "I can always accurately perceive when I am going to vomit",
+    "I can always accurately perceive when I am going to sneeze",
+    "I can always accurately perceive when I am going to cough",
+    "I can always accurately perceive when I am hot/cold",
+    "I can always accurately perceive when I am sexually aroused",
+    "I can always accurately perceive when I am going to pass wind",
+    "I can always accurately perceive when I am going to burp",
+    "I can always accurately perceive when my muscles are tired/sore",
+    "I can always accurately perceive when I am going to get a bruise",
+    "I can always accurately perceive when I am in pain",
+    "I can always accurately perceive when my blood sugar is low",
+    "I can always accurately perceive when someone is touching me affectionately rather than non-affectionately",
+    "I can always accurately perceive when something is going to be ticklish",
+    "I can always accurately perceive when something is going to be itchy",
+]
+var IAS_dimensions = [
+    "IAS_1",
+    "IAS_2",
+    "IAS_3",
+    "IAS_4",
+    "IAS_5",
+    "IAS_6",
+    "IAS_7",
+    "IAS_8",
+    "IAS_9",
+    "IAS_10",
+    "IAS_11",
+    "IAS_12",
+    "IAS_13",
+    "IAS_14",
+    "IAS_15",
+    "IAS_16",
+    "IAS_17",
+    "IAS_18",
+    "IAS_19",
+    "IAS_20",
+    "IAS_21",
+]
+
+var ias_questions = []
+for (const [index, element] of IAS_items.entries()) {
+    ias_questions.push({
+        prompt: "<b>" + element + "</b>",
+        name: IAS_dimensions[index],
+        ticks: ["Strongly Disagree", "Strongly Agree"],
+        required: false,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        slider_start: 0.5,
+    })
+}
+
+var ias = {
+    type: jsPsychMultipleSlider,
+    questions: ias_questions,
+    randomize_question_order: true,
+    preamble:
+        "<h2>About your body sensations...</h2>" +
+        "<p style='text-align: left;'>Below are several statements regarding how accurately you can perceive specific bodily sensations. Please rate on the scale how well you believe you can perceive each specific signal.</p>" +
+        "<p style='text-align: left;'>For example, if you often feel you need to urinate and then realise you do not need to when you go to the toilet, you would rate your accuracy perceiving this bodily signal as low.</p>" +
+        "<p style='text-align: left;'>Please only rate how well you can perceive these signals without using external cues. For example, if you can only perceive how fast your heart is beating when you measure it by taking your pulse, this would <i>not</i> count as accurate internal perception.</p><br /><br/> ",
+    require_movement: false,
+    slider_width: 700,
+    data: {
+        screen: "questionnaire_ias",
+    },
+}
+
 // BDI-II ========================================================================
 var bdi2 = {
     type: jsPsychSurveyMultiChoice,
