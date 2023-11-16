@@ -11,6 +11,7 @@
         <script src="jspsych/plugin-survey-text.js"></script>
         <script src="jspsych/plugin-survey-likert.js"></script>
         <script src="jspsych/plugin-survey-multi-choice.js"></script>
+        <script src="jspsych/plugin-survey-multi-select.js"></script>
         <script src="jspsych/multiple-slider.js"></script>
 
         <!-- To save data via DataPipe (for online experiments) -->
@@ -22,18 +23,8 @@
 
         <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
         <style>
-            /* set canvas to be full screen */
-            .jspsych-content {
-                max-width: 100%;
-            }
-
-            /*Hide scrollbar while keeping it functional */
-            body {
-                overflow-y: scroll;
-            }
-
-            Body::-webkit-scrollbar {
-                display: none;
+            .multichoice-narrow {
+                max-width: 50%;
             }
         </style>
     </head>
@@ -60,9 +51,10 @@
         timeline.push(demographics_browser_info)
         timeline.push(demographics_consent)
         timeline.push(demographics_info)
+        timeline.push(demographics_disorders)
 
         // Questionnaires =======================================================
-        var Qs = [phq4(), bdi2]
+        var Qs = [phq4(), bdi2, stai5]
         Qs = jsPsych.randomization.shuffle(Qs) // Randomize
         for (var i = 0; i < Qs.length; i++) {
             timeline.push(Qs[i]) // Push each element to timeline

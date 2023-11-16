@@ -63,6 +63,7 @@ var demographics_consent = {
         // Title
         "<h1>Informed Consent</h1>" +
         "<p align='left'>Thank you for considering participating in our research. This study contains various questionnaires about your personality, feelings and current state of mind.</p>" +
+        "<p>The aim is for us to understand how <b>mood fluctuations</b> and mood disorders symptoms (or absence thereof) are expressed and what difficulties they can generate.</p>" +
         "<p align='left'>Your participation in this research will be kept completely confidential. Your responses are entirely anonymous, and no IP address or any identifiers is collected.</p>" +
         "<p align='left'><b>By participating, you agree to follow the instructions and provide honest answers.</b> If you do not wish to participate this survey, simply close your browser.</p>" +
         // "<p>Please note that various checks will be performed to ensure the validity of the data.<br>We reserve the right to return your participation or prorate reimbursement should we detect non-valid responses (e.g., random pattern of answers, instructions not read, ...).</p>"
@@ -131,4 +132,60 @@ var demographics_freetext = {
 
 var demographics_info = {
     timeline: [demographics_multichoice, demographics_freetext],
+}
+
+// Psychopathology ========================================================================
+var demographics_disorders = {
+    type: jsPsychSurveyMultiSelect,
+    preamble:
+        "As this study contains questions about your feelings and mood, it is important for us understand relevant medical antecedents. If nothing applies to you, do not tick anything and click on 'Continue'.",
+    questions: [
+        {
+            prompt: "<b>Have you ever been medically diagnosed with any of the following?</b>",
+            options: [
+                "Major Depressive Disorder (MDD)",
+                "Bipolar Disorder (Type I and II)",
+                "Borderline Personality Disorder (BPD)",
+                "Dysthymia (Persistent Depressive Disorder)",
+                "Seasonal Affective Disorder (SAD)",
+                "Premenstrual Dysphoric Disorder (PMDD)",
+                // "Substance/Medication-Induced Mood Disorder",
+                // "Mood Disorder Due to a General Medical Condition",
+                // "Disruptive Mood Dysregulation Disorder",
+                // "Adjustment Disorder with Depressed Mood",
+                "Generalized Anxiety Disorder (GAD)",
+                "Panic Disorder",
+                "Social Anxiety Disorder (Social Phobia)",
+                "Phobias",
+                // "Agoraphobia",
+                // "Separation Anxiety Disorder",
+                // "Selective Mutism",
+                "Obsessive-Compulsive Disorder (OCD)",
+                "Post-Traumatic Stress Disorder (PTSD)",
+                "Acute Stress Disorder",
+            ],
+            name: "disorder_diagnostic",
+        },
+        {
+            prompt: "<b>Are you currently undergoing treatment:</b>",
+            options: [
+                "Antidepressant Medication <sup><sub>(e.g., PROZAC, ZOLOFT, EFFEXOR...)</sub></sup>",
+                "Anxiolytic Medication <sup><sub>(e.g., XANAX, VALIUM, ...)</sub></sup>",
+                "Psychotherapy/Counseling  <sup><sub>(e.g., CBT, ACT, ...)</sub></sup>",
+                "Mood Stabilizers <sup><sub>(e.g., LITHIUM, LAMICTAL, ...)</sub></sup>",
+                "Antipsychotic Medication <sup><sub>(e.g., RISPERDAL, SEROQUEL, ...)</sub></sup>",
+                // "Cognitive Behavioral Therapy (CBT)",
+                // "Electroconvulsive Therapy (ECT)",
+                // "Transcranial Magnetic Stimulation (TMS)",
+                "Lifestyle Changes <sup><sub>(e.g., diet, exercise, ...)</sub></sup>",
+                "Mindfulness and Stress Management Techniques",
+                "Alternative Therapies <sup><sub>(e.g., acupuncture, herbal remedies, ...)</sub></sup>",
+                "Other",
+            ],
+            name: "disorder_treatment",
+        },
+    ],
+    data: {
+        screen: "demographics_disorders",
+    },
 }
