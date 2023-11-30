@@ -77,9 +77,11 @@ var demographics_consent = {
 // Thank you ========================================================================
 var demographics_endscreen = {
     type: jsPsychHtmlButtonResponse,
+    css_classes: ["multichoice-narrow"],
     stimulus:
-        "<h1>Thanks so much for participating <3</h1>" +
+        "<h1>Thank you for participating</h1>" +
         "<p>It means a lot to us. Don't hesitate to share the study!</p>" +
+        "<p align='left'>The purpose of this study was for us to understand how mood fluctuations and mood disorder symptoms (or absence thereof) are expressed and what difficulties they can generate. Your participation in this study will be kept completely confidential.</p>" +
         "<p>Click on 'Continue' and <b>wait until your responses have been successfully saved</b> before closing the tab.</p> ",
     choices: ["Continue"],
     data: { screen: "endscreen" },
@@ -149,10 +151,10 @@ var demographics_info = {
 var demographics_disorders = {
     type: jsPsychSurveyMultiSelect,
     preamble:
-        "As this study contains questions about your feelings and mood, it is important for us understand relevant medical antecedents. If nothing applies to you, do not tick anything and click on 'Continue'.",
+        "As this study contains questions about your feelings and mood, it is important for us understand relevant medical antecedents.<br>If nothing applies to you, do not tick anything and click on 'Continue'.",
     questions: [
         {
-            prompt: "<b>Have you ever been medically diagnosed with any of the following?</b>",
+            prompt: "<b>Are you <i>currently</i> living with one of the following medically diagnosed with any of the following?</b>",
             options: [
                 "Major Depressive Disorder (MDD)",
                 "Bipolar Disorder (Type I and II)",
@@ -178,7 +180,12 @@ var demographics_disorders = {
             name: "disorder_diagnostic",
         },
         {
-            prompt: "<b>Are you currently undergoing treatment:</b>",
+            prompt: "<b>Have you ever <i>previously</i> been diagnosed with any of the preceding?</b>",
+            options: ["Yes", "No"],
+            name: "disorder_history",
+        },
+        {
+            prompt: "<b>Are you <i>currently</i> undergoing any following treatment:</b>",
             options: [
                 "Antidepressant Medication <sup><sub>(e.g., PROZAC, ZOLOFT, EFFEXOR...)</sub></sup>",
                 "Anxiolytic Medication <sup><sub>(e.g., XANAX, VALIUM, ...)</sub></sup>",
