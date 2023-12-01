@@ -23,7 +23,7 @@
 
         <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
         <style>
-            .multichoice-narrow {
+            .narrow-text {
                 max-width: 50%;
             }
         </style>
@@ -61,7 +61,9 @@
         }
 
         // End =================================================================
-        timeline.push(demographics_endscreen)
+
+        timeline.push(demographics_waitdatasaving)
+
         // Save data via DataPipe
         timeline.push({
             type: jsPsychPipe,
@@ -70,6 +72,12 @@
             filename: `${jsPsych.randomization.randomID(10)}.csv`,
             data_string: () => jsPsych.data.get().csv(),
         })
+
+        timeline.push(
+            demographics_endscreen(
+                "https://dominiquemakowski.github.io/PHQ4R/study2/experiment/experimenter1.html"
+            )
+        )
 
         /* ----------------- Run the timeline ----------------- */
         jsPsych.run(timeline)

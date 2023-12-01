@@ -87,7 +87,7 @@ for (const [index, element] of stai5_items.entries()) {
 
 var stai5 = {
     type: jsPsychSurveyLikert,
-    css_classes: ["multichoice-narrow"],
+    css_classes: ["narrow-text"],
     questions: stai5_questions,
     randomize_question_order: false,
     preamble:
@@ -181,7 +181,7 @@ var ias = {
 // BDI-II ========================================================================
 var bdi2 = {
     type: jsPsychSurveyMultiChoice,
-    css_classes: ["multichoice-narrow"],
+    css_classes: ["narrow-text"],
     preamble:
         "<p style='text-align: left;'>This questionnaire consists of 21 groups of statements. Please read each group of statements carefully. And then pick out the one statement in each group that best describes the way you have been feeling <b>during the past two weeks</b>, including today. If several statements in the group seem to apply equally well, circle the highest number for that group.</p>",
     questions: [

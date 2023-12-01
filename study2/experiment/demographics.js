@@ -75,16 +75,35 @@ var demographics_consent = {
 }
 
 // Thank you ========================================================================
-var demographics_endscreen = {
+var demographics_waitdatasaving = {
     type: jsPsychHtmlButtonResponse,
-    css_classes: ["multichoice-narrow"],
     stimulus:
-        "<h1>Thank you for participating</h1>" +
-        "<p>It means a lot to us. Don't hesitate to share the study!</p>" +
-        "<p align='left'>The purpose of this study was for us to understand how mood fluctuations and mood disorder symptoms (or absence thereof) are expressed and what difficulties they can generate. Your participation in this study will be kept completely confidential.</p>" +
-        "<p>Click on 'Continue' and <b>wait until your responses have been successfully saved</b> before closing the tab.</p> ",
+        "<p>Done! now click on 'Continue' and <b>wait until your responses have been successfully saved</b> before closing the tab.</p> ",
     choices: ["Continue"],
-    data: { screen: "endscreen" },
+    data: { screen: "waitdatasaving" },
+}
+
+var demographics_endscreen = function (
+    link = "https://dominiquemakowski.github.io/PHQ4R/study2/experiment/experimenter1.html"
+) {
+    return {
+        type: jsPsychHtmlButtonResponse,
+        css_classes: ["narrow-text"],
+        stimulus:
+            "<h1>Thank you for participating</h1>" +
+            "<p>It means a lot to us. Don't hesitate to share the study by sending this link:</p>" +
+            "<p><b><a href='" +
+            link +
+            "'>" +
+            link +
+            "<a/></b></p><br>" +
+            "<h2>Information</h2>" +
+            "<p align='left'>The purpose of this study was for us to understand how mood fluctuations and mood disorder symptoms (or absence thereof) are expressed and what difficulties they can generate. Your participation in this study will be kept completely confidential.</p>" +
+            "<p align='left'>If you have any questions about the project, or would like to withdraw your participation, please contact D.Makowski@sussex.ac.uk.</p>" +
+            "<p><b>You can safely close the tab now.</b></p>",
+        choices: ["End"],
+        data: { screen: "endscreen" },
+    }
 }
 
 // Demographic info ========================================================================
