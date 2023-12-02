@@ -1,4 +1,4 @@
-# PHQ-4-R: Adaptation of the 4-item screening for Anxiety and Depression for a subclinical sensitivity
+# Adaptation of the PHQ-4 Short Screening for Depression and Anxiety to increase its Sensitivity to Subclinical Variability
 
 
 The PHQ-4 consists of two validated ultra-brief screeners for depression (PHQ–2) and anxiety (GAD–2).
@@ -24,5 +24,4 @@ In this brief study, we test the addition of the "Once or twice" response option
 ## Study 2
 
 - [**Experiment**](https://dominiquemakowski.github.io/PHQ4R/study2/experiment/experimenter1.html)
-
-
+- [**Preregistration**](https://osf.io/)
