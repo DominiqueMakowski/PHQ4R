@@ -10,7 +10,12 @@ var PHQ4_items = [
     "Little interest or pleasure in doing things",
 ]
 
-var PHQ4_dimensions = ["Anxiety_1", "Anxiety_2", "Depression_3", "Depression_4"]
+var PHQ4_dimensions = [
+    "PHQ4_Anxiety_1",
+    "PHQ4_Anxiety_2",
+    "PHQ4_Depression_3",
+    "PHQ4_Depression_4",
+]
 
 // Questionnaire ========================================================================
 
@@ -68,7 +73,7 @@ var stai5_items = [
     "I get in a state of tension or turmoil as I think over my recent concerns and interests",
 ]
 
-var stai5_dimensions = ["stai5_1", "stai5_2", "stai5_3", "stai5_4", "stai5_5"]
+var stai5_dimensions = ["STAI5_1", "STAI5_2", "STAI5_3", "STAI5_4", "STAI5_5"]
 
 stai5_questions = []
 for (const [index, element] of stai5_items.entries()) {
