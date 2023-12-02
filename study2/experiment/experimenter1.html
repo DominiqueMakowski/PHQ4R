@@ -36,14 +36,11 @@
         var timeline = []
 
         var jsPsych = initJsPsych({
-            on_trial_finish: function () {
+            on_finish: function () {
                 jsPsych.data.addProperties({
                     experimenter: "Experimenter1",
                 })
-            },
-            on_finish: function () {
-                // Display data in browser (useful for debugging)
-                jsPsych.data.displayData("json")
+                // jsPsych.data.displayData("json") // Display data in browser (useful for debugging)
             },
         })
 
