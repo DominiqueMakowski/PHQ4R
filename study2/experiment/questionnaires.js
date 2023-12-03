@@ -159,7 +159,7 @@ for (const [index, element] of IAS_items.entries()) {
         prompt: "<b>" + element + "</b>",
         name: IAS_dimensions[index],
         ticks: ["Strongly Disagree", "Strongly Agree"],
-        required: false,
+        required: true,
         min: 0,
         max: 1,
         step: 0.01,
@@ -198,7 +198,8 @@ var bdi2 = {
                 "2. I am sad all the time",
                 "3. I am so sad or unhappy that I can't stand it",
             ],
-            name: "bdi2_1",
+            name: "BDI2_1",
+            required: true,
         },
         {
             prompt: "<b>2. Pessimism</b>",
@@ -208,7 +209,8 @@ var bdi2 = {
                 "2. I do not expect things to work out for me",
                 "3. I feel my future is hopeless and will only get worse",
             ],
-            name: "bdi2_2",
+            name: "BDI2_2",
+            required: true,
         },
         {
             prompt: "<b>3. Past Failure</b>",
@@ -218,7 +220,8 @@ var bdi2 = {
                 "2. As I look back, I see a lot of failures",
                 "3. I feel I am a total failure as a person",
             ],
-            name: "bdi2_3",
+            name: "BDI2_3",
+            required: true,
         },
         {
             prompt: "<b>4. Loss of Pleasure</b>",
@@ -228,7 +231,8 @@ var bdi2 = {
                 "2. I get very little pleasure from the things I used to enjoy",
                 "3. I can't get any pleasure from the things I used to enjoy",
             ],
-            name: "bdi2_4",
+            name: "BDI2_4",
+            required: true,
         },
         {
             prompt: "<b>5. Guilty Feelings</b>",
@@ -238,7 +242,8 @@ var bdi2 = {
                 "2. I feel quite guilty most of the time",
                 "3. I feel guilty all of the time",
             ],
-            name: "bdi2_5",
+            name: "BDI2_5",
+            required: true,
         },
         {
             prompt: "<b>6. Punishment Feelings</b>",
@@ -248,7 +253,8 @@ var bdi2 = {
                 "2. I expect to be punished",
                 "3. I feel I am being punished",
             ],
-            name: "bdi2_6",
+            name: "BDI2_6",
+            required: true,
         },
         {
             prompt: "<b>7. Self-Dislike</b>",
@@ -258,7 +264,8 @@ var bdi2 = {
                 "2. I am disappointed in myself",
                 "3. I dislike myself",
             ],
-            name: "bdi2_7",
+            name: "BDI2_7",
+            required: true,
         },
         {
             prompt: "<b>8. Self-Criticalness</b>",
@@ -268,7 +275,8 @@ var bdi2 = {
                 "2. I criticize myself for all of my faults",
                 "3. I blame myself for everything bad that happens",
             ],
-            name: "bdi2_8",
+            name: "BDI2_8",
+            required: true,
         },
         {
             prompt: "<b>9. Suicidal Thoughts or Wishes</b>",
@@ -278,7 +286,8 @@ var bdi2 = {
                 "2. I would like to kill myself",
                 "3. I would kill myself if I had the chance",
             ],
-            name: "bdi2_9",
+            name: "BDI2_9",
+            required: true,
         },
         {
             prompt: "<b>10. Crying</b>",
@@ -288,7 +297,8 @@ var bdi2 = {
                 "2. I cry over every little thing",
                 "3. I feel like crying, but I can't",
             ],
-            name: "bdi2_10",
+            name: "BDI2_10",
+            required: true,
         },
         {
             prompt: "<b>11. Agitation</b>",
@@ -298,7 +308,8 @@ var bdi2 = {
                 "2. I am so restless or agitated, it's hard to stay still",
                 "3. I am so restless or agitated that I have to keep moving or doing something",
             ],
-            name: "bdi2_11",
+            name: "BDI2_11",
+            required: true,
         },
         {
             prompt: "<b>12. Loss of Interest</b>",
@@ -308,7 +319,8 @@ var bdi2 = {
                 "2. I have lost most of my interest in other people or things",
                 "3. It's hard to get interested in anything",
             ],
-            name: "bdi2_12",
+            name: "BDI2_12",
+            required: true,
         },
         {
             prompt: "<b>13. Indecisiveness</b>",
@@ -318,7 +330,8 @@ var bdi2 = {
                 "2. I have much greater difficulty in making decisions than I used to",
                 "3. I have trouble making any decisions",
             ],
-            name: "bdi2_13",
+            name: "BDI2_13",
+            required: true,
         },
         {
             prompt: "<b>14. Worthlessness</b>",
@@ -328,7 +341,8 @@ var bdi2 = {
                 "2. I feel more worthless as compared to others",
                 "3. I feel utterly worthless",
             ],
-            name: "bdi2_14",
+            name: "BDI2_14",
+            required: true,
         },
         {
             prompt: "<b>15. Loss of Energy</b>",
@@ -338,7 +352,8 @@ var bdi2 = {
                 "2. I don't have enough energy to do very much",
                 "3. I don't have enough energy to do anything",
             ],
-            name: "bdi2_15",
+            name: "BDI2_15",
+            required: true,
         },
         {
             prompt: "<b>16. Changes in Sleeping Pattern</b>",
@@ -351,7 +366,8 @@ var bdi2 = {
                 "3a. I sleep most of the day",
                 "3b. I wake up 1-2 hours early and can't get back to sleep",
             ],
-            name: "bdi2_16",
+            name: "BDI2_16",
+            required: true,
         },
         {
             prompt: "<b>17. Irritability</b>",
@@ -361,7 +377,8 @@ var bdi2 = {
                 "2. I am much more irritable than usual",
                 "3. I am irritable all the time",
             ],
-            name: "bdi2_17",
+            name: "BDI2_17",
+            required: true,
         },
         {
             prompt: "<b>18. Changes in Appetite</b>",
@@ -374,7 +391,8 @@ var bdi2 = {
                 "3a. I have no appetite at all",
                 "3b. I crave food all the time",
             ],
-            name: "bdi2_18",
+            name: "BDI2_18",
+            required: true,
         },
         {
             prompt: "<b>19. Concentration Difficulty</b>",
@@ -384,7 +402,8 @@ var bdi2 = {
                 "2. It's hard to keep my mind on anything for very long",
                 "3. I find I can't concentrate on anything",
             ],
-            name: "bdi2_19",
+            name: "BDI2_19",
+            required: true,
         },
         {
             prompt: "<b>20. Tiredness or Fatigue</b>",
@@ -394,7 +413,8 @@ var bdi2 = {
                 "2. I am too tired or fatigued to do a lot of the things I used to do",
                 "3. I am too tired or fatigued to do most of the things I used to do",
             ],
-            name: "bdi2_20",
+            name: "BDI2_20",
+            required: true,
         },
         {
             prompt: "<b>21. Loss of Interest in Sex</b>",
@@ -404,7 +424,8 @@ var bdi2 = {
                 "2. I am much less interested in sex now",
                 "3. I have lost interest in sex completely",
             ],
-            name: "bdi2_21",
+            name: "BDI2_21",
+            required: true,
         },
     ],
     data: {
