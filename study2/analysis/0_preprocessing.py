@@ -18,7 +18,7 @@ for i, file in enumerate(storage.files):
     data = pd.read_csv(response.raw)
 
     # Collection date
-    if data["date"][0] < "17/11/2023":
+    if data["date"].dropna().unique()[0] < "17/11/2023":
         continue
 
     # Participant ========================================================

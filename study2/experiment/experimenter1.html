@@ -5,14 +5,14 @@
         <title>University of Sussex - Research</title>
 
         <!-- Load all necessary plugins -->
-        <script src="jspsych/jspsych.js"></script>
-        <script src="jspsych/plugin-browser-check.js"></script>
-        <script src="jspsych/plugin-html-button-response.js"></script>
-        <script src="jspsych/plugin-survey-text.js"></script>
-        <script src="jspsych/plugin-survey-likert.js"></script>
-        <script src="jspsych/plugin-survey-multi-choice.js"></script>
-        <script src="jspsych/plugin-survey-multi-select.js"></script>
-        <script src="jspsych/multiple-slider.js"></script>
+        <script src="https://unpkg.com/jspsych"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-browser-check"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-html-button-response"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-survey-text"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-survey-likert"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select"></script>
+        <script src="https://unpkg.com/@jspsych/multiple-slider"></script>
 
         <!-- To save data via DataPipe (for online experiments) -->
         <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.3"></script>
@@ -21,7 +21,11 @@
         <script src="demographics.js"></script>
         <script src="questionnaires.js"></script>
 
-        <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+        <link
+            href="https://unpkg.com/jspsych/css/jspsych.css"
+            rel="stylesheet"
+            type="text/css"
+        />
         <style>
             .narrow-text {
                 max-width: 50%;
