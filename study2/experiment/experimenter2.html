@@ -1,84 +1,82 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- Title shown in tab -->
-        <title>University of Sussex - Research</title>
 
-        <!-- Load all necessary plugins -->
-        <script src="https://unpkg.com/jspsych"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-browser-check"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-html-button-response"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-survey-text"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-survey-likert"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice"></script>
-        <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select"></script>
-        <script src="https://unpkg.com/@jspsych/multiple-slider"></script>
+<head>
+    <!-- Title shown in tab -->
+    <title>University of Sussex - Research</title>
 
-        <!-- To save data via DataPipe (for online experiments) -->
-        <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.3"></script>
+    <!-- Load all necessary plugins -->
+    <script src="https://unpkg.com/jspsych"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-browser-check"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-likert"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-select"></script>
+    <script src="https://realitybending.github.io/JSmisc/jspsych_extensions/plugin-multiple-slider.js"></script>
 
-        <!-- Load parameters here (always below the loading of the JsPsych) -->
-        <script src="demographics.js"></script>
-        <script src="questionnaires.js"></script>
+    <!-- To save data via DataPipe (for online experiments) -->
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.3"></script>
 
-        <link
-            href="https://unpkg.com/jspsych/css/jspsych.css"
-            rel="stylesheet"
-            type="text/css"
-        />
-        <style>
-            .narrow-text {
-                max-width: 50%;
-            }
-        </style>
-    </head>
+    <!-- Load parameters here (always below the loading of the JsPsych) -->
+    <script src="demographics.js"></script>
+    <script src="questionnaires.js"></script>
 
-    <body></body>
-
-    <script>
-        // Initialize experiment =================================================
-        var timeline = []
-
-        var jsPsych = initJsPsych({
-            // on_finish: function () {
-            //     jsPsych.data.displayData("json") // Display data in browser
-            // },
-        })
-
-        // Session and Participant Info ----------------------------------------
-        timeline.push(demographics_consent((experimenter = "Experimenter2")))
-        timeline.push(demographics_browser_info)
-        timeline.push(demographics_info)
-        timeline.push(demographics_disorders)
-
-        // Questionnaires =======================================================
-        var Qs = [phq4(), bdi2, stai5, ias]
-        Qs = jsPsych.randomization.shuffle(Qs) // Randomize
-        for (var i = 0; i < Qs.length; i++) {
-            timeline.push(Qs[i]) // Push each element to timeline
+    <link href="https://unpkg.com/jspsych/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+        .narrow-text {
+            max-width: 50%;
         }
+    </style>
+</head>
 
-        // End =================================================================
+<body></body>
 
-        timeline.push(demographics_waitdatasaving)
+<script>
+    // Initialize experiment =================================================
+    var timeline = []
 
-        // Save data via DataPipe
-        timeline.push({
-            type: jsPsychPipe,
-            action: "save",
-            experiment_id: "aFDUfulnpbUg", // This in generated in the DataPipe interface
-            filename: `${jsPsych.randomization.randomID(10)}.csv`,
-            data_string: () => jsPsych.data.get().csv(),
-        })
+    var jsPsych = initJsPsych({
+        // on_finish: function () {
+        //     jsPsych.data.displayData("json") // Display data in browser
+        // },
+    })
 
-        timeline.push(
-            demographics_endscreen(
-                "https://dominiquemakowski.github.io/PHQ4R/study2/experiment/experimenter2.html"
-            )
+    // Session and Participant Info ----------------------------------------
+    timeline.push(demographics_consent((experimenter = "Experimenter2")))
+    timeline.push(demographics_browser_info)
+    timeline.push(demographics_info)
+    timeline.push(demographics_disorders)
+
+    // Questionnaires =======================================================
+    var Qs = [phq4(), bdi2, stai5, ias]
+    Qs = jsPsych.randomization.shuffle(Qs) // Randomize
+    for (var i = 0; i < Qs.length; i++) {
+        timeline.push(Qs[i]) // Push each element to timeline
+    }
+
+    // End =================================================================
+
+    timeline.push(demographics_waitdatasaving)
+
+    // Save data via DataPipe
+    timeline.push({
+        type: jsPsychPipe,
+        action: "save",
+        experiment_id: "aFDUfulnpbUg", // This in generated in the DataPipe interface
+        filename: `${jsPsych.randomization.randomID(10)}.csv`,
+        data_string: () => jsPsych.data.get().csv(),
+    })
+
+    timeline.push(
+        demographics_endscreen(
+            "https://dominiquemakowski.github.io/PHQ4R/study2/experiment/experimenter2.html"
         )
+    )
 
-        /* ----------------- Run the timeline ----------------- */
-        jsPsych.run(timeline)
-        // jsPsych.simulate(timeline, "data-only")
-    </script>
+    /* ----------------- Run the timeline ----------------- */
+    jsPsych.run(timeline)
+    // jsPsych.simulate(timeline, "data-only")
+</script>
+
 </html>
