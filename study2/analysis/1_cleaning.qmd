@@ -1,0 +1,208 @@
+---
+title: "PHQ4R - Data Cleaning"
+editor: source
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    code-fold: true
+    self-contained: true
+---
+
+## Data Preparation
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(easystats)
+library(patchwork)
+library(ggside)
+```
+
+
+```{r}
+df <- read.csv("../data/data_raw.csv")
+```
+
+The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
+
+### Compute Scores
+
+#### PHQ-4
+
+```{r}
+recode_phq <- function(x) {
+  case_when(
+    x == 1 ~ 0.5,
+    x == 2 ~ 1,
+    x == 3 ~ 2,
+    x == 4 ~ 3,
+    .default = x
+  )
+}
+
+df <- df |>
+  mutate(
+    PHQ4_Anxiety_1 = ifelse(PHQ4_Condition == "PHQ4 - Revised", recode_phq(PHQ4_Anxiety_1), PHQ4_Anxiety_1),
+    PHQ4_Anxiety_2 = ifelse(PHQ4_Condition == "PHQ4 - Revised", recode_phq(PHQ4_Anxiety_2), PHQ4_Anxiety_2),
+    PHQ4_Depression_3 = ifelse(PHQ4_Condition == "PHQ4 - Revised", recode_phq(PHQ4_Depression_3), PHQ4_Depression_3),
+    PHQ4_Depression_4 = ifelse(PHQ4_Condition == "PHQ4 - Revised", recode_phq(PHQ4_Depression_4), PHQ4_Depression_4),
+    PHQ4_Anxiety = PHQ4_Anxiety_1 + PHQ4_Anxiety_2,
+    PHQ4_Depression = PHQ4_Depression_3 + PHQ4_Depression_4,
+    PHQ4_Total = PHQ4_Anxiety + PHQ4_Depression
+  )
+```
+
+```{r}
+df |>
+  select(matches("PHQ4_")) |>
+  pivot_longer(cols = matches("Depression_|Anxiety_"), names_to = "item", values_to = "score") |>
+  ggplot(aes(x = as.factor(score))) +
+  geom_bar(stat="count") +
+  facet_grid(item ~ PHQ4_Condition) +
+  labs(x = "Score", y = "N answers")
+```
+
+
+#### STAI-5
+
+```{r}
+df |>
+  select(matches("STAI5_"), -STAI5_Duration, -STAI5_Order) |>
+  pivot_longer(cols = matches("STAI5_"), names_to = "item", values_to = "score") |>
+  ggplot(aes(x = as.factor(score))) +
+  geom_bar(stat="count") +
+  facet_wrap(~item) +
+  labs(x = "Score", y = "N answers")
+```
+
+
+```{r}
+df <- df |> 
+  mutate(STAI5_General = (STAI5_1 + STAI5_2 + STAI5_3 + STAI5_4 + STAI5_5) / 5)
+```
+
+
+#### BDI-2
+
+```{r}
+df |>
+  select(matches("BDI2_"), -BDI2_Duration, -BDI2_Order) |>
+  pivot_longer(cols = matches("BDI2_"), names_to = "item", values_to = "score") |>
+  ggplot(aes(x = as.factor(score))) +
+  geom_bar(stat="count") +
+  facet_wrap(~item) +
+  labs(x = "Score", y = "N answers")
+```
+
+```{r}
+df <- df |> 
+  mutate(BDI2_Total = rowSums(select(df, matches("BDI2_"), -BDI2_Duration, -BDI2_Order)))
+```
+
+
+### Recruitment History
+
+```{r}
+# Consecutive count of participants per day (as area)
+df |>
+  mutate(
+    Date = as.Date(Date, format = "%d/%m/%Y"),
+    N = 1:nrow(df)
+  ) |>
+  ggplot(aes(x = Date, y = N)) +
+  geom_area() +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(
+    title = "Recruitment History",
+    x = "Date",
+    y = "Total Number of Participants"
+  ) +
+  see::theme_modern()
+```
+
+
+## Outliers
+
+### Experiment Duration
+
+```{r}
+df |>
+  mutate(Participant = fct_reorder(Participant, Experiment_Duration),
+         Category = ifelse(Experiment_Duration > 50, "extra", "ok"),
+         Duration = ifelse(Experiment_Duration > 50, 50, Experiment_Duration)) |>
+  ggplot(aes(y = Participant, x = Duration)) +
+  geom_point(aes(color = Category, shape = Category)) +
+  scale_shape_manual(values = c("extra" = 3, ok = 19)) +
+  scale_color_manual(values = c("extra" = "red", ok = "black")) +
+  guides(color = "none", shape = "none") +
+  ggside::geom_xsidedensity(fill = "grey", color=NA) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  labs(
+    title = "Experiment Completion Time",
+    x = "Duration (in minutes)",
+    y = "Participant"
+  )  +
+  see::theme_modern() +
+  ggside::theme_ggside_void() +
+  theme(ggside.panel.scale = .3) 
+```
+
+## Descriptive Statistics
+
+### Participants
+
+The final sample includes `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
+
+### Table 1
+
+```{r}
+table1 <- df |> 
+  select(Age, 
+         PHQ4_Condition, 
+         STAI5 = STAI5_General,
+         BDI2 = BDI2_Total) |> 
+  report::report_sample(group_by = "PHQ4_Condition")
+
+table1$Variable <- str_remove_all(table1$Variable, fixed("Mean "))
+table1$Variable <- str_remove_all(table1$Variable, fixed(" (SD)"))
+
+insight::display(table1)
+```
+
+```{r}
+rbind(
+  as.data.frame(report::report(t.test(df$Age ~ df$PHQ4_Condition))),
+  as.data.frame(report::report(t.test(df$STAI5_General ~ df$PHQ4_Condition))),
+  as.data.frame(report::report(t.test(df$BDI2_Total ~ df$PHQ4_Condition)))
+) |> 
+  select(Parameter, t, df_error, p) |> 
+  mutate(Parameter = str_remove_all(Parameter, fixed("df$"))) |>
+  insight::display()
+```
+
+### Distributions
+
+```{r}
+df |> 
+  select(PHQ4_Condition, 
+         STAI5 = STAI5_General,
+         BDI2 = BDI2_Total,
+         PHQ4_Total) |> 
+  standardize() |> 
+  estimate_density(at = "PHQ4_Condition") |> 
+  ggplot(aes(x=x, y=y)) +
+  geom_line(aes(color = Parameter)) +
+  labs(x = "Standardized Score", y = "Distribution") +
+  facet_wrap(~PHQ4_Condition)
+```
+
+## Save 
+
+```{r}
+#| code-fold: false
+
+write.csv(df, "../data/data.csv", row.names = FALSE)
+```

@@ -1,25 +1,48 @@
 import json
-import os
 
-import osfclient
 import pandas as pd
 
+
+# Get files from OSF ======================================================
+def osf_listfiles(data_subproject="", token="", after_date=None):
+    try:
+        import osfclient
+    except ImportError:
+        raise ImportError("Please install 'osfclient' (`pip install osfclient`)")
+    osf = osfclient.OSF(token=token).project(data_subproject)  # Connect to project
+    storage = [s for s in osf.storages][0]  # Access storage component
+    files = [
+        {
+            "name": file.name.replace(".csv", ""),
+            "date": pd.to_datetime(file.date_created),
+            "url": file._download_url,
+            "size": file.size,
+            "file": file,
+        }
+        for file in storage.files
+    ]
+
+    if after_date is not None:
+        date = pd.to_datetime(after_date, format="%d/%m/%Y", utc=True)
+        files = [f for f, d in zip(files, [f["date"] > date for f in files]) if d]
+    return files
+
+
 token = ""  # Paste OSF token here to access private repositories
-data_subproject = "au695"  # Data subproject ID
-data_all = pd.DataFrame()  # Initialize empty dataframe
+files = osf_listfiles(
+    token=token,
+    data_subproject="au695",  # Data subproject ID
+    after_date="18/12/2023",
+)
 
-osf = osfclient.OSF(token=token).project(data_subproject)  # Connect to project
-storage = [s for s in osf.storages][0]  # Access storage component
-n_files = sum([1 for _ in storage.files])
-for i, file in enumerate(storage.files):
-    print(f"File N°{i+1}/{n_files}")
-    file_name = file.name.replace(".csv", "")
-    response = file._get(file._download_url, stream=True)
-    data = pd.read_csv(response.raw)
 
-    # Collection date
-    if data["date"].dropna().unique()[0] < "17/11/2023":
-        continue
+# Loop through files ======================================================
+alldata = pd.DataFrame()  # Initialize empty dataframe
+
+for i, file in enumerate(files):
+    print(f"File N°{i+1}/{len(files)}")
+
+    data = pd.read_csv(file["file"]._get(file["url"], stream=True).raw)
 
     # Participant ========================================================
     # data["screen"].unique()
@@ -29,7 +52,7 @@ for i, file in enumerate(storage.files):
 
     df = pd.DataFrame(
         {
-            "Participant": file_name,
+            "Participant": file["name"],
             "Experimenter": brower["experimenter"],
             "Experiment_Duration": data["time_elapsed"].max() / 1000 / 60,
             "Date": brower["date"],
@@ -48,20 +71,29 @@ for i, file in enumerate(storage.files):
     demo1 = json.loads(demo1["response"])
 
     df["Gender"] = demo1["gender"]
-    df["Education"] = demo1["education"]
 
     demo2 = data[data["screen"] == "demographics_2"].iloc[0]
     demo2 = json.loads(demo2["response"])
 
     df["Age"] = demo2["age"]
-    df["Ethnicity"] = demo2["ethnicity"]
 
-    # Psychopathology ----------------------------------------------------
-    demo3 = data[data["screen"] == "demographics_disorders"].iloc[0]
-    demo3 = json.loads(demo3["response"])
+    # Education
+    edu = demo1["education"]
+    edu = "Bachelor" if "bachelor" in edu else edu
+    edu = "Master" if "master" in edu else edu
+    edu = "Doctorate" if "doctorate" in edu else edu
+    df["Education"] = edu
 
-    df["Medical_Diagnostic"] = "; ".join(demo3["disorder_diagnostic"])
-    df["Medical_Treatment"] = "; ".join(demo3["disorder_treatment"])
+    # Ethnicity
+    race = demo2["ethnicity"].title().rstrip()
+    race = "Caucasian" if race in ["White"] else race
+    race = "South Asian" if race in ["Pakistani"] else race
+    race = "Arab" if race in ["Middle Eastern"] else race
+    race = (
+        "Arab" if race in ["Muslim"] else race
+    )  # Experimenter1: Likelihood given recruitment date
+    race = "Other" if race in ["Bahraini", "Manama"] else race
+    df["Ethnicity"] = race
 
     # Questionnaires =====================================================
 
@@ -72,10 +104,68 @@ for i, file in enumerate(storage.files):
     # PHQ4 ---------------------------------------------------------------
     phq4 = data[data["screen"] == "questionnaire_phq4"].iloc[0]
 
-    df["PHQ4_Condition"] = phq4["condition"]
-    df["PHQ4_Duration"] = phq4["rt"]
+    df["PHQ4_Condition"] = (
+        "PHQ4 - Revised" if phq4["condition"] == "PHQ4R" else "PHQ4 - Original"
+    )
+
+    df["PHQ4_Duration"] = phq4["rt"] / 1000 / 60
     df["PHQ4_Order"] = order.index("questionnaire_phq4") + 1
 
     phq4 = json.loads(phq4["response"])
     for item in phq4:
         df[item] = phq4[item]
+
+    # STAI ---------------------------------------------------------------
+    stai = data[data["screen"] == "questionnaire_stai5"].iloc[0]
+
+    df["STAI5_Duration"] = stai["rt"] / 1000 / 60
+    df["STAI5_Order"] = order.index("questionnaire_stai5") + 1
+
+    stai = json.loads(stai["response"])
+    for item in stai:
+        df[item] = stai[item]
+
+    # BDI-2 --------------------------------------------------------------
+    bdi2 = data[data["screen"] == "questionnaire_bdi2"].iloc[0]
+
+    df["BDI2_Duration"] = bdi2["rt"] / 1000 / 60
+    df["BDI2_Order"] = order.index("questionnaire_bdi2") + 1
+
+    bdi2 = json.loads(bdi2["response"])
+    for item in bdi2:
+        resp = bdi2[item][0:3]
+        # Keep only number in string
+        df[item] = int(resp.join([i for i in resp if i.isdigit()]))
+
+    # IAS ----------------------------------------------------------------
+    ias = data[data["screen"] == "questionnaire_ias"].iloc[0]
+
+    df["IAS_Duration"] = ias["rt"] / 1000 / 60
+    df["IAS_Order"] = order.index("questionnaire_ias") + 1
+
+    ias = json.loads(ias["response"])
+    for item in ias:
+        df[item] = ias[item]
+
+    alldata = pd.concat([alldata, df], axis=0, ignore_index=True)
+
+# Save data ==============================================================
+# Inspect
+alldata["Ethnicity"].unique()
+
+# Remove columns
+alldata = alldata.drop(
+    columns=[
+        "Time",
+        "Browser",
+        "Platform",
+        "Screen_Width",
+        "Screen_Height",
+    ]
+)
+# Reanonimize
+alldata = alldata.sort_values(by=["Date"]).reset_index(drop=True)
+alldata["Participant"] = [f"S{i+1:03}" for i in alldata.index]
+# Save data
+alldata.to_csv("../data/data_raw.csv", index=False)
+print("Done!")
