@@ -28,6 +28,27 @@ df <- read.csv("../data/data_raw.csv")
 
 The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
 
+### Recruitment History
+
+```{r}
+# Consecutive count of participants per day (as area)
+df |>
+  mutate(Date = as.Date(Date, format = "%d/%m/%Y")) |> 
+  arrange(Date) |>
+  mutate(N = 1:nrow(df)) |>
+  ggplot(aes(x = Date, y = N)) +
+  geom_area() +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(
+    title = "Recruitment History",
+    x = "Date",
+    y = "Total Number of Participants"
+  ) +
+  see::theme_modern()
+```
+
+
+
 ### Compute Scores
 
 #### PHQ-4
@@ -103,26 +124,6 @@ df <- df |>
 ```
 
 
-### Recruitment History
-
-```{r}
-# Consecutive count of participants per day (as area)
-df |>
-  mutate(
-    Date = as.Date(Date, format = "%d/%m/%Y"),
-    N = 1:nrow(df)
-  ) |>
-  ggplot(aes(x = Date, y = N)) +
-  geom_area() +
-  scale_y_continuous(expand = c(0, 0)) +
-  labs(
-    title = "Recruitment History",
-    x = "Date",
-    y = "Total Number of Participants"
-  ) +
-  see::theme_modern()
-```
-
 
 ## Outliers
 
@@ -162,6 +163,7 @@ The final sample includes `r report::report_participants(df, age="Age", gender="
 table1 <- df |> 
   select(Age, 
          PHQ4_Condition, 
+         PHQ4 = PHQ4_Total,
          STAI5 = STAI5_General,
          BDI2 = BDI2_Total) |> 
   report::report_sample(group_by = "PHQ4_Condition")
@@ -175,6 +177,7 @@ insight::display(table1)
 ```{r}
 rbind(
   as.data.frame(report::report(t.test(df$Age ~ df$PHQ4_Condition))),
+  as.data.frame(report::report(t.test(df$PHQ4_Total ~ df$PHQ4_Condition))),
   as.data.frame(report::report(t.test(df$STAI5_General ~ df$PHQ4_Condition))),
   as.data.frame(report::report(t.test(df$BDI2_Total ~ df$PHQ4_Condition)))
 ) |> 
