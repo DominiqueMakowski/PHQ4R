@@ -86,7 +86,7 @@ for i, file in enumerate(files):
 
     # Ethnicity
     race = demo2["ethnicity"].title().rstrip()
-    race = "Caucasian" if race in ["White", "White British"] else race
+    race = "Caucasian" if race in ["White", "White British", "White English"] else race
     race = "South Asian" if race in ["Pakistani"] else race
     race = "Arab" if race in ["Middle Eastern"] else race
     race = (

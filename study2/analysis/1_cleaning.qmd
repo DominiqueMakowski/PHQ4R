@@ -1,5 +1,5 @@
 ---
-title: "PHQ4R - Data Cleaning"
+title: "PHQ4R - Data Cleaning (Study 2)"
 editor: source
 editor_options: 
   chunk_output_type: console
@@ -23,7 +23,9 @@ library(ggside)
 
 
 ```{r}
-df <- read.csv("../data/data_raw.csv")
+#| code-fold: false
+
+df <- read.csv("https://raw.githubusercontent.com/DominiqueMakowski/PHQ4R/main/study2/data/data_raw.csv")
 ```
 
 The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
@@ -32,12 +34,35 @@ The initial sample consisted of `r report::report_participants(df, age="Age", ge
 
 ```{r}
 # Consecutive count of participants per day (as area)
+# df |>
+#   mutate(Date = as.Date(Date, format = "%d/%m/%Y")) |> 
+#   arrange(Date) |>
+#   mutate(N = 1:nrow(df)) |>
+#   ggplot(aes(x = Date, y = N)) +
+#   geom_area() +
+#   scale_y_continuous(expand = c(0, 0)) +
+#   labs(
+#     title = "Recruitment History",
+#     x = "Date",
+#     y = "Total Number of Participants"
+#   ) +
+#   see::theme_modern()
+```
+
+```{r}
+#| message: false
+
+# Consecutive count of participants per day (as area)
 df |>
   mutate(Date = as.Date(Date, format = "%d/%m/%Y")) |> 
-  arrange(Date) |>
-  mutate(N = 1:nrow(df)) |>
+  group_by(Date, Experimenter) |> 
+  summarize(N = n()) |> 
+  ungroup() |>
+  complete(Date, Experimenter, fill = list(N = 0)) |> 
+  group_by(Experimenter) |>
+  mutate(N = cumsum(N)) |>
   ggplot(aes(x = Date, y = N)) +
-  geom_area() +
+  geom_area(aes(fill=Experimenter)) +
   scale_y_continuous(expand = c(0, 0)) +
   labs(
     title = "Recruitment History",
@@ -48,12 +73,14 @@ df |>
 ```
 
 
-
 ### Compute Scores
 
 #### PHQ-4
 
 ```{r}
+#| echo: true
+#| code-fold: show
+
 recode_phq <- function(x) {
   case_when(
     x == 1 ~ 0.5,
@@ -81,9 +108,10 @@ df |>
   select(matches("PHQ4_")) |>
   pivot_longer(cols = matches("Depression_|Anxiety_"), names_to = "item", values_to = "score") |>
   ggplot(aes(x = as.factor(score))) +
-  geom_bar(stat="count") +
+  geom_bar(stat="count", fill="#9C27B0") +
   facet_grid(item ~ PHQ4_Condition) +
-  labs(x = "Score", y = "N answers")
+  labs(x = "Score", y = "N answers") +
+  theme_bw()
 ```
 
 
@@ -94,13 +122,17 @@ df |>
   select(matches("STAI5_"), -STAI5_Duration, -STAI5_Order) |>
   pivot_longer(cols = matches("STAI5_"), names_to = "item", values_to = "score") |>
   ggplot(aes(x = as.factor(score))) +
-  geom_bar(stat="count") +
+  geom_bar(stat="count", fill="#E91E63") +
   facet_wrap(~item) +
-  labs(x = "Score", y = "N answers")
+  labs(x = "Score", y = "N answers") +
+  theme_bw()
 ```
 
 
 ```{r}
+#| echo: true
+#| code-fold: show
+
 df <- df |> 
   mutate(STAI5_General = (STAI5_1 + STAI5_2 + STAI5_3 + STAI5_4 + STAI5_5) / 5)
 ```
@@ -113,28 +145,33 @@ df |>
   select(matches("BDI2_"), -BDI2_Duration, -BDI2_Order) |>
   pivot_longer(cols = matches("BDI2_"), names_to = "item", values_to = "score") |>
   ggplot(aes(x = as.factor(score))) +
-  geom_bar(stat="count") +
+  geom_bar(stat="count", fill="#2196F3") +
   facet_wrap(~item) +
-  labs(x = "Score", y = "N answers")
+  labs(x = "Score", y = "N answers") +
+  theme_bw()
 ```
 
 ```{r}
+#| echo: true
+#| code-fold: show
+
 df <- df |> 
   mutate(BDI2_Total = rowSums(select(df, matches("BDI2_"), -BDI2_Duration, -BDI2_Order)))
 ```
 
 
 
-## Outliers
+## Exclusions
 
 ### Experiment Duration
 
 ```{r}
 df |>
   mutate(Participant = fct_reorder(Participant, Experiment_Duration),
-         Category = ifelse(Experiment_Duration > 50, "extra", "ok"),
-         Duration = ifelse(Experiment_Duration > 50, 50, Experiment_Duration)) |>
+         Category = ifelse(Experiment_Duration > 30, "extra", "ok"),
+         Duration = ifelse(Experiment_Duration > 30, 30, Experiment_Duration)) |>
   ggplot(aes(y = Participant, x = Duration)) +
+  geom_vline(xintercept = median(df$Experiment_Duration), color = "red", linetype = "dashed") +
   geom_point(aes(color = Category, shape = Category)) +
   scale_shape_manual(values = c("extra" = 3, ok = 19)) +
   scale_color_manual(values = c("extra" = "red", ok = "black")) +
@@ -146,12 +183,13 @@ df |>
     x = "Duration (in minutes)",
     y = "Participant"
   )  +
-  see::theme_modern() +
+  theme_bw() +
   ggside::theme_ggside_void() +
-  theme(ggside.panel.scale = .3) 
+  theme(ggside.panel.scale = .3,
+        panel.border = element_blank()) 
 ```
 
-## Descriptive Statistics
+## Final Sample
 
 ### Participants
 
@@ -197,9 +235,11 @@ df |>
   standardize() |> 
   estimate_density(at = "PHQ4_Condition") |> 
   ggplot(aes(x=x, y=y)) +
-  geom_line(aes(color = Parameter)) +
+  geom_line(aes(color = Parameter), linewidth=2) +
+  scale_color_manual(values = c("STAI5" = "#E91E63", "BDI2" = "#2196F3", "PHQ4_Total" = "#9C27B0")) +
   labs(x = "Standardized Score", y = "Distribution") +
-  facet_wrap(~PHQ4_Condition)
+  facet_wrap(~PHQ4_Condition) +
+  theme_bw()
 ```
 
 ## Save 
