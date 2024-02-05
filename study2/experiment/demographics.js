@@ -6,28 +6,20 @@ var demographics_browser_info = {
         date: new Date().toLocaleDateString("fr-FR"),
         time: new Date().toLocaleTimeString("fr-FR"),
     },
-    on_finish: function () {
-        data = jsPsych.data.get().filter({ screen: "browser_info" }).values()[0]
-        jsPsych.data.addProperties({
-            ["screen_height"]: data["height"],
-            ["screen_width"]: data["width"],
-        })
-        for (var key in data) {
-            if (
-                [
-                    "vsync_rate",
-                    "os",
-                    "mobile",
-                    "browser",
-                    "browser_version",
-                ].includes(key)
-            ) {
-                jsPsych.data.addProperties({
-                    [key]: data[key],
-                })
-            }
-        }
-        jsPsych.data.addProperties()
+    on_finish: function (data) {
+        dat = jsPsych.data.get().filter({ screen: "browser_info" }).values()[0]
+
+        // Rename
+        data["screen_height"] = dat["height"]
+        data["screen_width"] = dat["width"]
+
+        // Add URL variables - ?sona_id=x&exp=1
+        let urlvars = jsPsych.data.urlVariables()
+        data["researcher"] = urlvars["exp"]
+        data["sona_id"] = urlvars["sona_id"]
+        data["prolific_id"] = urlvars["PROLIFIC_PID"] // Prolific
+        data["study_id"] = urlvars["STUDY_ID"] // Prolific
+        data["session_id"] = urlvars["SESSION_ID"] // Prolific
     },
 }
 
@@ -47,9 +39,7 @@ var demographics_participant_id = {
     on_finish: function () {
         // Store `participant_id` so that it can be reused later
         jsPsych.data.addProperties({
-            participant_id: jsPsych.data.get().last().values()[0]["response"][
-                "Participant_ID"
-            ],
+            participant_id: jsPsych.data.get().last().values()[0]["response"]["Participant_ID"],
         })
     },
 }
@@ -110,18 +100,31 @@ var demographics_endscreen = function (
     return {
         type: jsPsychHtmlButtonResponse,
         css_classes: ["narrow-text"],
-        stimulus:
-            "<h1>Thank you for participating</h1>" +
-            "<p>It means a lot to us. Don't hesitate to share the study by sending this link:</p>" +
-            "<p><b><a href='" +
-            link +
-            "'>" +
-            link +
-            "<a/></b></p><br>" +
-            "<h2>Information</h2>" +
-            "<p align='left'>The purpose of this study was for us to understand how mood fluctuations and mood disorder symptoms (or absence thereof) are expressed and what difficulties they can generate. Your participation in this study will be kept completely confidential.</p>" +
-            "<p align='left'>If you have any questions about the project, please contact D.Makowski@sussex.ac.uk.</p>" +
-            "<p><b>You can safely close the tab now.</b></p>",
+        stimulus: function () {
+            let text =
+                "<h1>Thank you for participating</h1>" +
+                "<p>It means a lot to us. We know participating in scientific experiments can be long and not always the most fun, so we really do appreciate your help in helping us understand how the Human brain works.</p>" +
+                "<h2>Information</h2>" +
+                "<p align='left'>The purpose of this study was for us to understand how mood fluctuations and mood disorder symptoms (or absence thereof) are expressed and what difficulties they can generate. Your participation in this study will be kept completely confidential.</p>" +
+                "<p align='left'>If you have any questions about the project, please contact <i>D.Makowski@sussex.ac.uk</i>, and check-out the <b><a href='https://realitybending.github.io/'>Reality Bending Lab</a></b> for more information about our research team.</p>" +
+                "<p align='left'>Don't hesitate to share the study by sending this link:</p>" +
+                "<p><b><a href='" +
+                link +
+                "'>" +
+                link +
+                "<a/></b></p><br>"
+
+            if (
+                jsPsych.data.get().filter({ screen: "browser_info" }).values()[0]["prolific_id"] !=
+                undefined
+            ) {
+                text +=
+                    "<br><p><b>You will now be redirected to Prolific. Please do not close this tab.</b></p>"
+            } else {
+                text += "<br><p><b>You can safely close the tab now.</b></p>"
+            }
+            return text
+        },
         choices: ["End"],
         data: { screen: "endscreen" },
     }
