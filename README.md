@@ -23,6 +23,6 @@ In this brief study, we test the addition of the "Once or twice" response option
 
 ## Study 2
 
-- [**Experiment**](https://dominiquemakowski.github.io/PHQ4R/study2/experiment/experimenter1.html)
+- [**Experiment**](https://dominiquemakowski.github.io/PHQ4R/study2/experiment/index?exp=readme)
 - [**Preregistration**](https://osf.io/)
 - [**Data cleaning**](https://dominiquemakowski.github.io/PHQ4R/study2/analysis/1_cleaning.html)
