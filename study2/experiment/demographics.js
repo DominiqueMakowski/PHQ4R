@@ -232,10 +232,9 @@ var demographics_disorders = {
             options: [
                 "Antidepressant Medication <sup><sub>(e.g., PROZAC, ZOLOFT, EFFEXOR...)</sub></sup>",
                 "Anxiolytic Medication <sup><sub>(e.g., XANAX, VALIUM, ...)</sub></sup>",
-                "Psychotherapy/Counseling  <sup><sub>(e.g., CBT, ACT, ...)</sub></sup>",
+                "Psychotherapy/Counseling <sup><sub>(e.g., CBT, ACT, ...)</sub></sup>",
                 "Mood Stabilizers <sup><sub>(e.g., LITHIUM, LAMICTAL, ...)</sub></sup>",
                 "Antipsychotic Medication <sup><sub>(e.g., RISPERDAL, SEROQUEL, ...)</sub></sup>",
-                // "Cognitive Behavioral Therapy (CBT)",
                 // "Electroconvulsive Therapy (ECT)",
                 // "Transcranial Magnetic Stimulation (TMS)",
                 "Lifestyle Changes <sup><sub>(e.g., diet, exercise, ...)</sub></sup>",
