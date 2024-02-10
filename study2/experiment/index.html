@@ -48,13 +48,13 @@
         })
 
         // Session and Participant Info ----------------------------------------
-        timeline.push(demographics_consent((experimenter = "Experimenter1")))
+        timeline.push(demographics_consent_incentivized)
         timeline.push(demographics_browser_info)
         timeline.push(demographics_info)
         timeline.push(demographics_disorders)
 
         // Questionnaires =======================================================
-        var Qs = [phq4(), bdi2, stai5, ias]
+        var Qs = [phq4(), bdi2, stai5, ias, maia]
         Qs = jsPsych.randomization.shuffle(Qs) // Randomize
         for (var i = 0; i < Qs.length; i++) {
             timeline.push(Qs[i]) // Push each element to timeline

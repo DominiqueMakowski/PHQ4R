@@ -10,20 +10,12 @@ var PHQ4_items = [
     "Little interest or pleasure in doing things",
 ]
 
-var PHQ4_dimensions = [
-    "PHQ4_Anxiety_1",
-    "PHQ4_Anxiety_2",
-    "PHQ4_Depression_3",
-    "PHQ4_Depression_4",
-]
+var PHQ4_dimensions = ["PHQ4_Anxiety_1", "PHQ4_Anxiety_2", "PHQ4_Depression_3", "PHQ4_Depression_4"]
 
 // Questionnaire ========================================================================
 
 function phq4() {
-    condition = jsPsych.randomization.sampleWithoutReplacement(
-        ["PHQ4", "PHQ4R"],
-        1
-    )[0]
+    condition = jsPsych.randomization.sampleWithoutReplacement(["PHQ4", "PHQ4R"], 1)[0]
 
     if (condition == "PHQ4") {
         labels = [
@@ -80,12 +72,7 @@ for (const [index, element] of stai5_items.entries()) {
     stai5_questions.push({
         prompt: "<b>" + element + "</b>",
         name: stai5_dimensions[index],
-        labels: [
-            "<br>Not at all",
-            "<br>Somewhat",
-            "<br>Moderately so",
-            "<br>Very much so",
-        ],
+        labels: ["<br>Not at all", "<br>Somewhat", "<br>Moderately so", "<br>Very much so"],
         required: true,
     })
 }
@@ -114,6 +101,7 @@ var IAS_items = [
     "I can always accurately perceive when I need to urinate",
     "I can always accurately perceive when I need to defecate",
     "I can always accurately perceive when I encounter different tastes",
+    "I can always accurately perceive when I am about to blink", // Attentional check
     "I can always accurately perceive when I am going to vomit",
     "I can always accurately perceive when I am going to sneeze",
     "I can always accurately perceive when I am going to cough",
@@ -137,6 +125,7 @@ var IAS_dimensions = [
     "IAS_5",
     "IAS_6",
     "IAS_7",
+    "AttentionCheck_1",
     "IAS_8",
     "IAS_9",
     "IAS_10",
@@ -395,6 +384,17 @@ var bdi2 = {
             required: true,
         },
         {
+            prompt: "<b>19. Attention</b>", // Attention check
+            options: [
+                "0. I am not paying attention",
+                "1. I am cyrrebtky answering the questions at random",
+                "2. I am carefuly reading and answering the questions",
+                "3. I am not reading to try finish the questionnaire quickly",
+            ],
+            name: "AttentionCheck_2",
+            required: true,
+        },
+        {
             prompt: "<b>19. Concentration Difficulty</b>",
             options: [
                 "0. I can concentrate as well as ever",
@@ -430,5 +430,116 @@ var bdi2 = {
     ],
     data: {
         screen: "questionnaire_bdi2",
+    },
+}
+
+// MAIA-2 questionnaire
+var MAIA_items = [
+    "When I am tense I notice where the tension is located in my body",
+    "I notice when I am uncomfortable in my body",
+    "I notice where in my body I am comfortable",
+    "I notice changes in my breathing, such as whether it slows down or speeds up",
+    "I ignore physical tension or discomfort until they become more severe",
+    "I distract myself from sensations of discomfort",
+    "When I feel pain or discomfort, I try to power through it",
+    "I try to ignore pain",
+    "I push feelings of discomfort away by focusing on something",
+    "When I feel unpleasant body sensations, I occupy myself with something else so I do not have to feel them",
+    "When I feel physical pain, I become upset",
+    "I start to worry that something is wrong if I feel any discomfort",
+    "I can notice an unpleasant body sensation without worrying about it",
+    "I can stay calm and not worry when I have feelings of discomfort or pain",
+    "When I am in discomfort or pain I cannot get it out of my mind",
+    "I can pay attention to my breath without being distracted by things happening around me",
+    "I can maintain awareness of my inner bodily sensations even when there is a lot going on around me",
+    "When I am in conversation with someone, I can pay attention to my posture",
+    "I can return awareness to my body if I am distracted",
+    "I can refocus my attention from thinking to sensing my body",
+    "I can maintain awareness of my whole body even when a part of me is in pain or discomfort",
+    "I am able to consciously focus on my body as a whole",
+    "I notice how my body changes when I am angry",
+    "When something is wrong in my life I can feel it in my body",
+    "I notice that my body feels different after a peaceful experience",
+    "I notice that my breathing becomes free and easy when I feel comfortable",
+    "I notice how my body changes when I feel happy / joyful",
+    "When I feel overwhelmed I can find a calm place inside",
+    "When I bring awareness to my body I feel a sense of calm",
+    "I can use my breath to reduce tension",
+    "When I am caught up in thoughts, I can calm my mind by focusing on my body/breathing",
+    "I listen for information from my body about my emotional state",
+    "When I am upset, I take time to explore how my body feels",
+    "I listen to my body to inform me about what to do",
+    "I am at home in my body",
+    "I feel my body is a safe place",
+    "I trust my body sensations",
+    "I answer to the right end of the scale to show that I am paying attention", // Attentional Check
+]
+var MAIA_dimensions = [
+    "MAIA2_Noticing_1",
+    "MAIA2_Noticing_2",
+    "MAIA2_Noticing_3",
+    "MAIA2_Noticing_4",
+    "MAIA2_NotDistracting_1_R",
+    "MAIA2_NotDistracting_2_R",
+    "MAIA2_NotDistracting_3_R",
+    "MAIA2_NotDistracting_4_R",
+    "MAIA2_NotDistracting_5_R",
+    "MAIA2_NotDistracting_6_R",
+    "MAIA2_NotWorrying_1_R",
+    "MAIA2_NotWorrying_2_R",
+    "MAIA2_NotWorrying_3",
+    "MAIA2_NotWorrying_4",
+    "MAIA2_NotWorrying_5_R",
+    "MAIA2_AttentionRegulation_1",
+    "MAIA2_AttentionRegulation_2",
+    "MAIA2_AttentionRegulation_3",
+    "MAIA2_AttentionRegulation_4",
+    "MAIA2_AttentionRegulation_5",
+    "MAIA2_AttentionRegulation_6",
+    "MAIA2_AttentionRegulation_7",
+    "MAIA2_EmotionalAwareness_1",
+    "MAIA2_EmotionalAwareness_2",
+    "MAIA2_EmotionalAwareness_3",
+    "MAIA2_EmotionalAwareness_4",
+    "MAIA2_EmotionalAwareness_5",
+    "MAIA2_SelfRegulation_1",
+    "MAIA2_SelfRegulation_2",
+    "MAIA2_SelfRegulation_3",
+    "MAIA2_SelfRegulation_4",
+    "MAIA2_BodyListening_1",
+    "MAIA2_BodyListening_2",
+    "MAIA2_BodyListening_3",
+    "MAIA2_Trusting_1",
+    "MAIA2_Trusting_2",
+    "MAIA2_Trusting_3",
+    "AttentionCheck_3",
+]
+
+// MAIA-2 Questions
+var maia2_questions = []
+for (const [index, element] of MAIA_items.entries()) {
+    maia2_questions.push({
+        prompt: "<b>" + element + "</b>",
+        name: MAIA_dimensions[index],
+        ticks: ["Never", "Always"],
+        required: false,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        slider_start: 0.5,
+    })
+}
+
+var maia = {
+    type: jsPsychMultipleSlider,
+    questions: maia2_questions,
+    randomize_question_order: true,
+    preamble:
+        "<h2>About your body sensations...</h2>" +
+        "<p>Please indicate how often each statement applies to you generally in daily life.</p><br /><br/> ",
+    require_movement: false,
+    slider_width: null,
+    data: {
+        screen: "questionnaire_maia",
     },
 }
