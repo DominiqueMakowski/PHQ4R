@@ -1,5 +1,5 @@
 ---
-title: "PHQ4R - Data Cleaning (Study 2)"
+title: "PHQ-4-R - Data Cleaning (Study 2)"
 editor: source
 editor_options: 
   chunk_output_type: console
@@ -25,29 +25,12 @@ library(ggside)
 ```{r}
 #| code-fold: false
 
-df <- read.csv("https://raw.githubusercontent.com/DominiqueMakowski/PHQ4R/main/study2/data/data_raw.csv")
+df <- read.csv("../data/data_raw.csv")
 ```
 
 The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
 
 ### Recruitment History
-
-```{r}
-# Consecutive count of participants per day (as area)
-# df |>
-#   mutate(Date = as.Date(Date, format = "%d/%m/%Y")) |> 
-#   arrange(Date) |>
-#   mutate(N = 1:nrow(df)) |>
-#   ggplot(aes(x = Date, y = N)) +
-#   geom_area() +
-#   scale_y_continuous(expand = c(0, 0)) +
-#   labs(
-#     title = "Recruitment History",
-#     x = "Date",
-#     y = "Total Number of Participants"
-#   ) +
-#   see::theme_modern()
-```
 
 ```{r}
 #| message: false
@@ -81,6 +64,9 @@ df |>
 #| echo: true
 #| code-fold: show
 
+# TODO: compute modified score
+# Maybe use the score_PHQ4 function from the README to demo it here
+
 recode_phq <- function(x) {
   case_when(
     x == 1 ~ 0.5,
@@ -101,11 +87,75 @@ df <- df |>
     PHQ4_Depression = PHQ4_Depression_3 + PHQ4_Depression_4,
     PHQ4_Total = PHQ4_Anxiety + PHQ4_Depression
   )
+
+
+df <- df |>
+  mutate(
+    Expe_PHQ4_Anxiety_1 = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised",
+      case_when(
+        PHQ4_Anxiety_1 == 0 ~ 0,
+        PHQ4_Anxiety_1 == 0.5 ~ 0.34,
+        PHQ4_Anxiety_1 == 1 ~ 0.55,
+        PHQ4_Anxiety_1 == 2 ~ 0.71,
+        PHQ4_Anxiety_1 == 3 ~ 1,
+        .default = PHQ4_Anxiety_1
+      ), PHQ4_Anxiety_1
+    ),
+    Expe_PHQ4_Anxiety_2 = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised",
+      case_when(
+        PHQ4_Anxiety_2 == 0 ~ 0,
+        PHQ4_Anxiety_2 == 0.5 ~ 0.44,
+        PHQ4_Anxiety_2 == 1 ~ 0.58,
+        PHQ4_Anxiety_2 == 2 ~ 0.71,
+        PHQ4_Anxiety_2 == 3 ~ 1,
+        .default = PHQ4_Anxiety_2
+      ), PHQ4_Anxiety_2
+    ),
+    Expe_PHQ4_Depression_3 = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised",
+      case_when(
+        PHQ4_Depression_3 == 0 ~ 0,
+        PHQ4_Depression_3 == 0.5 ~ 0.38,
+        PHQ4_Depression_3 == 1 ~ 0.51,
+        PHQ4_Depression_3 == 2 ~ 0.62,
+        PHQ4_Depression_3 == 3 ~ 1,
+        .default = PHQ4_Depression_3
+      ), PHQ4_Depression_3
+    ),
+    Expe_PHQ4_Depression_4 = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised",
+      case_when(
+        PHQ4_Depression_4 == 0 ~ 0,
+        PHQ4_Depression_4 == 0.5 ~ 0.35,
+        PHQ4_Depression_4 == 1 ~ 0.52,
+        PHQ4_Depression_4 == 2 ~ 0.66,
+        PHQ4_Depression_4 == 3 ~ 1,
+        .default = PHQ4_Depression_4
+      ), PHQ4_Depression_4
+    ),
+    Expe_PHQ4_Anxiety = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised", datawizard::rescale(Expe_PHQ4_Anxiety_1 + Expe_PHQ4_Anxiety_2, range = c(0, 2), to = c(0, 6)), PHQ4_Anxiety_1 + PHQ4_Anxiety_2
+    ),
+    Expe_PHQ4_Depression = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised", datawizard::rescale(Expe_PHQ4_Depression_3 + Expe_PHQ4_Depression_4, range = c(0, 2), to = c(0, 6)), PHQ4_Depression_3 + PHQ4_Depression_4
+    ),
+    Expe_PHQ4_Total = Expe_PHQ4_Anxiety + Expe_PHQ4_Depression
+  )
+
+# df |>
+#   select(starts_with("Expe_PHQ4_"), PHQ4_Condition) |>
+#   pivot_longer(cols = -PHQ4_Condition, names_to = "item", values_to = "score") |>
+#   ggplot(aes(x = score)) +
+#   geom_density(fill="#9C27B0", adjust=1/2)  +
+#   facet_grid(item ~ PHQ4_Condition)
 ```
+
 
 ```{r}
 df |>
-  select(matches("PHQ4_")) |>
+  select(starts_with("PHQ4_")) |>
   pivot_longer(cols = matches("Depression_|Anxiety_"), names_to = "item", values_to = "score") |>
   ggplot(aes(x = as.factor(score))) +
   geom_bar(stat="count", fill="#9C27B0") +
@@ -137,6 +187,8 @@ df <- df |>
   mutate(STAI5_General = (STAI5_1 + STAI5_2 + STAI5_3 + STAI5_4 + STAI5_5) / 5)
 ```
 
+<!-- df[is.na(df$STAI5_General), c("Participant")] -->
+
 
 #### BDI-2
 
@@ -159,11 +211,15 @@ df <- df |>
   mutate(BDI2_Total = rowSums(select(df, matches("BDI2_"), -BDI2_Duration, -BDI2_Order)))
 ```
 
+<!-- df[is.na(df$BDI2_Total), c("Participant")] -->
 
 
 ## Exclusions
 
 ### Experiment Duration
+
+The experiment's median duration is `r insight::format_value(median(df$Experiment_Duration))` min (`r insight::format_ci(bayestestR::hdi(df$Experiment_Duration, ci=0.5))`).
+
 
 ```{r}
 df |>
@@ -172,11 +228,11 @@ df |>
          Duration = ifelse(Experiment_Duration > 30, 30, Experiment_Duration)) |>
   ggplot(aes(y = Participant, x = Duration)) +
   geom_vline(xintercept = median(df$Experiment_Duration), color = "red", linetype = "dashed") +
-  geom_point(aes(color = Category, shape = Category)) +
+  geom_point(aes(color = Experimenter, shape = Category)) +
+  geom_text(aes(color = Experimenter, label=ifelse(Experiment_Duration < 4.5, as.character(Participant), '')), hjust=-1, vjust=0) +
   scale_shape_manual(values = c("extra" = 3, ok = 19)) +
-  scale_color_manual(values = c("extra" = "red", ok = "black")) +
-  guides(color = "none", shape = "none") +
-  ggside::geom_xsidedensity(fill = "grey", color=NA) +
+  guides(shape = "none") +
+  ggside::geom_xsidedensity(aes(fill=Experimenter), color=NA, alpha=0.5) +
   ggside::scale_xsidey_continuous(expand = c(0, 0)) +
   labs(
     title = "Experiment Completion Time",
@@ -186,14 +242,154 @@ df |>
   theme_bw() +
   ggside::theme_ggside_void() +
   theme(ggside.panel.scale = .3,
-        panel.border = element_blank()) 
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) 
 ```
+
+### Response Coherence
+
+
+```{r}
+SD_per_dim <- function(x, dims="") {
+  m <- matrix(nrow=nrow(x), ncol=0)
+  for(s in dims) {
+    m <- cbind(m, sapply(as.data.frame(t(x[grepl(s, names(x))])), sd))
+  }
+  m
+}
+
+df$BDI2_SD <- select(df, matches("BDI2_"), -BDI2_Duration, -BDI2_Order, -BDI2_Total) |> 
+  SD_per_dim(dims=c("BDI2_")) |> 
+  rowMeans()
+df$STAI5_SD <- select(df, matches("STAI5_"), -STAI5_Duration, -STAI5_Order, -STAI5_General) |> 
+  SD_per_dim(dims=c("STAI5_")) |> 
+  rowMeans()
+```
+
+```{r}
+outliers <- df |> 
+  select(Participant, BDI2_SD, BDI2_Duration, STAI5_SD, STAI5_Duration) |> 
+  standardize(robust=TRUE) |> 
+  mutate(SD = rowSums(across(ends_with("SD"))), Duration = rowSums(across(ends_with("Duration")))) 
+
+# df |> 
+#   ggplot(aes(x=BDI2_Duration, y=BDI2_SD)) +
+#   geom_point() 
+
+table <- df |> 
+  select(Participant, BDI2_SD, BDI2_Duration, STAI5_SD, STAI5_Duration) |> 
+  mutate_at(vars(ends_with("Duration")), \(x) ifelse(x > 10, 10, x)) |>
+  mutate(Participant = fct_reorder(Participant, outliers$Duration)) |> 
+  arrange(Participant)
+
+data.frame(Participant = c("Average"), t(sapply(table[2:ncol(table)], mean, na.rm = TRUE))) |>
+  rbind(table) |> 
+  gt::gt() |> 
+  gt::fmt_number() |> 
+  # gt::data_color(columns = "Participant", fn=\(x) ifelse(x %in% outliers_half, "orange", "white")) |>
+  gt::data_color(columns = ends_with("Duration"), 
+                 direction="column", palette = "RdBu") |> 
+  gt::data_color(columns = ends_with("SD"), 
+                 direction="column", palette = "RdBu", reverse=TRUE) |> 
+  gt::data_color(direction="row", rows=1, palette = "grey") |> 
+  gt::opt_interactive(use_compact_mode = TRUE)
+```
+
+
+### Attentional Checks
+
+```{r}
+df |> 
+  select(starts_with("IAS_"), -IAS_Duration, -IAS_Order) |>
+  pivot_longer(starts_with("IAS_"), names_to = "item", values_to = "score") |> 
+  ggplot(aes(x = score)) +
+  geom_density() +
+  facet_wrap(~item)
+```
+
 
 ## Final Sample
 
 ### Participants
 
 The final sample includes `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
+
+
+### Age
+
+```{r}
+p_age <- df |>  
+  mutate(Gender = ifelse(is.na(Gender), "Missing", Gender)) |>
+  ggplot(aes(x = x)) +
+  geom_histogram(aes(x = Age, fill=Gender), bins=28) +
+  geom_vline(xintercept = mean(df$Age), color = "red", linewidth=1.5) +
+  # geom_label(data = data.frame(x = mean(df$Age) * 1.15, y = 0.95 * 75), aes(y = y), color = "red", label = paste0("Mean = ", format_value(mean(df$Age)))) +
+  scale_fill_manual(values = c("Male"= "#64B5F6", "Female"= "#F06292", "Other"="orange", "Missing"="brown")) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(title = "Age", y = "Number of Participants", color = NULL, subtitle = "Distribution of participants' age") +
+  theme_modern(axis.title.space = 10) +
+  theme(
+    plot.title = element_text(size = rel(1.2), face = "bold", hjust = 0),
+    plot.subtitle = element_text(size = rel(1.2), vjust = 7),
+    axis.text.y = element_text(size = rel(1.1)),
+    axis.text.x = element_text(size = rel(1.1)),
+    axis.title.x = element_blank()
+  )
+p_age
+```
+
+
+<!-- ## Ethnicity -->
+
+<!-- ```{r p_demographics_ethnicity} -->
+<!-- plot_waffle <- function(sub, what = "Nationality", title = what, rows = 8, size = 3) { -->
+<!--   ggwaffle::waffle_iron(sub, what, rows = rows) |> -->
+<!--     ggplot(aes(x, y)) + -->
+<!--     geom_point(aes(color = group), shape = "square", size = size) + -->
+<!--     coord_equal() + -->
+<!--     ggtitle(title) + -->
+<!--     labs(fill = "", color = "", subtitle = "N participants per self-declared group") + # (each square represents one participant)" -->
+<!--     theme_void() + -->
+<!--     theme( -->
+<!--       plot.title = element_text(size = rel(1.2), face = "bold", hjust = 0), -->
+<!--       plot.subtitle = element_text(size = rel(1.2)), -->
+<!--       legend.key.height = unit(1, "mm"), -->
+<!--       legend.key.width = unit(1, "mm") -->
+<!--     ) -->
+<!-- } -->
+
+<!-- p_ethni <- plot_waffle(sub, "Ethnicity", rows = 20, size = 8) + -->
+<!--   scale_color_manual(values = c("Hispanic" = "#FF5722", "Caucasian" = "#2196F3", "African" = "#4CAF50", "Asian" = "#FFC107", "Other" = "#795548")) -->
+<!-- p_ethni -->
+<!-- ``` -->
+
+
+### Education
+
+```{r}
+p_edu <- df |>
+  mutate(
+    Education = ifelse(Education == "", NA, Education),
+    Education = fct_relevel(Education, "Other", "High School", "Bachelor", "Master", "Doctorate")) |> 
+  ggplot(aes(x = Education)) +
+  geom_bar(aes(fill = Education)) +
+  scale_y_continuous(expand = c(0, 0), breaks= scales::pretty_breaks()) +
+  scale_fill_viridis_d(guide = "none") +
+  labs(title = "Education", y = "Number of Participants", subtitle = "Participants per achieved education level") +
+  theme_modern(axis.title.space = 15) +
+  theme(
+    plot.title = element_text(size = rel(1.2), face = "bold", hjust = 0),
+    plot.subtitle = element_text(size = rel(1.2), vjust = 7),
+    axis.text.y = element_text(size = rel(1.1)),
+    axis.text.x = element_text(size = rel(1.1)),
+    axis.title.x = element_blank()
+  )
+p_edu
+```
+
+
 
 ### Table 1
 
@@ -213,13 +409,21 @@ insight::display(table1)
 ```
 
 ```{r}
+add_bf <- function(r) {
+  x <- as.data.frame(r)
+  f <- as.formula(paste(str_remove(x$Parameter, fixed("df$")), "~ PHQ4_Condition"))
+  x$BF <- as.data.frame(BayesFactor::ttestBF(formula=f, data=df))$bf
+  x
+}
+
+
 rbind(
-  as.data.frame(report::report(t.test(df$Age ~ df$PHQ4_Condition))),
-  as.data.frame(report::report(t.test(df$PHQ4_Total ~ df$PHQ4_Condition))),
-  as.data.frame(report::report(t.test(df$STAI5_General ~ df$PHQ4_Condition))),
-  as.data.frame(report::report(t.test(df$BDI2_Total ~ df$PHQ4_Condition)))
+  add_bf(report::report(t.test(df$Age ~ df$PHQ4_Condition))),
+  add_bf(report::report(t.test(df$PHQ4_Total ~ df$PHQ4_Condition))),
+  add_bf(report::report(t.test(df$STAI5_General ~ df$PHQ4_Condition))),
+  add_bf(report::report(t.test(df$BDI2_Total ~ df$PHQ4_Condition)))
 ) |> 
-  select(Parameter, t, df_error, p) |> 
+  select(Parameter, t, df_error, p, BF) |> 
   mutate(Parameter = str_remove_all(Parameter, fixed("df$"))) |>
   insight::display()
 ```
@@ -241,6 +445,48 @@ df |>
   facet_wrap(~PHQ4_Condition) +
   theme_bw()
 ```
+
+### Mood Disorders
+
+### Diagnostic
+
+```{r}
+p1 <- select(df, Participant, Gender, starts_with("Disorder_")) |> 
+  pivot_longer(cols = starts_with("Disorder_"), names_to = "Disorder", values_to = "Value") |> 
+  mutate(Disorder = str_remove_all(Disorder, fixed("Disorder_"))) |> 
+  summarize(N = sum(Value) / nrow(df), .by=c("Gender", "Disorder")) |> 
+  mutate(N_tot = sum(N), .by="Disorder") |>
+  mutate(Disorder = fct_reorder(Disorder, desc(N_tot))) |>
+  ggplot(aes(x = Disorder, y = N, fill=Gender)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Male"= "#64B5F6", "Female"= "#F06292", "Other"="orange", "Missing"="brown")) +
+  scale_y_continuous(expand = c(0, 0), labels=scales::percent) +
+  labs(title = "Mood Disorders", y = "Number of Participants", subtitle = "Participants per self-declared mood disorder", x="Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+p2 <- select(df, Participant, Gender, starts_with("DisorderTreatment_")) |> 
+  pivot_longer(cols = starts_with("DisorderTreatment_"), names_to = "Treatment", values_to = "Value") |> 
+  mutate(Treatment = str_remove_all(Treatment, fixed("DisorderTreatment_"))) |> 
+  summarize(N = sum(Value) / nrow(df), .by=c("Gender", "Treatment")) |> 
+  mutate(N_tot = sum(N), .by="Treatment") |>
+  mutate(Treatment = fct_reorder(Treatment, desc(N_tot))) |>
+  ggplot(aes(x = Treatment, y = N, fill=Gender)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Male"= "#64B5F6", "Female"= "#F06292", "Other"="orange", "Missing"="brown")) +
+  scale_y_continuous(expand = c(0, 0), labels=scales::percent) +
+  labs(title = "Treatment", y = "Number of Participants", subtitle = "Participants per treatment", x="Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p1 / p2
+```
+
+```{r}
+df$MoodDisorder <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant, DisorderTreatment_Anxiolytic))
+df$MoodDisorder <- ifelse(df$MoodDisorder > 0, TRUE, FALSE)
+```
+
+`r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment.
+
 
 ## Save 
 

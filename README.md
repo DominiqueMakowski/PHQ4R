@@ -7,8 +7,8 @@ The PHQ-4 consists of two validated ultra-brief screeners for depression (PHQ–
 >
 >   - **Feeling nervous, anxious or on edge**
 >   - **Not being able to stop or control worrying**
->   - **Little interest or pleasure in doing things**
 >   - **Feeling down, depressed, or hopeless**
+>   - **Little interest or pleasure in doing things**
 
 0: **"Not at all"**, 0.5: **"Once or twice**, 1: **"Several days"**, 2: **"More than half the days"**, 3: **"Nearly every day"**
 

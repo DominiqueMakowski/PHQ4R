@@ -1,4 +1,21 @@
 score_PHQ4 <- function(A1, A2, D1, D2, method="basic") {
+
+  # Rescore ----
+  int_to_char <- function(x) {
+    x <- as.character(x)
+    x[x=="0"] <- "Not at all"
+    x[x=="1"] <- "Once or twice"
+    x[x=="2"] <- "Several days"
+    x[x=="3"] <- "More than half the days"
+    x[x=="4"] <- "Nearly every day"
+    x[x=="NA"] <- NA
+    x
+  }
+  if(is.numeric(A1)) A1 <- int_to_char(A1)
+  if(is.numeric(A2)) A2 <- int_to_char(A2)
+  if(is.numeric(D1)) D1 <- int_to_char(D1)
+  if(is.numeric(D2)) D2 <- int_to_char(D2)
+
   df <- data.frame(A1 = A1, A2 = A2, D1 = D1, D2 = D2)
   df <- as.data.frame(sapply(df, tolower, simplify=FALSE))
 

@@ -1,5 +1,6 @@
 import json
 
+import numpy as np
 import pandas as pd
 
 
@@ -28,7 +29,7 @@ def osf_listfiles(data_subproject="", token="", after_date=None):
     return files
 
 
-token = ""  # Paste OSF token here to access private repositories
+token = "zYboMoukFI8HKabenQ35DH6tESHJo6oZll5BvOPma6Dppjqc2jnIB6sPCERCuaqO0UrHAa"  # Paste OSF token here to access private repositories
 files = osf_listfiles(
     token=token,
     data_subproject="au695",  # Data subproject ID
@@ -38,6 +39,7 @@ files = osf_listfiles(
 
 # Loop through files ======================================================
 alldata = pd.DataFrame()  # Initialize empty dataframe
+prolific_ids = {}
 
 for i, file in enumerate(files):
     print(f"File N°{i+1}/{len(files)}")
@@ -48,40 +50,64 @@ for i, file in enumerate(files):
     # data["screen"].unique()
 
     # Browser info -------------------------------------------------------
-    brower = data[data["screen"] == "browser_info"].iloc[0]
+    browser = data[data["screen"] == "browser_info"].iloc[0]
+
+    # Experimenter
+    if "experimenter" in browser.index:
+        experimenter = browser["experimenter"]
+    else:
+        experimenter = browser["researcher"]
+    if "prolific_id" in browser.index:
+        if isinstance(browser["prolific_id"], str):
+            experimenter = "Prolific"
+    if isinstance(experimenter, float):
+        experimenter = "Experimenter" + str(int(experimenter))
 
     df = pd.DataFrame(
         {
             "Participant": file["name"],
-            "Experimenter": brower["experimenter"],
+            "Experimenter": experimenter,
             "Experiment_Duration": data["time_elapsed"].max() / 1000 / 60,
-            "Date": brower["date"],
-            "Time": brower["time"],
-            "Browser": brower["browser"],
-            "Mobile": brower["mobile"],
-            "Platform": brower["os"],
-            "Screen_Width": brower["screen_width"],
-            "Screen_Height": brower["screen_height"],
+            "Date_OSF": file["date"],
+            "Date": browser["date"],
+            "Time": browser["time"],
+            "Browser": browser["browser"],
+            "Mobile": browser["mobile"],
+            "Platform": browser["os"],
+            "Screen_Width": browser["screen_width"],
+            "Screen_Height": browser["screen_height"],
         },
         index=[0],
     )
+
+    # Prolific
+    if experimenter == "Prolific":
+        id = browser["prolific_id"]
+        if id not in []:
+            prolific_ids[file["name"]] = id
 
     # Demographics -------------------------------------------------------
     demo1 = data[data["screen"] == "demographics_1"].iloc[0]
     demo1 = json.loads(demo1["response"])
 
-    df["Gender"] = demo1["gender"]
+    sex = demo1["gender"]
+    df["Gender"] = np.nan if sex == "" else sex
 
     demo2 = data[data["screen"] == "demographics_2"].iloc[0]
     demo2 = json.loads(demo2["response"])
 
-    df["Age"] = demo2["age"]
+    age = demo2["age"]
+    age = 63 if age == "Sixty three" else age
+    age = 28 if age == "É8" else age
+    df["Age"] = np.nan if age == "" else float(age)
 
     # Education
     edu = demo1["education"]
+    edu = "High School" if "High school" in edu else edu
     edu = "Bachelor" if "bachelor" in edu else edu
     edu = "Master" if "master" in edu else edu
     edu = "Doctorate" if "doctorate" in edu else edu
+    edu = np.nan if edu == "" in edu else edu
     df["Education"] = edu
 
     # Ethnicity
@@ -89,11 +115,42 @@ for i, file in enumerate(files):
     race = "Caucasian" if race in ["White", "White British", "White English"] else race
     race = "South Asian" if race in ["Pakistani"] else race
     race = "Arab" if race in ["Middle Eastern"] else race
-    race = (
-        "Arab" if race in ["Muslim"] else race
-    )  # Experimenter1: Likelihood given recruitment date
+    race = "Arab" if race in ["Muslim"] else race  # Experimenter1: Likelihood given recruitment date
     race = "Other" if race in ["Bahraini", "Manama"] else race
     df["Ethnicity"] = race
+
+    # Mood disorders
+    demo3 = data[data["screen"] == "demographics_disorders"].iloc[0]
+    demo3 = json.loads(demo3["response"])
+    df["Disorder_MDD"] = 1 if "Major Depressive Disorder (MDD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_Bipolar"] = 1 if "Bipolar Disorder (Type I and II)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_BPD"] = 1 if "Borderline Personality Disorder (BPD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_Dysthymia"] = 1 if "Dysthymia (Persistent Depressive Disorder)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_SAD"] = 1 if "Seasonal Affective Disorder (SAD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_PMDD"] = 1 if "Premenstrual Dysphoric Disorder (PMDD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_GAD"] = 1 if "Generalized Anxiety Disorder (GAD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_Panic"] = 1 if "Panic Disorder" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_SocialPhobia"] = 1 if "Social Anxiety Disorder (Social Phobia)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_Phobia"] = 1 if "Phobias" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_OCD"] = 1 if "Obsessive-Compulsive Disorder (OCD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_PTSD"] = 1 if "Post-Traumatic Stress Disorder (PTSD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_Stress"] = 1 if "Acute Stress Disorder" in demo3["disorder_diagnostic"] else 0
+
+    df["DisorderHistory"] = demo3["disorder_history"][0] if len(demo3["disorder_history"]) > 0 else np.nan
+
+    df["DisorderTreatment_Antidepressant"] = (
+        1 if any(["Antidepressant" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Anxiolytic"] = 1 if any(["Anxiolytic" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Therapy"] = 1 if any(["Psychotherapy" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_MoodStabilizer"] = (
+        1 if any(["Mood Stabilizer" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Antipsychotic"] = 1 if any(["Antipsychotic" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Lifestyle"] = 1 if any(["Lifestyle" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Mindfulness"] = 1 if any(["Mindfulness" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Alternative"] = 1 if any(["Alternative" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Other"] = 1 if any(["Other" in i for i in demo3["disorder_treatment"]]) else 0
 
     # Questionnaires =====================================================
 
@@ -104,9 +161,7 @@ for i, file in enumerate(files):
     # PHQ4 ---------------------------------------------------------------
     phq4 = data[data["screen"] == "questionnaire_phq4"].iloc[0]
 
-    df["PHQ4_Condition"] = (
-        "PHQ4 - Revised" if phq4["condition"] == "PHQ4R" else "PHQ4 - Original"
-    )
+    df["PHQ4_Condition"] = "PHQ4 - Revised" if phq4["condition"] == "PHQ4R" else "PHQ4 - Original"
 
     df["PHQ4_Duration"] = phq4["rt"] / 1000 / 60
     df["PHQ4_Order"] = order.index("questionnaire_phq4") + 1
@@ -148,25 +203,36 @@ for i, file in enumerate(files):
         df[item] = ias[item]
 
     # Save data ----------------------------------------------------------
-    alldata = pd.concat([alldata, df], axis=0, ignore_index=True)
+    alldata = pd.concat([alldata, df], axis=0, ignore_index=True, join="outer")
 
 # Save data ==============================================================
+df.filter(regex=r"Disorder_", axis=1)
 # Inspect
 alldata["Ethnicity"].unique()
+
+
+# Reanonimize ============================================================
+alldata["d"] = pd.to_datetime(alldata["Date"] + " " + alldata["Time"], format="%d/%m/%Y %H:%M:%S")
+alldata = alldata.sort_values(by=["d"]).reset_index(drop=True)
+correspondance = {j: f"S{i+1:03}" for i, j in enumerate(alldata["Participant"])}
+alldata["Participant"] = [correspondance[i] for i in alldata["Participant"]]
+alldata = alldata.drop(columns=["Date_OSF", "d"])  # Drop OSf column
+
+prolific_ids = {correspondance[k]: v for k, v in prolific_ids.items()}
+prolific_ids
+# "59dcaf7124d7bf00012f09c4" in [prolific_ids[i] for i in prolific_ids.keys()]
 
 # Remove columns
 alldata = alldata.drop(
     columns=[
-        "Time",
         "Browser",
         "Platform",
         "Screen_Width",
         "Screen_Height",
     ]
 )
-# Reanonimize
-alldata = alldata.sort_values(by=["Date"]).reset_index(drop=True)
-alldata["Participant"] = [f"S{i+1:03}" for i in alldata.index]
+
+
 # Save data
 alldata.to_csv("../data/data_raw.csv", index=False)
 print("Done!")

@@ -1,0 +1,410 @@
+---
+title: "PHQ4R - Data Analysis (Study 2)"
+editor: source
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    code-fold: true
+    self-contained: true
+---
+
+## Data Preparation
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(easystats)
+library(patchwork)
+library(ggside)
+```
+
+
+```{r}
+df <- read.csv("../data/data.csv") |> 
+  mutate(
+    PHQ4_Condition = fct_relevel(PHQ4_Condition, "PHQ4 - Original"),
+    PHQ4_Condition = fct_recode(PHQ4_Condition, "Original" = "PHQ4 - Original", "Revised" = "PHQ4 - Revised"),
+    BDI2_Category = ifelse(BDI2_Total <= 19, "Mild", "Moderate+"),
+    STAI5_Category = ifelse(STAI5_General < 2, "Mild", "Moderate+"),
+  )
+```
+
+## Depression
+
+### Whole Sample
+
+```{r}
+model <- lm(BDI2_Total ~ PHQ4_Depression * PHQ4_Condition, data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = PHQ4_Depression, y = BDI2_Total), width=0.1) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+### Subsamples
+
+
+```{r}
+model <- lm(BDI2_Total ~ BDI2_Category / (PHQ4_Depression * PHQ4_Condition), data = df)
+
+parameters::parameters(model) |> 
+  display()
+
+# model <- rstanarm::stan_glm(BDI2_Total ~ BDI2_Category / (PHQ4_Depression * PHQ4_Condition), data = df)
+# parameters::parameters(model)
+# bayestestR::bayesfactor_parameters(model)
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = PHQ4_Depression, y = BDI2_Total)) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition, linetype=BDI2_Category), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+### General Score
+
+
+```{r}
+lm(BDI2_Total ~ PHQ4_Total * PHQ4_Condition, data = df) |> 
+  parameters::parameters() |> 
+  display()
+
+lm(BDI2_Total ~ BDI2_Category / (PHQ4_Total * PHQ4_Condition), data = df) |> 
+  parameters::parameters() |> 
+  display()
+```
+
+```{r}
+m0 <- lm(BDI2_Total ~ PHQ4_Depression, data = filter(df, PHQ4_Condition == "Original"))
+m1 <- lm(BDI2_Total ~ PHQ4_Depression, data = filter(df, PHQ4_Condition == "Revised"))
+
+performance::compare_performance(m0, m1)
+```
+
+## Anxiety
+
+### Whole Sample
+
+ 
+```{r}
+model <- lm(STAI5_General ~ PHQ4_Anxiety * PHQ4_Condition, data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = PHQ4_Anxiety, y = STAI5_General)) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+### Subsamples
+
+```{r}
+model <- lm(STAI5_General ~ STAI5_Category / (PHQ4_Anxiety * PHQ4_Condition), data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = PHQ4_Anxiety, y = STAI5_General)) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition, linetype=STAI5_Category), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+
+### General Score
+
+
+```{r}
+lm(STAI5_General ~ PHQ4_Total * PHQ4_Condition, data = df) |> 
+  parameters::parameters() |> 
+  display()
+
+lm(STAI5_General ~ BDI2_Category / (PHQ4_Total * PHQ4_Condition), data = df) |> 
+  parameters::parameters() |> 
+  display()
+```
+
+## Correlation Difference
+
+### Test 
+
+```{r}
+dat <- df |> 
+  group_by(PHQ4_Condition) |>
+  summarize(
+    N = n(),
+    r_depression = cor.test(BDI2_Total, PHQ4_Depression)$estimate,
+    r_anxiety = cor.test(STAI5_General, PHQ4_Anxiety)$estimate,
+  ) 
+
+psych::r.test(n=dat$N[1], n2=dat$N[2], r12=dat$r_depression[1], r34=dat$r_depression[2])
+psych::r.test(n=dat$N[1], n2=dat$N[2], r12=dat$r_anxiety[1], r34=dat$r_anxiety[2])
+```
+
+### Bootstrapping 
+
+#### Whole Sample
+
+```{r}
+bootstrap_diffs <- function(df_original, df_revised) {
+  dat <- data.frame()
+  for(i in 1:1000) {
+    newdf_ori <- df_original[sample(nrow(df_original), replace = TRUE), ]
+    newdf_rev <- df_revised[sample(nrow(df_revised), replace = TRUE), ]
+    
+    r_depression_ori = cor.test(newdf_ori$BDI2_Total, newdf_ori$PHQ4_Depression)$estimate
+    r_depression_rev = cor.test(newdf_rev$BDI2_Total, newdf_rev$PHQ4_Depression)$estimate
+    r_anxiety_ori = cor.test(newdf_ori$STAI5_General, newdf_ori$PHQ4_Anxiety)$estimate
+    r_anxiety_rev = cor.test(newdf_rev$STAI5_General, newdf_rev$PHQ4_Anxiety)$estimate
+    
+    dat <- rbind(dat,
+      data.frame(
+        d_r_depression = r_depression_rev - r_depression_ori,
+        d_r_anxiety = r_anxiety_rev - r_anxiety_ori,
+        iteration = i
+      )
+    )
+  }
+  dat
+}
+
+
+dat <- bootstrap_diffs(
+  filter(df, PHQ4_Condition == "Original"),
+  filter(df, PHQ4_Condition == "Revised"))
+
+dat |> 
+  pivot_longer(cols = c(d_r_depression, d_r_anxiety)) |>
+  ggplot(aes(x = value)) +
+  geom_density(aes(fill = name), alpha = 0.5) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  theme_bw() +
+  labs(x = "Difference in Correlation", y = "Density") 
+```
+
+#### Subsamples
+
+```{r}
+dat <- data.frame()
+for(cat in c("Mild", "Moderate+")) {
+  dat <- rbind(
+    dat,
+    bootstrap_diffs(
+      filter(df, PHQ4_Condition == "Original", BDI2_Category == cat),
+      filter(df, PHQ4_Condition == "Revised", BDI2_Category == cat)) |> 
+      mutate(Category = paste("Depression -", cat)),
+    bootstrap_diffs(
+      filter(df, PHQ4_Condition == "Original", STAI5_Category == cat),
+      filter(df, PHQ4_Condition == "Revised", STAI5_Category == cat)) |> 
+      mutate(Category = paste("Anxiety -", cat)) 
+  )
+}
+
+
+dat |> 
+  separate(Category, into = c("Type", "Category"), sep = " - ") |>
+  pivot_longer(cols = c(d_r_depression, d_r_anxiety)) |>
+  ggplot(aes(x = value)) +
+  geom_density(aes(fill = name), alpha = 0.5) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  theme_bw() +
+  labs(x = "Difference in Correlation", y = "Density") +
+  facet_grid(Category~Type)
+```
+
+## Predictive Value
+
+### Mood Disorder
+
+```{r}
+glm(MoodDisorder ~ PHQ4_Total * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+
+glm(MoodDisorder ~ PHQ4_Depression * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+
+glm(MoodDisorder ~ PHQ4_Anxiety * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+```
+
+
+### MDD
+
+```{r}
+glm(Disorder_MDD ~ PHQ4_Total * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+
+glm(Disorder_MDD ~ PHQ4_Depression * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+
+glm(Disorder_MDD ~ PHQ4_Anxiety * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+```
+
+### GAD
+
+```{r}
+glm(Disorder_GAD ~ PHQ4_Total * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+
+glm(Disorder_GAD ~ PHQ4_Depression * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+
+glm(Disorder_GAD ~ PHQ4_Anxiety * PHQ4_Condition, data = df, family="binomial") |> 
+  parameters::parameters() |> 
+  display()
+```
+
+
+
+## Modified - Depression
+
+### Whole Sample
+
+```{r}
+model <- lm(BDI2_Total ~ Expe_PHQ4_Depression * PHQ4_Condition, data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = Expe_PHQ4_Depression, y = BDI2_Total), width=0.1) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+### Subsamples
+
+
+```{r}
+model <- lm(BDI2_Total ~ BDI2_Category / (Expe_PHQ4_Depression * PHQ4_Condition), data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = Expe_PHQ4_Depression, y = BDI2_Total)) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition, linetype=BDI2_Category), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+
+
+## Modified - Anxiety
+
+### Whole Sample
+
+ 
+```{r}
+model <- lm(STAI5_General ~ Expe_PHQ4_Anxiety * PHQ4_Condition, data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = Expe_PHQ4_Anxiety, y = STAI5_General)) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
+
+### Subsamples
+
+```{r}
+model <- lm(STAI5_General ~ STAI5_Category / (Expe_PHQ4_Anxiety * PHQ4_Condition), data = df)
+
+parameters::parameters(model) |> 
+  display()
+```
+
+
+```{r}
+df |> 
+  ggplot(aes(x = Expe_PHQ4_Anxiety, y = STAI5_General)) +
+  geom_jitter(aes(color = PHQ4_Condition), width=0.1) +
+  geom_smooth(aes(color = PHQ4_Condition, linetype=STAI5_Category), method = "lm") +
+  theme_bw() +
+  ggside::geom_xsidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  ggside::geom_ysidedensity(aes(fill = PHQ4_Condition), color=NA, alpha=0.5) +
+  ggside::scale_ysidex_continuous(expand = c(0, 0)) +
+  ggside::theme_ggside_void() 
+```
