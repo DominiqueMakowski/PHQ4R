@@ -55,6 +55,18 @@ df |>
   see::theme_modern()
 ```
 
+```{r}
+#| message: false
+
+# Table
+summarize(df, N = n(), .by=c("Experimenter")) |> 
+  arrange(desc(N)) |> 
+  gt::gt() |> 
+  gt::opt_stylize() |> 
+  gt::opt_interactive(use_compact_mode = TRUE) |> 
+  gt::tab_header("Number of participants per recruitment source")
+```
+
 
 ### Compute Scores
 
