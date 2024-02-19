@@ -91,7 +91,7 @@ df <- df |>
 
 df <- df |>
   mutate(
-    Expe_PHQ4_Anxiety_1 = ifelse(
+    Weighted_PHQ4_Anxiety_1 = ifelse(
       PHQ4_Condition == "PHQ4 - Revised",
       case_when(
         PHQ4_Anxiety_1 == 0 ~ 0,
@@ -102,7 +102,7 @@ df <- df |>
         .default = PHQ4_Anxiety_1
       ), PHQ4_Anxiety_1
     ),
-    Expe_PHQ4_Anxiety_2 = ifelse(
+    Weighted_PHQ4_Anxiety_2 = ifelse(
       PHQ4_Condition == "PHQ4 - Revised",
       case_when(
         PHQ4_Anxiety_2 == 0 ~ 0,
@@ -113,7 +113,7 @@ df <- df |>
         .default = PHQ4_Anxiety_2
       ), PHQ4_Anxiety_2
     ),
-    Expe_PHQ4_Depression_3 = ifelse(
+    Weighted_PHQ4_Depression_3 = ifelse(
       PHQ4_Condition == "PHQ4 - Revised",
       case_when(
         PHQ4_Depression_3 == 0 ~ 0,
@@ -124,7 +124,7 @@ df <- df |>
         .default = PHQ4_Depression_3
       ), PHQ4_Depression_3
     ),
-    Expe_PHQ4_Depression_4 = ifelse(
+    Weighted_PHQ4_Depression_4 = ifelse(
       PHQ4_Condition == "PHQ4 - Revised",
       case_when(
         PHQ4_Depression_4 == 0 ~ 0,
@@ -135,17 +135,17 @@ df <- df |>
         .default = PHQ4_Depression_4
       ), PHQ4_Depression_4
     ),
-    Expe_PHQ4_Anxiety = ifelse(
-      PHQ4_Condition == "PHQ4 - Revised", datawizard::rescale(Expe_PHQ4_Anxiety_1 + Expe_PHQ4_Anxiety_2, range = c(0, 2), to = c(0, 6)), PHQ4_Anxiety_1 + PHQ4_Anxiety_2
+    Weighted_PHQ4_Anxiety = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised", datawizard::rescale(Weighted_PHQ4_Anxiety_1 + Weighted_PHQ4_Anxiety_2, range = c(0, 2), to = c(0, 6)), PHQ4_Anxiety_1 + PHQ4_Anxiety_2
     ),
-    Expe_PHQ4_Depression = ifelse(
-      PHQ4_Condition == "PHQ4 - Revised", datawizard::rescale(Expe_PHQ4_Depression_3 + Expe_PHQ4_Depression_4, range = c(0, 2), to = c(0, 6)), PHQ4_Depression_3 + PHQ4_Depression_4
+    Weighted_PHQ4_Depression = ifelse(
+      PHQ4_Condition == "PHQ4 - Revised", datawizard::rescale(Weighted_PHQ4_Depression_3 + Weighted_PHQ4_Depression_4, range = c(0, 2), to = c(0, 6)), PHQ4_Depression_3 + PHQ4_Depression_4
     ),
-    Expe_PHQ4_Total = Expe_PHQ4_Anxiety + Expe_PHQ4_Depression
+    Weighted_PHQ4_Total = Weighted_PHQ4_Anxiety + Weighted_PHQ4_Depression
   )
 
 # df |>
-#   select(starts_with("Expe_PHQ4_"), PHQ4_Condition) |>
+#   select(starts_with("Weighted_PHQ4_"), PHQ4_Condition) |>
 #   pivot_longer(cols = -PHQ4_Condition, names_to = "item", values_to = "score") |>
 #   ggplot(aes(x = score)) +
 #   geom_density(fill="#9C27B0", adjust=1/2)  +
@@ -229,7 +229,7 @@ df |>
   ggplot(aes(y = Participant, x = Duration)) +
   geom_vline(xintercept = median(df$Experiment_Duration), color = "red", linetype = "dashed") +
   geom_point(aes(color = Experimenter, shape = Category)) +
-  geom_text(aes(color = Experimenter, label=ifelse(Experiment_Duration < 4.5, as.character(Participant), '')), hjust=-1, vjust=0) +
+  geom_text(aes(color = Experimenter, label=ifelse(Experiment_Duration < 3, as.character(Participant), '')), hjust=-1, vjust=0) +
   scale_shape_manual(values = c("extra" = 3, ok = 19)) +
   guides(shape = "none") +
   ggside::geom_xsidedensity(aes(fill=Experimenter), color=NA, alpha=0.5) +
@@ -483,9 +483,10 @@ p1 / p2
 ```{r}
 df$MoodDisorder <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant, DisorderTreatment_Anxiolytic))
 df$MoodDisorder <- ifelse(df$MoodDisorder > 0, TRUE, FALSE)
+df$DisorderHistory <- ifelse(df$DisorderHistory == "Yes", TRUE, FALSE)
 ```
 
-`r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment.
+`r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment. `r sum(df$DisorderHistory)` participants (`r insight::format_percent(sum(df$DisorderHistory) / nrow(df))`) reported having a history of mood disorder.
 
 
 ## Save 
