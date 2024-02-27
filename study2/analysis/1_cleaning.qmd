@@ -25,7 +25,8 @@ library(ggside)
 ```{r}
 #| code-fold: false
 
-df <- read.csv("../data/data_raw.csv")
+df <- read.csv("../data/data_raw.csv") |> 
+   mutate(across(everything(), ~ifelse(.x == "", NA, .x))) 
 ```
 
 The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
@@ -75,9 +76,6 @@ summarize(df, N = n(), .by=c("Experimenter")) |>
 ```{r}
 #| echo: true
 #| code-fold: show
-
-# TODO: compute modified score
-# Maybe use the score_PHQ4 function from the README to demo it here
 
 recode_phq <- function(x) {
   case_when(

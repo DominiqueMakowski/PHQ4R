@@ -36,6 +36,7 @@
         var timeline = []
 
         var jsPsych = initJsPsych({
+            show_progress_bar: true,
             on_finish: function () {
                 // jsPsych.data.displayData("json") // Display data in browser
                 let info = jsPsych.data.get().filter({ screen: "browser_info" }).values()[0]
