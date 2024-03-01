@@ -387,7 +387,7 @@ var bdi2 = {
             prompt: "<b>19. Attention</b>", // Attention check
             options: [
                 "0. I am not paying attention",
-                "1. I am cyrrebtky answering the questions at random",
+                "1. I am currently answering the questions at random",
                 "2. I am carefuly reading and answering the questions",
                 "3. I am not reading to try finish the questionnaire quickly",
             ],

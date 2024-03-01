@@ -1,4 +1,4 @@
-- Title: <b style="color: rgba(57, 73, 171, 1)">4 questionnaires about mood</b> | 10min online (1 credit)
+- Title: <b style="color: rgba(57, 73, 171, 1)">Questionnaires about your Mood</b> | 10min online (1 credit)
 - Abstract: This study aims at measuring your mood using various questionnaires.
 - Description: 
 
