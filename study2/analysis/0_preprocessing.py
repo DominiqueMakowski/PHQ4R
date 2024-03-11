@@ -29,7 +29,7 @@ def osf_listfiles(data_subproject="", token="", after_date=None):
     return files
 
 
-token = "zYboMoukFI8HKabenQ35DH6tESHJo6oZll5BvOPma6Dppjqc2jnIB6sPCERCuaqO0UrHAa"  # Paste OSF token here to access private repositories
+token = ""  # Paste OSF token here to access private repositories
 files = osf_listfiles(
     token=token,
     data_subproject="au695",  # Data subproject ID
@@ -61,7 +61,10 @@ for i, file in enumerate(files):
         if isinstance(browser["prolific_id"], str):
             experimenter = "Prolific"
     if isinstance(experimenter, float):
-        experimenter = "Experimenter" + str(int(experimenter))
+        if np.isnan(experimenter):
+            experimenter = "Unknown"
+        else:
+            experimenter = "Experimenter" + str(int(experimenter))
 
     df = pd.DataFrame(
         {
@@ -86,6 +89,12 @@ for i, file in enumerate(files):
         if id not in []:
             prolific_ids[file["name"]] = id
 
+    df["SONA_ID"] = np.nan
+    if "sona_id" in browser.index:
+        if np.isnan(browser["sona_id"]) == False:
+            id = int(browser["sona_id"])
+            df["SONA_ID"] = id
+
     # Demographics -------------------------------------------------------
     demo1 = data[data["screen"] == "demographics_1"].iloc[0]
     demo1 = json.loads(demo1["response"])
@@ -99,6 +108,7 @@ for i, file in enumerate(files):
     age = demo2["age"]
     age = 63 if age == "Sixty three" else age
     age = 28 if age == "É8" else age
+    age = np.nan if age == 12 else age  # Sona participant (> 18)
     df["Age"] = np.nan if age == "" else float(age)
 
     # Education
@@ -115,42 +125,94 @@ for i, file in enumerate(files):
     race = "Caucasian" if race in ["White", "White British", "White English"] else race
     race = "South Asian" if race in ["Pakistani"] else race
     race = "Arab" if race in ["Middle Eastern"] else race
-    race = "Arab" if race in ["Muslim"] else race  # Experimenter1: Likelihood given recruitment date
+    race = (
+        "Arab" if race in ["Muslim"] else race
+    )  # Experimenter1: Likelihood given recruitment date
     race = "Other" if race in ["Bahraini", "Manama"] else race
     df["Ethnicity"] = race
 
     # Mood disorders
     demo3 = data[data["screen"] == "demographics_disorders"].iloc[0]
     demo3 = json.loads(demo3["response"])
-    df["Disorder_MDD"] = 1 if "Major Depressive Disorder (MDD)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_Bipolar"] = 1 if "Bipolar Disorder (Type I and II)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_BPD"] = 1 if "Borderline Personality Disorder (BPD)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_Dysthymia"] = 1 if "Dysthymia (Persistent Depressive Disorder)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_SAD"] = 1 if "Seasonal Affective Disorder (SAD)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_PMDD"] = 1 if "Premenstrual Dysphoric Disorder (PMDD)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_GAD"] = 1 if "Generalized Anxiety Disorder (GAD)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_MDD"] = (
+        1 if "Major Depressive Disorder (MDD)" in demo3["disorder_diagnostic"] else 0
+    )
+    df["Disorder_Bipolar"] = (
+        1 if "Bipolar Disorder (Type I and II)" in demo3["disorder_diagnostic"] else 0
+    )
+    df["Disorder_BPD"] = (
+        1
+        if "Borderline Personality Disorder (BPD)" in demo3["disorder_diagnostic"]
+        else 0
+    )
+    df["Disorder_Dysthymia"] = (
+        1
+        if "Dysthymia (Persistent Depressive Disorder)" in demo3["disorder_diagnostic"]
+        else 0
+    )
+    df["Disorder_SAD"] = (
+        1 if "Seasonal Affective Disorder (SAD)" in demo3["disorder_diagnostic"] else 0
+    )
+    df["Disorder_PMDD"] = (
+        1
+        if "Premenstrual Dysphoric Disorder (PMDD)" in demo3["disorder_diagnostic"]
+        else 0
+    )
+    df["Disorder_GAD"] = (
+        1 if "Generalized Anxiety Disorder (GAD)" in demo3["disorder_diagnostic"] else 0
+    )
     df["Disorder_Panic"] = 1 if "Panic Disorder" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_SocialPhobia"] = 1 if "Social Anxiety Disorder (Social Phobia)" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_SocialPhobia"] = (
+        1
+        if "Social Anxiety Disorder (Social Phobia)" in demo3["disorder_diagnostic"]
+        else 0
+    )
     df["Disorder_Phobia"] = 1 if "Phobias" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_OCD"] = 1 if "Obsessive-Compulsive Disorder (OCD)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_PTSD"] = 1 if "Post-Traumatic Stress Disorder (PTSD)" in demo3["disorder_diagnostic"] else 0
-    df["Disorder_Stress"] = 1 if "Acute Stress Disorder" in demo3["disorder_diagnostic"] else 0
+    df["Disorder_OCD"] = (
+        1
+        if "Obsessive-Compulsive Disorder (OCD)" in demo3["disorder_diagnostic"]
+        else 0
+    )
+    df["Disorder_PTSD"] = (
+        1
+        if "Post-Traumatic Stress Disorder (PTSD)" in demo3["disorder_diagnostic"]
+        else 0
+    )
+    df["Disorder_Stress"] = (
+        1 if "Acute Stress Disorder" in demo3["disorder_diagnostic"] else 0
+    )
 
-    df["DisorderHistory"] = demo3["disorder_history"][0] if len(demo3["disorder_history"]) > 0 else np.nan
+    df["DisorderHistory"] = (
+        demo3["disorder_history"][0] if len(demo3["disorder_history"]) > 0 else np.nan
+    )
 
     df["DisorderTreatment_Antidepressant"] = (
         1 if any(["Antidepressant" in i for i in demo3["disorder_treatment"]]) else 0
     )
-    df["DisorderTreatment_Anxiolytic"] = 1 if any(["Anxiolytic" in i for i in demo3["disorder_treatment"]]) else 0
-    df["DisorderTreatment_Therapy"] = 1 if any(["Psychotherapy" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Anxiolytic"] = (
+        1 if any(["Anxiolytic" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Therapy"] = (
+        1 if any(["Psychotherapy" in i for i in demo3["disorder_treatment"]]) else 0
+    )
     df["DisorderTreatment_MoodStabilizer"] = (
         1 if any(["Mood Stabilizer" in i for i in demo3["disorder_treatment"]]) else 0
     )
-    df["DisorderTreatment_Antipsychotic"] = 1 if any(["Antipsychotic" in i for i in demo3["disorder_treatment"]]) else 0
-    df["DisorderTreatment_Lifestyle"] = 1 if any(["Lifestyle" in i for i in demo3["disorder_treatment"]]) else 0
-    df["DisorderTreatment_Mindfulness"] = 1 if any(["Mindfulness" in i for i in demo3["disorder_treatment"]]) else 0
-    df["DisorderTreatment_Alternative"] = 1 if any(["Alternative" in i for i in demo3["disorder_treatment"]]) else 0
-    df["DisorderTreatment_Other"] = 1 if any(["Other" in i for i in demo3["disorder_treatment"]]) else 0
+    df["DisorderTreatment_Antipsychotic"] = (
+        1 if any(["Antipsychotic" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Lifestyle"] = (
+        1 if any(["Lifestyle" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Mindfulness"] = (
+        1 if any(["Mindfulness" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Alternative"] = (
+        1 if any(["Alternative" in i for i in demo3["disorder_treatment"]]) else 0
+    )
+    df["DisorderTreatment_Other"] = (
+        1 if any(["Other" in i for i in demo3["disorder_treatment"]]) else 0
+    )
 
     # Questionnaires =====================================================
 
@@ -161,7 +223,9 @@ for i, file in enumerate(files):
     # PHQ4 ---------------------------------------------------------------
     phq4 = data[data["screen"] == "questionnaire_phq4"].iloc[0]
 
-    df["PHQ4_Condition"] = "PHQ4 - Revised" if phq4["condition"] == "PHQ4R" else "PHQ4 - Original"
+    df["PHQ4_Condition"] = (
+        "PHQ4 - Revised" if phq4["condition"] == "PHQ4R" else "PHQ4 - Original"
+    )
 
     df["PHQ4_Duration"] = phq4["rt"] / 1000 / 60
     df["PHQ4_Order"] = order.index("questionnaire_phq4") + 1
@@ -202,6 +266,19 @@ for i, file in enumerate(files):
     for item in ias:
         df[item] = ias[item]
 
+    # Defragment DF
+    df = df.copy()
+
+    # MAIA ----------------------------------------------------------------
+    if "questionnaire_maia" in order:
+        maia = data[data["screen"] == "questionnaire_maia"].iloc[0]
+        df["MAIA_Duration"] = maia["rt"] / 1000 / 60
+        df["MAIA_Order"] = order.index("questionnaire_maia") + 1
+
+        maia = json.loads(maia["response"])
+        for item in maia:
+            df[item] = maia[item]
+
     # Save data ----------------------------------------------------------
     alldata = pd.concat([alldata, df], axis=0, ignore_index=True, join="outer")
 
@@ -210,17 +287,6 @@ df.filter(regex=r"Disorder_", axis=1)
 # Inspect
 alldata["Ethnicity"].unique()
 
-
-# Reanonimize ============================================================
-alldata["d"] = pd.to_datetime(alldata["Date"] + " " + alldata["Time"], format="%d/%m/%Y %H:%M:%S")
-alldata = alldata.sort_values(by=["d"]).reset_index(drop=True)
-correspondance = {j: f"S{i+1:03}" for i, j in enumerate(alldata["Participant"])}
-alldata["Participant"] = [correspondance[i] for i in alldata["Participant"]]
-alldata = alldata.drop(columns=["Date_OSF", "d"])  # Drop OSf column
-
-prolific_ids = {correspondance[k]: v for k, v in prolific_ids.items()}
-prolific_ids
-# "59dcaf7124d7bf00012f09c4" in [prolific_ids[i] for i in prolific_ids.keys()]
 
 # Remove columns
 alldata = alldata.drop(
@@ -231,6 +297,77 @@ alldata = alldata.drop(
         "Screen_Height",
     ]
 )
+
+# Reanonimize ============================================================
+alldata["d"] = pd.to_datetime(
+    alldata["Date"] + " " + alldata["Time"], format="%d/%m/%Y %H:%M:%S"
+)
+alldata = alldata.sort_values(by=["d"]).reset_index(drop=True)
+correspondance = {j: f"S{i+1:03}" for i, j in enumerate(alldata["Participant"])}
+alldata["Participant"] = [correspondance[i] for i in alldata["Participant"]]
+alldata = alldata.drop(columns=["Date_OSF", "d"])  # Drop OSf column
+
+
+# Prolific ============================================================
+prolific_ids = {correspondance[k]: v for k, v in prolific_ids.items()}
+# prolific_ids
+# "59dcaf7124d7bf00012f09c4" in [prolific_ids[i] for i in prolific_ids.keys()]
+
+# SONA check ================================================================
+sona_credited = [
+    29640,
+    29659,
+    29761,
+    29829,  # Check 3 Failed
+    29903,
+    # 30610,  # Not in the list
+    30636,
+    30665,
+    30724,
+    30736,
+    30782,
+    30813,
+    31034,
+    31060,
+    31086,  # Check 3 failed
+    31110,
+    31723,
+    31744,
+    31745,
+    31752,
+    31759,
+    31774,
+    31777,
+    31782,
+    31820,
+    31824,
+    31827,
+    31835,
+    31852,  # Check 2 failed
+    31865,
+    31869,
+    31871,  # Check 3 failed
+    31906,
+    31915,
+    31975,
+    32057,
+    32067,
+    32077,  # Check 3 failed
+    32098,
+    32168,
+    32244,
+]
+sona = (
+    alldata[~np.isnan(alldata["SONA_ID"])]
+    .sort_values("SONA_ID")
+    .set_index("SONA_ID", drop=False)
+)
+ids = list(np.sort(sona["SONA_ID"].astype(int).values))
+sona["Experiment_Duration"]
+sona.loc[
+    [id for id in ids if id not in sona_credited],
+    sona.columns.str.startswith("Attention"),
+]
 
 
 # Save data
