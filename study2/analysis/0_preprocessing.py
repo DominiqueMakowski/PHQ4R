@@ -381,6 +381,53 @@ sona_credited = [
     32098,
     32168,
     32244,
+    32132, 
+    30615,
+    30687,
+    32173,
+    32178,
+    32247,
+    30708,
+    # 30712, # Not in the list
+    30751,
+    30819,
+    30840,
+    30892,
+    30904,
+    30978,
+    30985,
+    31011,
+    # 31019, # Not in the list
+    31047,
+    31066,
+    31115,
+    31776,
+    # 31796, # Not in the list
+    # 31838, # Not in the list
+    31844, 
+    31867,
+    31878, 
+    31935,
+    31948,
+    31956,
+    31957,
+    # 31959, # Not in the list
+    31965,
+    # 31977, # Not in the list
+    32002,
+    32016, 
+    32026, 
+    32051,
+    # 32055, # Not in the list
+    32072, # Failed check 3
+    # 32083, # Not in the list
+    # 32091, # not in the list
+    # 32113, # not in the list
+    32115, 
+    # 32119, # not in the list
+
+    
+
 ]
 sona = (
     alldata[~np.isnan(alldata["SONA_ID"])]
@@ -393,6 +440,7 @@ sona.loc[
     [id for id in ids if id not in sona_credited],
     sona.columns.str.startswith("Attention"),
 ]
+
 
 
 # Save data
