@@ -95,6 +95,14 @@ for i, file in enumerate(files):
             id = int(browser["sona_id"])
             df["SONA_ID"] = id
 
+    # Filter duplicates
+    if df["SONA_ID"].values[0] == 30884 and df["Mobile"].values[0] == True:
+        continue
+    if df["SONA_ID"].values[0] == 31886 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 31943 and df["Experiment_Duration"].values[0] < 10:
+        continue
+
     # Demographics -------------------------------------------------------
     demo1 = data[data["screen"] == "demographics_1"].iloc[0]
     demo1 = json.loads(demo1["response"])
@@ -321,37 +329,42 @@ sona_credited = [
     29829,  # Check 3 Failed
     29903,
     # 30610,  # Not in the list
+    30615,
     30636,
     30743,
-    30783, # Check 3 Failed 
+    30783,  # Check 3 Failed
     30942,
     30970,
     30986,
-    31005, # Check 3 Failed
+    31005,  # Check 3 Failed
     31048,
     31108,
     31770,
     31779,
     31799,
-    31801, # Check 3 Failed 
-    31809, 
+    31801,  # Check 3 Failed
+    31809,
     31821,
-    31839, 
-    31862,  
+    31839,
+    31862,
     31902,
-    31955, 
-    31976, 
+    31955,
+    31976,
     31978,
-    32023, 
-    32045, 
-    32107, # Check 3 Failed 
-    32175, 
+    32023,
+    32045,
+    32107,  # Check 3 Failed
+    32175,
     30786,
     30665,
     30724,
     30736,
     30782,
     30813,
+    30884,
+    31886,
+    31011,
+    31019,
     31034,
     31060,
     31086,  # Check 3 failed
@@ -364,22 +377,34 @@ sona_credited = [
     31774,
     31777,
     31782,
+    31796,
     31820,
     31824,
     31827,
     31835,
+    31838,
     31852,  # Check 2 failed
     31865,
     31869,
     31871,  # Check 3 failed
     31906,
     31915,
+    31943,
+    31957,
+    31959,
     31975,
+    32051,
+    32055,
     32057,
     32067,
     32077,  # Check 3 failed
+    32083,
+    32091,
     32098,
+    32113,
+    32119,
     32168,
+    32173,
     32244,
     32132, 
     30615,
@@ -440,7 +465,8 @@ sona.loc[
     [id for id in ids if id not in sona_credited],
     sona.columns.str.startswith("Attention"),
 ]
-
+# Inspect ppt
+# sona.loc[sona["SONA_ID"] == 31943,]
 
 
 # Save data
