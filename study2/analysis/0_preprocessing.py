@@ -44,6 +44,11 @@ prolific_ids = {}
 for i, file in enumerate(files):
     print(f"File N°{i+1}/{len(files)}")
 
+    if (
+        "Participant" in alldata.columns
+        and file["name"] in alldata["Participant"].values
+    ):
+        continue
     data = pd.read_csv(file["file"]._get(file["url"], stream=True).raw)
 
     # Participant ========================================================
@@ -96,11 +101,39 @@ for i, file in enumerate(files):
             df["SONA_ID"] = id
 
     # Filter duplicates
+    if df["SONA_ID"].values[0] == 30609 and df["Experiment_Duration"].values[0] < 6:
+        continue
+    if df["SONA_ID"].values[0] == 30679 and df["Mobile"].values[0] == True:
+        continue
+    if df["SONA_ID"].values[0] == 30878 and df["Experiment_Duration"].values[0] < 10:
+        continue
     if df["SONA_ID"].values[0] == 30884 and df["Mobile"].values[0] == True:
         continue
     if df["SONA_ID"].values[0] == 31886 and df["Experiment_Duration"].values[0] < 10:
         continue
     if df["SONA_ID"].values[0] == 31943 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 31873 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 31885 and df["Experiment_Duration"].values[0] < 8:
+        continue
+    if df["SONA_ID"].values[0] == 31744 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 31943 and df["Experiment_Duration"].values[0] < 12:
+        continue
+    if df["SONA_ID"].values[0] == 31757 and df["Experiment_Duration"].values[0] < 4:
+        continue
+    if df["SONA_ID"].values[0] == 32186 and df["Experiment_Duration"].values[0] < 6:
+        continue
+    if df["SONA_ID"].values[0] == 32004 and df["Experiment_Duration"].values[0] > 10:
+        continue
+    if df["SONA_ID"].values[0] == 32084 and df["Mobile"].values[0] == True:
+        continue
+    if df["SONA_ID"].values[0] == 32030 and df["Experiment_Duration"].values[0] < 15:
+        continue
+    if df["SONA_ID"].values[0] == 31010 and df["Experiment_Duration"].values[0] < 5:
+        continue
+    if df["SONA_ID"].values[0] == 31868 and df["Experiment_Duration"].values[0] < 10:
         continue
 
     # Demographics -------------------------------------------------------
@@ -328,25 +361,54 @@ sona_credited = [
     29761,
     29829,  # Check 3 Failed
     29903,
-    # 30610,  # Not in the list
+    30018,  # not in tlist
+    30609,
+    30610,  # Not in the list
+    30611,
     30615,
     30636,
+    30682,
+    30697,
+    30712,  # Not in list
     30743,
+    30744,
+    30745,
+    30747,  # Not in list
+    30748,
+    30759,  # Not in list
     30783,  # Check 3 Failed
+    30834,
+    30863,  # Not in list
+    30878,  # Not in list - Check 3 failed
     30942,
     30970,
+    30981,  # Not in list
     30986,
     31005,  # Check 3 Failed
+    31010,  # Not in list
+    31013,
     31048,
     31108,
+    31673,
     31770,
+    31772,
     31779,
+    31793,
     31799,
     31801,  # Check 3 Failed
+    31804,
     31809,
     31821,
+    31829,  # Not in list
+    31833,
     31839,
+    31840,
+    31855,  # Not in list
     31862,
+    31868,  # Not in list
+    31872,
+    31873,  # Not in list - Check 3 Failed
+    31885,  # Not in list - Check 3 Failed
     31902,
     31955,
     31976,
@@ -387,26 +449,41 @@ sona_credited = [
     31865,
     31869,
     31871,  # Check 3 failed
+    31889,
     31906,
     31915,
+    31919,
+    31926,
     31943,
     31957,
     31959,
     31975,
+    31977,  # Not in the list
+    32003,  # Not in list
+    32004,  # Not in list
+    32039,
+    32041,
     32051,
     32055,
     32057,
+    32059,
+    32062,  # Not in the list
     32067,
     32077,  # Check 3 failed
+    32080,
     32083,
+    32088,
     32091,
     32098,
+    32106,
     32113,
     32119,
+    32152,  # Not in the list
     32168,
     32173,
+    32183,
     32244,
-    32132, 
+    32132,
     30615,
     30687,
     32173,
@@ -429,9 +506,9 @@ sona_credited = [
     31776,
     # 31796, # Not in the list
     # 31838, # Not in the list
-    31844, 
+    31844,
     31867,
-    31878, 
+    31878,
     31935,
     31948,
     31956,
@@ -440,49 +517,37 @@ sona_credited = [
     31965,
     # 31977, # Not in the list
     32002,
-    32016, 
-    32026, 
+    32016,
+    32026,
     32051,
     # 32055, # Not in the list
-    32072, # Failed check 3
+    32072,  # Failed check 3
     # 32083, # Not in the list
     # 32091, # not in the list
     # 32113, # not in the list
-    32115, 
+    32115,
     # 32119, # not in the list
-    30640, 
+    30640,
     30898,
     30794,
-    31064, 
+    31064,
     31098,
     31729,
-    31781, # failed Check 3
-    31874, 
+    31781,  # failed Check 3
+    31874,
     31941,
     31947,
     # 31977 not on the list
-    32011, 
+    32011,
     32013,
-    32030, # failed check 3 
-    32064, 
+    32030,  # failed check 3
+    32064,
     32108,
-    32142, 
-    31757, # failed check 3 
+    32142,
+    31757,  # failed check 3
     30679,
     32084,
-    32186
-
-
-
-
-
-
-
-    
-
-
-    
-
+    32186,
 ]
 sona = (
     alldata[~np.isnan(alldata["SONA_ID"])]
@@ -493,10 +558,15 @@ ids = list(np.sort(sona["SONA_ID"].astype(int).values))
 sona["Experiment_Duration"]
 sona.loc[
     [id for id in ids if id not in sona_credited],
-    sona.columns.str.startswith("Attention"),
+    ["AttentionCheck_2", "AttentionCheck_3", "Date", "Experiment_Duration", "Mobile"],
 ]
 # Inspect ppt
 # sona.loc[sona["SONA_ID"] == 31943,]
+
+# Find duplicates
+alldata["SONA_ID"].value_counts()[alldata["SONA_ID"].value_counts() > 1]
+# Inspect duplicates
+# alldata[alldata["SONA_ID"] == 31744]
 
 
 # Save data
