@@ -49,7 +49,12 @@ for i, file in enumerate(files):
         and file["name"] in alldata["Participant"].values
     ):
         continue
-    data = pd.read_csv(file["file"]._get(file["url"], stream=True).raw)
+
+    download_ok = False
+    while download_ok == False:
+        data = pd.read_csv(file["file"]._get(file["url"], stream=True).raw)
+        if len(data) > 0:
+            download_ok = True
 
     # Participant ========================================================
     # data["screen"].unique()
@@ -105,9 +110,13 @@ for i, file in enumerate(files):
         continue
     if df["SONA_ID"].values[0] == 30679 and df["Mobile"].values[0] == True:
         continue
+    if df["SONA_ID"].values[0] == 30746 and df["Mobile"].values[0] == True:
+        continue
     if df["SONA_ID"].values[0] == 30878 and df["Experiment_Duration"].values[0] < 10:
         continue
     if df["SONA_ID"].values[0] == 30884 and df["Mobile"].values[0] == True:
+        continue
+    if df["SONA_ID"].values[0] == 31769 and df["Experiment_Duration"].values[0] > 15:
         continue
     if df["SONA_ID"].values[0] == 31886 and df["Experiment_Duration"].values[0] < 10:
         continue
@@ -120,6 +129,8 @@ for i, file in enumerate(files):
     if df["SONA_ID"].values[0] == 31744 and df["Experiment_Duration"].values[0] < 10:
         continue
     if df["SONA_ID"].values[0] == 31943 and df["Experiment_Duration"].values[0] < 12:
+        continue
+    if df["SONA_ID"].values[0] == 31968 and df["Experiment_Duration"].values[0] < 12:
         continue
     if df["SONA_ID"].values[0] == 31757 and df["Experiment_Duration"].values[0] < 4:
         continue
@@ -366,30 +377,48 @@ sona_credited = [
     30610,  # Not in the list
     30611,
     30615,
+    30616,
+    30617,  # Check 2 failed
+    30627,
     30636,
+    30656,
     30682,
+    30690,
     30697,
     30712,  # Not in list
+    30742,
     30743,
     30744,
     30745,
+    30746,
     30747,  # Not in list
     30748,
+    30758,
     30759,  # Not in list
+    30765,
+    30770,
     30783,  # Check 3 Failed
+    30798,
     30834,
     30863,  # Not in list
+    30867,
     30878,  # Not in list - Check 3 failed
     30942,
+    30957,  # Check 3 failed
     30970,
+    30974,  # Not in list
     30981,  # Not in list
     30986,
     31005,  # Check 3 Failed
     31010,  # Not in list
     31013,
     31048,
+    31082,
     31108,
     31673,
+    31736,  # check 3 failed
+    31764,  # check 2 failed
+    31769,
     31770,
     31772,
     31779,
@@ -440,6 +469,7 @@ sona_credited = [
     31777,
     31782,
     31796,
+    31805,
     31820,
     31824,
     31827,
@@ -449,18 +479,28 @@ sona_credited = [
     31865,
     31869,
     31871,  # Check 3 failed
+    31876,
+    31883,
     31889,
+    31894,
     31906,
     31915,
     31919,
     31926,
+    31929,
     31943,
     31957,
     31959,
+    31968,
+    31973,
     31975,
     31977,  # Not in the list
+    31981,
+    31991,
     32003,  # Not in list
     32004,  # Not in list
+    32015,
+    32022,
     32039,
     32041,
     32051,
@@ -475,12 +515,15 @@ sona_credited = [
     32088,
     32091,
     32098,
+    32105,
     32106,
     32113,
     32119,
+    32120,
     32152,  # Not in the list
     32168,
     32173,
+    32181,
     32183,
     32244,
     32132,
