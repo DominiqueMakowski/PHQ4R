@@ -29,7 +29,7 @@ def osf_listfiles(data_subproject="", token="", after_date=None):
     return files
 
 
-token = ""  # Paste OSF token here to access private repositories
+token = "zYboMoukFI8HKabenQ35DH6tESHJo6oZll5BvOPma6Dppjqc2jnIB6sPCERCuaqO0UrHAa"  # Paste OSF token here to access private repositories
 files = osf_listfiles(
     token=token,
     data_subproject="au695",  # Data subproject ID
@@ -591,12 +591,115 @@ sona_credited = [
     30679,
     32084,
     32186,
+    # ana gave credits from this number on the 7/05
+    29661,
+    30624,
+    30626,
+    30631,
+    30652,
+    30669,
+    32182,
+    32185,
+    32187,
+    # 32189. attention 2 check = 0 ,
+    # 32191, not on the list
+    # 32176, did more than once, failed check 3 on one occasion
+    30688,
+    30719,
+    30720,
+    # 30733, did study twice failed attention check 3 once
+    32151, 
+    31901, 
+    31016,
+    32155, 
+    31892, 
+     # 31751 failed check 2?
+    31884, 
+    30870, # failed check 3
+    30880,
+    32123, 
+    #  31958 failed check 2?
+    31966, # failed check 3
+    30940, 
+    32163, 
+    32073, 
+    31737, # failed check 3
+    31946, # failed check 3
+    30947, 
+    # 30939 did study multiple times, failed attention checks as well
+    31841, 
+    31050,
+    31733, # failed attention check 3
+    32018, # failed attention check 3
+    31992,
+    31970,
+    31879, 
+    32048, 
+    30895, 
+    31836, # failed attention check 3
+    31102, # failed attention check 3
+    32158, # failed attention check 3
+    32017, 
+    31842,
+    31877, 
+    30836, # did experiment twice but passed all checks
+    32129, 
+    32174, 
+    31942, # failed attention check 3 
+    30998, 
+    30761,
+    30799, 
+    30835,
+    30838, 
+    # 30846,  # was given credit but failed attention check 3?
+    30873, 
+    30909, 
+    30926, 
+    31008, 
+    31009, 
+    31017, 
+    31038, 
+    31043, 
+    # 31075, not on the list
+    # 31687, not on the list
+    31726, 
+    31732, 
+    31751, # failed check 2 potentially check 3
+    #31761, # was given credit but failed attention check 3?
+    31816, 
+    31817,
+    31826, 
+    31859, 
+    31893, 
+    31899, 
+    31905, 
+    # 31918, not in the list
+    31920, # failed attention check 3
+    31923, 
+    31930, 
+    31958, # failed attention check 2
+    # 31984, it was given credit ut failed check 3? 
+    32007, 
+    32025, 
+    32034, 
+    32042, 
+    32054, 
+    # 32090, not in the list
+    # 32121, not in the list
+    32154, 
+    32162, 
+    32191, 
+
+
 ]
+pd.set_option('display.max_rows', None) 
+
 sona = (
     alldata[~np.isnan(alldata["SONA_ID"])]
     .sort_values("SONA_ID")
     .set_index("SONA_ID", drop=False)
 )
+
 ids = list(np.sort(sona["SONA_ID"].astype(int).values))
 sona["Experiment_Duration"]
 sona.loc[
@@ -604,7 +707,7 @@ sona.loc[
     ["AttentionCheck_2", "AttentionCheck_3", "Date", "Experiment_Duration", "Mobile"],
 ]
 # Inspect ppt
-# sona.loc[sona["SONA_ID"] == 31943,]
+sona.loc[sona["SONA_ID"] == 31943,]
 
 # Find duplicates
 alldata["SONA_ID"].value_counts()[alldata["SONA_ID"].value_counts() > 1]
