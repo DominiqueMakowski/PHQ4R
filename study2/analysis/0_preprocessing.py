@@ -29,7 +29,7 @@ def osf_listfiles(data_subproject="", token="", after_date=None):
     return files
 
 
-token = ""  # Paste OSF token here to access private repositories
+token = "zYboMoukFI8HKabenQ35DH6tESHJo6oZll5BvOPma6Dppjqc2jnIB6sPCERCuaqO0UrHAa"  # Paste OSF token here to access private repositories
 files = osf_listfiles(
     token=token,
     data_subproject="au695",  # Data subproject ID
@@ -116,9 +116,15 @@ for i, file in enumerate(files):
         continue
     if df["SONA_ID"].values[0] == 30884 and df["Mobile"].values[0] == True:
         continue
+    if df["SONA_ID"].values[0] == 30913 and df["Experiment_Duration"].values[0] < 10:
+        continue
     if df["SONA_ID"].values[0] == 31769 and df["Experiment_Duration"].values[0] > 15:
         continue
+    if df["SONA_ID"].values[0] == 31811 and df["Experiment_Duration"].values[0] < 15:
+        continue
     if df["SONA_ID"].values[0] == 31886 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 30733 and df["Experiment_Duration"].values[0] < 10:
         continue
     if df["SONA_ID"].values[0] == 31943 and df["Experiment_Duration"].values[0] < 10:
         continue
@@ -379,13 +385,19 @@ sona_credited = [
     30615,
     30616,
     30617,  # Check 2 failed
+    30624,
+    30626,
     30627,
+    30631,
     30636,
+    30652,
     30656,
+    30665,
     30682,
     30690,
     30697,
     30712,  # Not in list
+    # 30733,
     30742,
     30743,
     30744,
@@ -395,14 +407,23 @@ sona_credited = [
     30748,
     30758,
     30759,  # Not in list
+    30761,
     30765,
     30770,
     30783,  # Check 3 Failed
     30798,
+    30799,
     30834,
+    30838,
+    30846,  # Check 3 failed (awarded because email)
     30863,  # Not in list
     30867,
+    30873,
     30878,  # Not in list - Check 3 failed
+    30835,
+    30909,
+    30913,  # Failed checks
+    30926,
     30942,
     30957,  # Check 3 failed
     30970,
@@ -410,13 +431,22 @@ sona_credited = [
     30981,  # Not in list
     30986,
     31005,  # Check 3 Failed
+    31008,
+    31009,
     31010,  # Not in list
     31013,
+    31017,
+    31038,
+    31043,
     31048,
     31082,
     31108,
     31673,
+    31726,  # failed checks
+    31727,  # not in the list
+    31732,
     31736,  # check 3 failed
+    31761,
     31764,  # check 2 failed
     31769,
     31770,
@@ -427,27 +457,44 @@ sona_credited = [
     31801,  # Check 3 Failed
     31804,
     31809,
+    31811,
+    31817,
     31821,
+    31826,
     31829,  # Not in list
     31833,
     31839,
     31840,
     31855,  # Not in list
+    31859,
     31862,
     31868,  # Not in list
     31872,
     31873,  # Not in list - Check 3 Failed
     31885,  # Not in list - Check 3 Failed
+    31893,
+    31899,
     31902,
+    31905,
+    31923,
+    31930,
     31955,
     31976,
     31978,
+    31984,  # Check 3 Failed
+    32007,
     32023,
+    32025,
+    32034,
+    32042,
     32045,
+    32054,
     32107,  # Check 3 Failed
+    32154,  # check 3 failed
+    32162,
     32175,
+    32187,
     30786,
-    30665,
     30724,
     30736,
     30782,
@@ -470,6 +517,7 @@ sona_credited = [
     31782,
     31796,
     31805,
+    31816,
     31820,
     31824,
     31827,
@@ -601,7 +649,14 @@ ids = list(np.sort(sona["SONA_ID"].astype(int).values))
 sona["Experiment_Duration"]
 sona.loc[
     [id for id in ids if id not in sona_credited],
-    ["AttentionCheck_2", "AttentionCheck_3", "Date", "Experiment_Duration", "Mobile"],
+    [
+        "AttentionCheck_2",
+        "AttentionCheck_3",
+        "Date",
+        "Time",
+        "Experiment_Duration",
+        "Mobile",
+    ],
 ]
 # Inspect ppt
 # sona.loc[sona["SONA_ID"] == 31943,]
