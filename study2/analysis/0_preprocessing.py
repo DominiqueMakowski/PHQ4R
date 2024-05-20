@@ -29,7 +29,7 @@ def osf_listfiles(data_subproject="", token="", after_date=None):
     return files
 
 
-token = "zYboMoukFI8HKabenQ35DH6tESHJo6oZll5BvOPma6Dppjqc2jnIB6sPCERCuaqO0UrHAa"  # Paste OSF token here to access private repositories
+token = ""  # Paste OSF token here to access private repositories
 files = osf_listfiles(
     token=token,
     data_subproject="au695",  # Data subproject ID
@@ -108,9 +108,23 @@ for i, file in enumerate(files):
     # Filter duplicates
     if df["SONA_ID"].values[0] == 30609 and df["Experiment_Duration"].values[0] < 6:
         continue
-    if df["SONA_ID"].values[0] == 30679 and df["Mobile"].values[0] == True:
+    if df["SONA_ID"].values[0] == 30679 and df["Date"].values[0] != "22/03/2024":
+        continue
+    if df["SONA_ID"].values[0] == 30688 and df["Time"].values[0] != "13:02:42":
         continue
     if df["SONA_ID"].values[0] == 30746 and df["Mobile"].values[0] == True:
+        continue
+    if df["SONA_ID"].values[0] == 30746 and df["Date"].values[0] != "19/04/2024":
+        continue
+    if df["SONA_ID"].values[0] == 30759 and df["Experiment_Duration"].values[0] > 10:
+        continue
+    if df["SONA_ID"].values[0] == 31787 and df["Experiment_Duration"].values[0] < 8:
+        continue
+    if df["SONA_ID"].values[0] == 30796 and df["Mobile"].values[0] == True:
+        continue
+    if df["SONA_ID"].values[0] == 30796 and df["Experiment_Duration"].values[0] > 20:
+        continue
+    if df["SONA_ID"].values[0] == 30836 and df["Experiment_Duration"].values[0] < 10:
         continue
     if df["SONA_ID"].values[0] == 30878 and df["Experiment_Duration"].values[0] < 10:
         continue
@@ -118,7 +132,21 @@ for i, file in enumerate(files):
         continue
     if df["SONA_ID"].values[0] == 30913 and df["Experiment_Duration"].values[0] < 10:
         continue
+    if df["SONA_ID"].values[0] == 30939:
+        continue
+    if df["SONA_ID"].values[0] == 30979 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 31030 and df["Experiment_Duration"].values[0] < 10:
+        continue
+    if df["SONA_ID"].values[0] == 31687 and df["Date"].values[0] != "30/04/2024":
+        continue
+    if df["SONA_ID"].values[0] == 31727 and df["Date"].values[0] != "26/04/2024":
+        continue
     if df["SONA_ID"].values[0] == 31769 and df["Experiment_Duration"].values[0] > 15:
+        continue
+    if df["SONA_ID"].values[0] == 31787 and df["Experiment_Duration"].values[0] < 7:
+        continue
+    if df["SONA_ID"].values[0] == 31800 and df["Experiment_Duration"].values[0] < 6:
         continue
     if df["SONA_ID"].values[0] == 31811 and df["Experiment_Duration"].values[0] < 15:
         continue
@@ -139,6 +167,8 @@ for i, file in enumerate(files):
     if df["SONA_ID"].values[0] == 31968 and df["Experiment_Duration"].values[0] < 12:
         continue
     if df["SONA_ID"].values[0] == 31757 and df["Experiment_Duration"].values[0] < 4:
+        continue
+    if df["SONA_ID"].values[0] == 32176 and df["Mobile"].values[0] == True:
         continue
     if df["SONA_ID"].values[0] == 32186 and df["Experiment_Duration"].values[0] < 6:
         continue
@@ -397,7 +427,7 @@ sona_credited = [
     30690,
     30697,
     30712,  # Not in list
-    # 30733,
+    30733,  # Not in list Check 3 failed
     30742,
     30743,
     30744,
@@ -411,6 +441,7 @@ sona_credited = [
     30765,
     30770,
     30783,  # Check 3 Failed
+    30796,  # Check 3 Failed
     30798,
     30799,
     30834,
@@ -424,10 +455,12 @@ sona_credited = [
     30909,
     30913,  # Failed checks
     30926,
+    30939,  # Check fails
     30942,
     30957,  # Check 3 failed
     30970,
     30974,  # Not in list
+    30979,
     30981,  # Not in list
     30986,
     31005,  # Check 3 Failed
@@ -436,12 +469,15 @@ sona_credited = [
     31010,  # Not in list
     31013,
     31017,
+    31030,
     31038,
     31043,
     31048,
+    31075,
     31082,
     31108,
     31673,
+    31687,
     31726,  # failed checks
     31727,  # not in the list
     31732,
@@ -454,6 +490,7 @@ sona_credited = [
     31779,
     31793,
     31799,
+    31800,
     31801,  # Check 3 Failed
     31804,
     31809,
@@ -476,6 +513,7 @@ sona_credited = [
     31899,
     31902,
     31905,
+    31918,  # Check 2 failed
     31923,
     31930,
     31955,
@@ -489,10 +527,13 @@ sona_credited = [
     32042,
     32045,
     32054,
+    32090,
     32107,  # Check 3 Failed
+    32121,
     32154,  # check 3 failed
     32162,
     32175,
+    32176,  # Check 3 failed
     32187,
     30786,
     30724,
@@ -515,6 +556,7 @@ sona_credited = [
     31774,
     31777,
     31782,
+    31787,
     31796,
     31805,
     31816,
@@ -579,6 +621,7 @@ sona_credited = [
     30687,
     32173,
     32178,
+    32189,  # Check 2 failed
     32247,
     30708,
     # 30712, # Not in the list
@@ -656,91 +699,104 @@ sona_credited = [
     30719,
     30720,
     # 30733, did study twice failed attention check 3 once
-    32151, 
-    31901, 
+    32151,
+    31901,
     31016,
-    32155, 
-    31892, 
-     # 31751 failed check 2?
-    31884, 
-    30870, # failed check 3
+    32155,
+    31892,
+    # 31751 failed check 2?
+    31884,
+    30870,  # failed check 3
     30880,
-    32123, 
+    32123,
     #  31958 failed check 2?
-    31966, # failed check 3
-    30940, 
-    32163, 
-    32073, 
-    31737, # failed check 3
-    31946, # failed check 3
-    30947, 
+    31966,  # failed check 3
+    30940,
+    32163,
+    32073,
+    31737,  # failed check 3
+    31946,  # failed check 3
+    30947,
     # 30939 did study multiple times, failed attention checks as well
-    31841, 
+    31841,
     31050,
-    31733, # failed attention check 3
-    32018, # failed attention check 3
+    31733,  # failed attention check 3
+    32018,  # failed attention check 3
     31992,
     31970,
-    31879, 
-    32048, 
-    30895, 
-    31836, # failed attention check 3
-    31102, # failed attention check 3
-    32158, # failed attention check 3
-    32017, 
+    31879,
+    32048,
+    30895,
+    31836,  # failed attention check 3
+    31102,  # failed attention check 3
+    32158,  # failed attention check 3
+    32017,
     31842,
-    31877, 
-    30836, # did experiment twice but passed all checks
-    32129, 
-    32174, 
-    31942, # failed attention check 3 
-    30998, 
+    31877,
+    30836,  # did experiment twice but passed all checks
+    32129,
+    32174,
+    31942,  # failed attention check 3
+    30998,
     30761,
-    30799, 
+    30799,
     30835,
-    30838, 
+    30838,
     # 30846,  # was given credit but failed attention check 3?
-    30873, 
-    30909, 
-    30926, 
-    31008, 
-    31009, 
-    31017, 
-    31038, 
-    31043, 
+    30873,
+    30909,
+    30926,
+    31008,
+    31009,
+    31017,
+    31038,
+    31043,
     # 31075, not on the list
     # 31687, not on the list
-    31726, 
-    31732, 
-    31751, # failed check 2 potentially check 3
-    #31761, # was given credit but failed attention check 3?
-    31816, 
+    31726,
+    31732,
+    31751,  # failed check 2 potentially check 3
+    # 31761, # was given credit but failed attention check 3?
+    31816,
     31817,
-    31826, 
-    31859, 
-    31893, 
-    31899, 
-    31905, 
+    31826,
+    31859,
+    31893,
+    31899,
+    31905,
     # 31918, not in the list
-    31920, # failed attention check 3
-    31923, 
-    31930, 
-    31958, # failed attention check 2
-    # 31984, it was given credit ut failed check 3? 
-    32007, 
-    32025, 
-    32034, 
-    32042, 
-    32054, 
+    31920,  # failed attention check 3
+    31923,
+    31930,
+    31958,  # failed attention check 2
+    # 31984, it was given credit ut failed check 3?
+    32007,
+    32025,
+    32034,
+    32042,
+    32054,
     # 32090, not in the list
     # 32121, not in the list
-    32154, 
-    32162, 
-    32191, 
-
-
+    32154,
+    32162,
+    32191,
 ]
-pd.set_option('display.max_rows', None) 
+
+
+# Inspection ============================================================
+pd.set_option("display.max_rows", None)
+
+# Find duplicates
+alldata["SONA_ID"].value_counts()[alldata["SONA_ID"].value_counts() > 1]
+# Inspect duplicates
+alldata[alldata["SONA_ID"] == 31787][
+    [
+        "Date",
+        "Time",
+        "Experiment_Duration",
+        "Mobile",
+    ]
+]
 
 sona = (
     alldata[~np.isnan(alldata["SONA_ID"])]
@@ -764,12 +820,7 @@ sona.loc[
 # Inspect ppt
 sona.loc[sona["SONA_ID"] == 31943,]
 
-# Find duplicates
-alldata["SONA_ID"].value_counts()[alldata["SONA_ID"].value_counts() > 1]
-# Inspect duplicates
-# alldata[alldata["SONA_ID"] == 31744]
 
-
-# Save data
+# Save data ==============================================================
 alldata.to_csv("../data/data_raw.csv", index=False)
 print("Done!")
