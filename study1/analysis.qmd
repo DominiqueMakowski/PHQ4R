@@ -225,6 +225,7 @@ p1b_s2 + ggtitle("Joint prevalence of responses")
 ```{r}
 df_anx <- select(df, contains("Anxiety"))
 df_anx2 <- select(df2, contains("Anxiety"))
+df_anxfull <- rbind(df_anx, df_anx2)
 ```
 
 
@@ -285,6 +286,27 @@ a <- data.frame(
   Discrimination = c(paste0(format_value(a$Anxiety_1[1, 1]), ", ", format_ci(a$Anxiety_1[2, 1], a$Anxiety_1[3, 1])), paste0(format_value(a$Anxiety_2[1, 1]), ", ", format_ci(a$Anxiety_2[2, 1], a$Anxiety_2[3, 1])))
 )
 knitr::kable(a)
+```
+
+```{r}
+#| eval: false
+
+# Plots
+plot(m_anxiety2, type = "trace", theta_lim = c(-3, 3))
+plot(m_anxiety2, type = "infotrace", theta_lim = c(-3, 3))
+plot(m_anxiety2, type = "score", theta_lim = c(-3, 3))
+plot(m_anxiety2, type = "infoSE", theta_lim = c(-3, 3))
+plot(m_anxiety2, type = "rxx", theta_lim = c(-3, 3))
+```
+
+
+#### Full
+
+```{r}
+m_anxietyfull <- mirt(df_anxfull, model = 1, itemtype = "graded", SE = TRUE, verbose = FALSE)
+
+plot(m_anxietyfull, type = "trace", theta_lim = c(-3, 3))
+# plot(m_anxietyfull, type = "infotrace", theta_lim = c(-3, 3))
 ```
 
 
@@ -369,6 +391,7 @@ p2a_s2 <- out2$p + labs(x = expression(Anxiety ~ (theta)))
 p2a_s2
 ```
 
+
 :::
 
 ### Normalized scoring
@@ -437,7 +460,7 @@ df_dep2 <- select(df2, contains("Depression"))
 - Sample 1: Cronbach's alpha is `r insight::format_value(performance::cronbachs_alpha(df_dep), digits=3)`.
 - Sample 2: Cronbach's alpha is `r insight::format_value(performance::cronbachs_alpha(df_dep2), digits=3)`.
 
-## Model
+### Model
 
 ::: {.panel-tabset}
 
@@ -484,7 +507,7 @@ knitr::kable(a2)
 
 
 
-## Category Characteristic Curves (CRC) and Item Information Curves
+### Category Characteristic Curves (CRC) and Item Information Curves
 
 ::: {.panel-tabset}
 
@@ -507,7 +530,7 @@ p2b_s2
 
 :::
 
-## Normalized scoring
+### Normalized scoring
 
 ::: {.panel-tabset}
 
