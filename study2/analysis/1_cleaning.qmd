@@ -26,7 +26,9 @@ library(ggside)
 #| code-fold: false
 
 df <- read.csv("../data/data_raw.csv") |> 
-   mutate(across(everything(), ~ifelse(.x == "", NA, .x))) 
+  mutate(across(everything(), ~ifelse(.x == "", NA, .x))) |> 
+  filter(Age >= 18) |> 
+  mutate(Age = ifelse(Age > 90, NA, Age))
 ```
 
 The initial sample consisted of `r report::report_participants(df, age="Age", gender="Gender", education="Education")`.
@@ -79,6 +81,36 @@ df$Sample <- case_when(
 )
 ```
 
+### Experiment Duration
+
+The experiment's median duration is `r insight::format_value(median(df$Experiment_Duration))` min (`r insight::format_ci(bayestestR::hdi(df$Experiment_Duration, ci=0.5))`).
+
+
+```{r}
+df |>
+  mutate(Participant = fct_reorder(Participant, Experiment_Duration),
+         Category = ifelse(Experiment_Duration > 30, "extra", "ok"),
+         Duration = ifelse(Experiment_Duration > 30, 30, Experiment_Duration)) |>
+  ggplot(aes(y = Participant, x = Duration)) +
+  geom_vline(xintercept = median(df$Experiment_Duration), color = "red", linetype = "dashed") +
+  geom_point(aes(color = Sample, shape = Category)) +
+  geom_text(aes(color = Sample, label=ifelse(Experiment_Duration < 3, as.character(Participant), '')), hjust=-1, vjust=0) +
+  scale_shape_manual(values = c("extra" = 3, ok = 19)) +
+  guides(shape = "none") +
+  ggside::geom_xsidedensity(aes(fill=Sample), color=NA, alpha=0.5) +
+  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
+  labs(
+    title = "Experiment Completion Time",
+    x = "Duration (in minutes)",
+    y = "Participant"
+  )  +
+  theme_bw() +
+  ggside::theme_ggside_void() +
+  theme(ggside.panel.scale = .3,
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) 
+```
 
 ### Compute Scores
 
@@ -232,41 +264,25 @@ df <- df |>
   mutate(BDI2_Total = rowSums(select(df, matches("BDI2_"), -BDI2_Duration, -BDI2_Order)))
 ```
 
-<!-- df[is.na(df$BDI2_Total), c("Participant")] -->
+
+#### IAS
+
+```{r}
+#| echo: true
+#| code-fold: show
+
+df <- df |> 
+  mutate(IAS_Total = rowSums(select(df, matches("IAS_"), -IAS_Duration, -IAS_Order)))
+```
+
 
 
 ## Exclusions
 
-### Experiment Duration
-
-The experiment's median duration is `r insight::format_value(median(df$Experiment_Duration))` min (`r insight::format_ci(bayestestR::hdi(df$Experiment_Duration, ci=0.5))`).
-
-
 ```{r}
-df |>
-  mutate(Participant = fct_reorder(Participant, Experiment_Duration),
-         Category = ifelse(Experiment_Duration > 30, "extra", "ok"),
-         Duration = ifelse(Experiment_Duration > 30, 30, Experiment_Duration)) |>
-  ggplot(aes(y = Participant, x = Duration)) +
-  geom_vline(xintercept = median(df$Experiment_Duration), color = "red", linetype = "dashed") +
-  geom_point(aes(color = Sample, shape = Category)) +
-  geom_text(aes(color = Sample, label=ifelse(Experiment_Duration < 3, as.character(Participant), '')), hjust=-1, vjust=0) +
-  scale_shape_manual(values = c("extra" = 3, ok = 19)) +
-  guides(shape = "none") +
-  ggside::geom_xsidedensity(aes(fill=Sample), color=NA, alpha=0.5) +
-  ggside::scale_xsidey_continuous(expand = c(0, 0)) +
-  labs(
-    title = "Experiment Completion Time",
-    x = "Duration (in minutes)",
-    y = "Participant"
-  )  +
-  theme_bw() +
-  ggside::theme_ggside_void() +
-  theme(ggside.panel.scale = .3,
-        panel.border = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y = element_blank()) 
+outliers <- list()
 ```
+
 
 
 ### Attention Checks
@@ -279,24 +295,62 @@ reject <- df |>
   select(Participant, Experimenter, starts_with("AttentionCheck")) |> 
   arrange(AttentionCheck_2, AttentionCheck_3) 
 
-failed <- reject[reject$AttentionCheck_2 == 0 | reject$AttentionCheck_3 < 0.7, "Participant"]
-failed <- failed[!is.na(failed)]
+outliers$attentionchecks <- reject[reject$AttentionCheck_2 == 0 | reject$AttentionCheck_3 < 0.95, "Participant"]
+outliers$attentionchecks <- outliers$attentionchecks[!is.na(outliers$attentionchecks)]
+df$AttentionCheck <- ifelse(df$Participant %in% outliers$attentionchecks, "Failed", "Passed")
 
 reject |> 
   gt::gt() |> 
   gt::data_color(columns = c("AttentionCheck_2", "AttentionCheck_3"), palette=c("red", "green")) |> 
-  gt::data_color(columns = "Participant", fn=\(x) ifelse(x %in% failed, "red", "white")) |> 
+  gt::data_color(columns = "Participant", fn=\(x) ifelse(x %in% outliers$attentionchecks, "red", "white")) |> 
   gt::opt_interactive(use_compact_mode = TRUE)
-
-df <- filter(df, !Participant %in% failed)
-df <- select(df, -starts_with("AttentionCheck"))
 ```
 
-We dropped `r length(failed)` participants for failing the attention checks.
 
+We removed `r length(outliers$attentionchecks)` participants for failing the attention checks.
+
+
+```{r}
+#| eval: false
+
+dat <- mutate(df, Failed = ifelse(Participant %in% outliers$attentionchecks, 1, 0)) |> 
+  filter(Gender %in% c("Female", "Male")) |> 
+  filter(Experiment_Duration < 30) |> 
+  mutate(Gender = as.factor(Gender)) |> 
+  select(Failed, Gender, Experiment_Duration, Age, Ethnicity) 
+
+m <- glm(Failed ~ Gender / Age, data=dat, family="binomial") 
+parameters::parameters(m)
+
+modelbased::estimate_relation(m, length=50) |> 
+  ggplot(aes(x=Age, y=Predicted, color=Gender)) +
+  geom_line() 
+```
+
+
+### Duration
+
+```{r}
+m <- mgcv::gam(Failed ~ s(Experiment_Duration), 
+          data=df |> 
+            filter(Experiment_Duration < 30) |> 
+            mutate(Failed = ifelse(AttentionCheck == "Failed", 1, 0)), 
+          family="binomial")
+
+parameters::parameters(m)
+plot(estimate_relation(m, length=40))
+
+df |> 
+  filter(Experiment_Duration < 30) |> 
+  select(Participant, Experiment_Duration, AttentionCheck) |> 
+  mutate(Participant = fct_reorder(Participant, Experiment_Duration)) |>
+  ggplot(aes(x=Participant, y=Experiment_Duration, fill=AttentionCheck)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+```
 
 ### Response Coherence
-
 
 ```{r}
 SD_per_dim <- function(x, dims="") {
@@ -315,54 +369,66 @@ df$STAI5_SD <- select(df, matches("STAI5_"), -STAI5_Duration, -STAI5_Order, -STA
   rowMeans()
 ```
 
+```{r}
+#| eval: false
+
+mgcv::gam(Failed ~ s(STAI5_SD), 
+          data=mutate(df, Failed = ifelse(AttentionCheck == "Failed", 1, 0)), 
+          family="binomial") |>
+  parameters::parameters()
+
+df |> 
+  select(Participant, STAI5_SD, AttentionCheck) |> 
+  mutate(Participant = fct_reorder(Participant, STAI5_SD)) |>
+  ggplot(aes(x=Participant, y=STAI5_SD, fill=AttentionCheck)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+```
+
+
+### Multivariate Distance
+
+```{r}
+dfoutlier <- df |> 
+  select(contains("IAS_"), -IAS_Duration, -IAS_Order, -IAS_Total) |>
+  # select(contains("BDI2_"), -BDI2_Duration, -BDI2_Order, -BDI2_Total, -BDI2_SD) |> 
+  # datawizard::remove_empty_rows() |> 
+  performance::check_outliers(
+    method=c("optics", "mahalanobis_robust"),
+    threshold=list(optics=2.5, optics_xi=0.03)) |> 
+  as.data.frame() |> 
+  mutate(Participant = fct_reorder(df$Participant, Distance_OPTICS),
+         Outlier_AttentionCheck = ifelse(Participant %in% outliers$attentionchecks, 1, 0),
+         Outlier_Distance = ifelse(abs(standardize(Distance_OPTICS)) > qnorm(0.995), 1, 0),
+         Experiment_Duration = df$Experiment_Duration,
+         Outlier = ifelse(Outlier_AttentionCheck == 1, "Failed Attention Checks", "Passed"))
+
+
+outliers$distance <- as.character(dfoutlier[dfoutlier$Outlier_Distance == 1, "Participant"])
+outliers$distance <- outliers$distance[!outliers$distance %in% c(outliers$attentionchecks, outliers$duration)]
+
+m <- mgcv::gam(Outlier_AttentionCheck ~ s(Distance_OPTICS), data = dfoutlier, family = "binomial")
+parameters::parameters(m)
+
+estimate_relation(m, length=40) |> 
+  ggplot(aes(x=Distance_OPTICS, y=Predicted)) +
+  geom_ribbon(aes(ymin=CI_low, ymax=CI_high), alpha=0.2) +
+  geom_line() + 
+  ggside::geom_xsidedensity(data=dfoutlier, aes(fill=Outlier), alpha=0.3, color=NA)
+
+dfoutlier |> 
+  ggplot(aes(x=Participant, y=Distance_OPTICS, fill=Outlier)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+```
 
 
 ```{r}
-outliers <- df |> 
-  select(Participant, BDI2_SD, BDI2_Duration, STAI5_SD, STAI5_Duration) |> 
-  standardize(robust=TRUE) |> 
-  mutate(SD = rowSums(across(ends_with("SD"))), Duration = rowSums(across(ends_with("Duration")))) 
-
-mv_outliers <- df |> 
-  select(Participant, 
-         matches("BDI2_"), -BDI2_Duration, -BDI2_Order, -BDI2_Total,
-         matches("STAI5_"), -STAI5_Duration, -STAI5_Order, -STAI5_General) |> 
-  check_outliers(method="mahalanobis_robust", ID="Participant")
-
-
-df |>
-  mutate(Outliers = mv_outliers) |> 
-  ggplot(aes(x=STAI5_SD, y=BDI2_SD)) +
-  geom_point(aes(color=Sample, shape=mv_outliers), alpha=2/3, size=3) +
-  scale_shape_manual(values=c(16, 4)) +
-  ggside::geom_xsidedensity(aes(color=Sample), alpha=0.5) +
-  ggside::geom_ysidedensity(aes(color=Sample), alpha=0.5) +
-  theme_minimal() +
-  ggside::theme_ggside_void() 
-  
-table <- df |> 
-  select(Participant, starts_with("AttentionCheck"), BDI2_SD, BDI2_Duration, STAI5_SD, STAI5_Duration) |> 
-  mutate_at(vars(ends_with("Duration")), \(x) ifelse(x > 10, 10, x)) |>
-  mutate(Participant = fct_reorder(Participant, outliers$Duration)) |> 
-  arrange(Participant)
-
-data.frame(Participant = c("Average"), t(sapply(table[2:ncol(table)], mean, na.rm = TRUE))) |>
-  rbind(table) |> 
-  gt::gt() |> 
-  gt::fmt_number() |> 
-  # gt::data_color(columns = "Participant", fn=\(x) ifelse(x %in% outliers_half, "orange", "white")) |>
-  gt::data_color(columns = ends_with("Duration"), 
-                 direction="column", palette = "RdBu") |> 
-  gt::data_color(columns = ends_with("SD"), 
-                 direction="column", palette = "RdBu", reverse=TRUE) |> 
-  gt::data_color(direction="row", rows=1, palette = "grey") |> 
-  gt::opt_interactive(use_compact_mode = TRUE)
-
-
-df <- df[!mv_outliers,]
+df <- filter(df, !Participant %in% c(outliers$attentionchecks, outliers$distance))
+df <- select(df, -starts_with("AttentionCheck"))
 ```
-
-We dropped `r length(mv_outliers)` participants flagged as multivariate outliers using the robust Mahalanobis distance.
 
 
 ## Final Sample
@@ -450,40 +516,47 @@ p_edu
 ### Table 1
 
 ```{r}
+df$PHQ4_Duration[df$PHQ4_Duration > 3] <- NA
+
 table1 <- df |> 
   select(Age, 
          PHQ4_Condition, 
-         PHQ4 = PHQ4_Total,
-         STAI5 = STAI5_General,
-         BDI2 = BDI2_Total) |> 
-  report::report_sample(group_by = "PHQ4_Condition")
+         PHQ4_Total,
+         PHQ4_Duration,
+         STAI5_General,
+         BDI2_Total) |> 
+  report::report_sample(by = "PHQ4_Condition")
 
 table1$Variable <- str_remove_all(table1$Variable, fixed("Mean "))
 table1$Variable <- str_remove_all(table1$Variable, fixed(" (SD)"))
-
-insight::display(table1)
+table1$Variable <- c("Age", "PHQ4 (Total)", "PHQ4 (Duration)", "STAI5", "BDI2")
 ```
 
 ```{r}
-add_bf <- function(df, var="Age") {
-  r <- report::report(t.test(df[[var]] ~ df[["PHQ4_Condition"]]), verbose=FALSE)
+add_bf <- function(df, var="PHQ4_Duration") {
+  dat <- df[, c(var, "PHQ4_Condition")]
+  dat <- dat[complete.cases(dat), ]
+  r <- report::report(t.test(dat[[var]] ~ dat[["PHQ4_Condition"]]), verbose=FALSE)
   x <- as.data.frame(r)
   f <- as.formula(paste(var, "~ PHQ4_Condition"))
-  x$BF <- as.data.frame(BayesFactor::ttestBF(formula=f, data=df))$bf
+  x$BF <- as.data.frame(BayesFactor::ttestBF(formula=f, data=dat))$bf
   x$Parameter <- var
   x
 }
 
 
-rbind(
+table1_inference <- rbind(
   add_bf(filter(df, !is.na(Age)), "Age"),
   add_bf(df, var="PHQ4_Total"),
+  add_bf(df, var="PHQ4_Duration"),
   add_bf(df, "STAI5_General"),
   add_bf(df, "BDI2_Total")
 ) |> 
   select(Parameter, t, df_error, p, BF) |> 
-  mutate(Parameter = str_remove_all(Parameter, fixed("df$"))) |>
-  insight::display()
+  mutate(Parameter = str_remove_all(Parameter, fixed("df$")))
+
+table1$BF <- table1_inference$BF
+insight::display(table1)
 ```
 
 ### Distributions
@@ -495,7 +568,7 @@ df |>
          BDI2 = BDI2_Total,
          PHQ4_Total) |> 
   standardize() |> 
-  estimate_density(at = "PHQ4_Condition") |> 
+  estimate_density(by = "PHQ4_Condition", method="KernSmooth") |> 
   ggplot(aes(x=x, y=y)) +
   geom_line(aes(color = Parameter), linewidth=2) +
   scale_color_manual(values = c("STAI5" = "#E91E63", "BDI2" = "#2196F3", "PHQ4_Total" = "#9C27B0")) +
@@ -541,10 +614,14 @@ p1 / p2
 ```{r}
 df$MoodDisorder <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant, DisorderTreatment_Anxiolytic))
 df$MoodDisorder <- ifelse(df$MoodDisorder > 0, TRUE, FALSE)
+
+df$Depression <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant))
+df$Depression <- ifelse(df$Depression > 0, TRUE, FALSE)
+
 df$DisorderHistory <- ifelse(df$DisorderHistory == "Yes", TRUE, FALSE)
 ```
 
-`r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment. `r sum(df$DisorderHistory, na.rm=TRUE)` participants (`r insight::format_percent(sum(df$DisorderHistory, na.rm=TRUE) / nrow(df))`) reported having a history of mood disorder.
+`r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment. `r sum(df$Depression)` participants (`r insight::format_percent(sum(df$Depression) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer or antidepressant. `r sum(df$DisorderHistory, na.rm=TRUE)` participants (`r insight::format_percent(sum(df$DisorderHistory, na.rm=TRUE) / nrow(df))`) reported having a history of mood disorder.
 
 
 ## Save 
