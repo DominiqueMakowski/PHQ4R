@@ -247,6 +247,8 @@ for i, file in enumerate(files):
         continue
     if df["SONA_ID"].values[0] == 32742 and df["Date"].values[0] != "03/12/2024":
         continue
+    if df["SONA_ID"].values[0] == 32624 and df["Experiment_Duration"].values[0] < 10:
+        continue
 
     # Demographics -------------------------------------------------------
     demo1 = data[data["screen"] == "demographics_1"].iloc[0]
@@ -324,6 +326,7 @@ for i, file in enumerate(files):
             "cuacasian",
             "portuguese",
             "white-british",
+            "white - irish",
         ]
         else race
     )
@@ -340,6 +343,7 @@ for i, file in enumerate(files):
             "south asian",
             "sri lankan",
             "indian-asian",
+            "indian, british",
         ]
         else race
     )
@@ -359,7 +363,7 @@ for i, file in enumerate(files):
             "british chinese",
             "asian british",
             "british asian",
-            "white - irish",
+            "burmese",
         ]
         else race
     )
@@ -1444,6 +1448,19 @@ sona_credited = [
     32587,
     32656,  # failed attention check 3
     32742,  # failed attention check 3
+    # 07/12/2024
+    31797,  # failed attention check 3
+    31904,
+    32284,  # failed attention check 3
+    32334,
+    32340,  # failed attention check 3
+    32496,
+    32575,  # failed attention check 3
+    32624,
+    32660,
+    32666,  # failed attention check 3
+    32671,
+    32730,
     # NOT IN LIST ----------
     # 32118,
     31918,

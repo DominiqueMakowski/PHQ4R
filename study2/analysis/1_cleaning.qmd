@@ -6,7 +6,7 @@ editor_options:
 format:
   html:
     code-fold: true
-    self-contained: true
+    self-contained: false
 ---
 
 ## Data Preparation
@@ -307,7 +307,7 @@ reject |>
 ```
 
 
-We removed `r length(outliers$attentionchecks)` participants for failing the attention checks.
+We removed `r length(outliers$attentionchecks)` (`r insight::format_percent(length(outliers$attentionchecks) / nrow(df))`) participants for failing the attention checks.
 
 
 ```{r}
@@ -350,7 +350,7 @@ df |>
   theme(axis.text.x = element_blank())
 ```
 
-### Response Coherence
+### Response Coherence and Variability
 
 ```{r}
 SD_per_dim <- function(x, dims="") {
@@ -367,46 +367,59 @@ df$BDI2_SD <- select(df, matches("BDI2_"), -BDI2_Duration, -BDI2_Order, -BDI2_To
 df$STAI5_SD <- select(df, matches("STAI5_"), -STAI5_Duration, -STAI5_Order, -STAI5_General) |> 
   SD_per_dim(dims=c("STAI5_")) |> 
   rowMeans()
+df$IAS_SD <- select(df, matches("IAS_"), -IAS_Duration, -IAS_Order, -IAS_Total) |> 
+  SD_per_dim(dims=c("IAS_")) |> 
+  rowMeans()
 ```
 
 ```{r}
-#| eval: false
-
-mgcv::gam(Failed ~ s(STAI5_SD), 
+m <- mgcv::gam(Failed ~ s(IAS_SD), 
           data=mutate(df, Failed = ifelse(AttentionCheck == "Failed", 1, 0)), 
-          family="binomial") |>
-  parameters::parameters()
+          family="binomial") 
+parameters::parameters(m)
+
+estimate_relation(m, length=40) |> 
+  ggplot(aes(x=IAS_SD, y=Predicted)) +
+  geom_ribbon(aes(ymin=CI_low, ymax=CI_high), alpha=0.2) +
+  geom_line() + 
+  ggside::geom_xsidedensity(data=df, aes(fill=AttentionCheck), alpha=0.3, color=NA)
 
 df |> 
-  select(Participant, STAI5_SD, AttentionCheck) |> 
-  mutate(Participant = fct_reorder(Participant, STAI5_SD)) |>
-  ggplot(aes(x=Participant, y=STAI5_SD, fill=AttentionCheck)) +
+  select(Participant, IAS_SD, AttentionCheck) |> 
+  mutate(Participant = fct_reorder(Participant, IAS_SD)) |>
+  ggplot(aes(x=Participant, y=IAS_SD, fill=AttentionCheck)) +
   geom_bar(stat="identity") +
   theme_minimal() +
   theme(axis.text.x = element_blank())
+
+outliers$ias_sd <- as.character(df[abs(standardize(df$IAS_SD, robust=TRUE)) > qnorm(0.995), "Participant"])
+outliers$ias_sd <- outliers$ias_sd[!outliers$ias_sd %in% c(outliers$attentionchecks, outliers$duration)]
 ```
 
+We removed `r length(outliers$ias_sd)` (`r insight::format_percent(length(outliers$ias_sd) / nrow(df))`) participants for failing being an outlier on the IAS' SD value.
 
 ### Multivariate Distance
 
 ```{r}
 dfoutlier <- df |> 
-  select(contains("IAS_"), -IAS_Duration, -IAS_Order, -IAS_Total) |>
-  # select(contains("BDI2_"), -BDI2_Duration, -BDI2_Order, -BDI2_Total, -BDI2_SD) |> 
+  select(contains("IAS_"), -IAS_Duration, -IAS_Order, -IAS_Total, -IAS_SD) |>
+  # select(contains("BDI2_"), -BDI2_Duration, -BDI2_Order, -BDI2_Total, -BDI2_SD) |>
+  # select(contains("STAI5_"), -STAI5_Duration, -STAI5_Order, -STAI5_General, -STAI5_SD) |>
+  # select(contains("MAIA2_"), -MAIA_Duration, -MAIA_Order) |>
   # datawizard::remove_empty_rows() |> 
   performance::check_outliers(
     method=c("optics", "mahalanobis_robust"),
-    threshold=list(optics=2.5, optics_xi=0.03)) |> 
+    threshold=list(optics=2, optics_xi=0.1)) |> 
   as.data.frame() |> 
   mutate(Participant = fct_reorder(df$Participant, Distance_OPTICS),
          Outlier_AttentionCheck = ifelse(Participant %in% outliers$attentionchecks, 1, 0),
-         Outlier_Distance = ifelse(abs(standardize(Distance_OPTICS)) > qnorm(0.995), 1, 0),
+         Outlier_Distance = ifelse(abs(standardize(Distance_OPTICS, robust=TRUE)) > qnorm(0.995), 1, 0),
          Experiment_Duration = df$Experiment_Duration,
          Outlier = ifelse(Outlier_AttentionCheck == 1, "Failed Attention Checks", "Passed"))
 
 
 outliers$distance <- as.character(dfoutlier[dfoutlier$Outlier_Distance == 1, "Participant"])
-outliers$distance <- outliers$distance[!outliers$distance %in% c(outliers$attentionchecks, outliers$duration)]
+outliers$distance <- outliers$distance[!outliers$distance %in% c(outliers$attentionchecks, outliers$duration, outliers$ias_sd)]
 
 m <- mgcv::gam(Outlier_AttentionCheck ~ s(Distance_OPTICS), data = dfoutlier, family = "binomial")
 parameters::parameters(m)
@@ -425,8 +438,12 @@ dfoutlier |>
 ```
 
 
+We removed `r length(outliers$distance)` (`r insight::format_percent(length(outliers$distance) / nrow(df))`) participants based on their multivariate distance. `r length(c(outliers$ias_sd, outliers$distance))` (`r insight::format_percent(length(c(outliers$ias_sd, outliers$distance)) / nrow(df))`) outliers in total.
+
+
+
 ```{r}
-df <- filter(df, !Participant %in% c(outliers$attentionchecks, outliers$distance))
+df <- filter(df, !Participant %in% c(outliers$attentionchecks, outliers$ias_sd, outliers$distance))
 df <- select(df, -starts_with("AttentionCheck"))
 ```
 
@@ -593,7 +610,8 @@ p1 <- select(df, Participant, Gender, starts_with("Disorder_")) |>
   scale_fill_manual(values = c("Male"= "#64B5F6", "Female"= "#F06292", "Other"="orange", "Missing"="brown")) +
   scale_y_continuous(expand = c(0, 0), labels=scales::percent) +
   labs(title = "Mood Disorders", y = "Number of Participants", subtitle = "Participants per self-declared mood disorder", x="Type") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme_minimal()
 
 p2 <- select(df, Participant, Gender, starts_with("DisorderTreatment_")) |> 
   pivot_longer(cols = starts_with("DisorderTreatment_"), names_to = "Treatment", values_to = "Value") |> 
@@ -606,7 +624,8 @@ p2 <- select(df, Participant, Gender, starts_with("DisorderTreatment_")) |>
   scale_fill_manual(values = c("Male"= "#64B5F6", "Female"= "#F06292", "Other"="orange", "Missing"="brown")) +
   scale_y_continuous(expand = c(0, 0), labels=scales::percent) +
   labs(title = "Treatment", y = "Number of Participants", subtitle = "Participants per treatment", x="Type") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme_minimal()
 
 p1 / p2
 ```
@@ -615,13 +634,22 @@ p1 / p2
 df$MoodDisorder <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant, DisorderTreatment_Anxiolytic))
 df$MoodDisorder <- ifelse(df$MoodDisorder > 0, TRUE, FALSE)
 
-df$Depression <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant))
-df$Depression <- ifelse(df$Depression > 0, TRUE, FALSE)
+df$Treatment <- rowSums(select(df, DisorderTreatment_MoodStabilizer, DisorderTreatment_Antidepressant, DisorderTreatment_Anxiolytic, DisorderTreatment_Therapy))
+df$Treatment <- ifelse(df$Treatment > 0, TRUE, FALSE)
+
+df$Depression <- rowSums(select(df, Disorder_MDD, Disorder_Dysthymia))
+df$Depression <- ifelse(df$Depression > 0 & df$Treatment, TRUE, FALSE)
+
+df$Anxiety <- rowSums(select(df, Disorder_GAD, Disorder_Panic))
+df$Anxiety <- ifelse(df$Anxiety > 0 & df$Treatment, TRUE, FALSE)
 
 df$DisorderHistory <- ifelse(df$DisorderHistory == "Yes", TRUE, FALSE)
 ```
 
-`r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment. `r sum(df$Depression)` participants (`r insight::format_percent(sum(df$Depression) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer or antidepressant. `r sum(df$DisorderHistory, na.rm=TRUE)` participants (`r insight::format_percent(sum(df$DisorderHistory, na.rm=TRUE) / nrow(df))`) reported having a history of mood disorder.
+- `r sum(df$MoodDisorder)` participants (`r insight::format_percent(sum(df$MoodDisorder) / nrow(df))`) have a mood disorder, as indexed by the use of a mood stabilizer, antidepressant, or anxiolytic treatment. 
+- `r sum(df$Depression)` participants (`r insight::format_percent(sum(df$Depression) / nrow(df))`) were labelled as having Depression, as indexed by the self-reported presence of MDD together with the use of a treatment (antidepressent, anxiolytic and/or therapy). 
+- `r sum(df$Anxiety)` participants (`r insight::format_percent(sum(df$Anxiety) / nrow(df))`) were labelled as having Anxiety, as indexed by the self-reported presence of GAD or Panic Disorder together with the use of a treatment (antidepressent, anxiolytic and/or therapy).
+- `r sum(df$DisorderHistory, na.rm=TRUE)` participants (`r insight::format_percent(sum(df$DisorderHistory, na.rm=TRUE) / nrow(df))`) reported having a history of mood disorder.
 
 
 ## Save 

@@ -1,0 +1,12 @@
+\begin{figure*}[!htbp]
+
+{\caption{{A) Proportion of answers of each type. B) Prevalence of
+answer pairs. C) Item Information Curves from IRT showing the coverage
+by each item and response of the latent dimension. Typically, an
+optimally informative item would display a large coverage over theta,
+with each response presenting a narrow coverage (high discrimination
+between different levels).}{\label{fig-one}}}}
+
+\includegraphics[width=1\textwidth,height=\textheight]{../../study1/figures/figure1.png}
+
+\end{figure*}

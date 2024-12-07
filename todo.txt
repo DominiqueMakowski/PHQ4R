@@ -1,1 +1,6 @@
-change title? "Measuring Depression and Anxiety in Non-clinical Populations with 4-items? Adaptation of the PHQ-4 Short Screening to increase its Sensitivity to Subclinical Variability.
+change title? 
+- "Measuring Depression and Anxiety in Non-clinical Populations with 4-items? Adaptation of the PHQ-4 Short Screening to increase its Sensitivity to Subclinical Variability.
+
+In study 1, we apply IRT to demonstrate the psychometric usefulness of this response option. 
+In study 2 (n=...), we show that the PHQ-4R is more sensitive to subclinical variability in depression (indexed by the BDI-II) and a better predictor of self-reported mood disorders.
+In conclusion, adding the "once or twice" response option is a low-cost no-downsides way of increasing the PHQ-R's sensitivity to subclinical variability, making it a tool of choice for general population research.
