@@ -222,7 +222,7 @@ knitr::include_graphics("../../study2/analysis/2_analysis_files/figure-html/figu
 
 The linear regression predicting the BDI-II total score with the PHQ-4 depression score showed no interaction related to the PHQ-4 version ($\Delta Intercept_{\text{refined}} = TODO; \Delta \beta_{\text{refined}} = TODO$), suggesting no differences in the relationship pattern between the two versions (see @fig-two).
 
-Moreover, Bayesian *t*-tests comparing the BDI-II scores between the refined and the original version at each integer score (0, 1, 2, 3) yielded no evidence in favour of a significant difference (BF > 3). In other words, having the same score on the refined version as on the original version was related to the same outcome on the BDI-II. 
+Moreover, Bayesian *t*-tests (using *BayesFactor*'s `ttestBF()` function with default priors; **ADD REF TO PKG**) comparing the BDI-II scores between the refined and the original version at each integer score (0, 1, 2, 3) yielded no evidence in favour of a significant difference (BF > 3). In other words, having the same score on the refined version as on the original version was related to the same outcome on the BDI-II. 
 
 However, the low in-between scores from the refined version are overall capturing significantly different levels of depression compared to the adjacent scores. Scoring 0.5 was associated with a higher BDI-II score than scoring 0 (BF > 30), and lower scores than scoring 1 (BF > 30). Similarly, scoring 1.5 was associated with a higher BDI-II score than scoring 1 (BF > 30), but not lower scores than scoring 2 (BF = 0.234).
 
