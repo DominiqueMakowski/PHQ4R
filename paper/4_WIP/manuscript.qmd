@@ -95,7 +95,7 @@ The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core
 
 While the scale has been validated and used in the general population and non-clinical samples [@lowe20104; @hajek2020prevalence], its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, which does not necessary entail a focus on the sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, "Not at all" and "Several days", is quite large and possibly leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of affective levels on the lower end of the spectrum, important for instance in the context of subclinical variability quantification. 
 
-This brief report aims at testing the possibility of enhancing - with minimal changes to the original scale - the PHQ-4 sensitivity to mild mood level inflections. In the first study, we will evaluate whether the new response option is prevalently used by participants, and whether it does capture a specific part of the latent measurand. In the second study, we will compare the refined PHQ-4 version to the original one in terms of sensitivity to subclinical variability in depression, using the Beck Depression Inventory [BDI-II, @beck1996beck] and the State Trait Anxiety Inventory [STAI-5, @zsido2020development] as our ground-truth measures of depression and anxiety.
+This brief report aims at testing the possibility of enhancing - with minimal changes to the original scale - the PHQ-4 sensitivity to mild mood level inflections. In the first study, we will evaluate whether the new response option is prevalently used by participants, and whether it does capture a specific part of the latent measure. In the second study, we will compare the refined PHQ-4 version to the original one in terms of sensitivity to subclinical variability in depression, using the Beck Depression Inventory [BDI-II, @beck1996beck] and the State Trait Anxiety Inventory [STAI-5, @zsido2020development] as our ground-truth measures of depression and anxiety.
 
 
 # Study 1
@@ -157,7 +157,6 @@ The fact that the new "Once or twice" response option was the most prevalent res
 One natural methodological limitation pertains to the interpretation of the latent dimensions in an IRT framework applied to pairs of items. In this study's context, references to for instance "the latent anxiety dimension" merely corresponds to the amalgamation of the two items of the anxiety subscale, and not to a more general and valid true anxiety factor.
 
 
-
 # Study 2
 
 ## Method
@@ -177,13 +176,33 @@ In this sample, 51 participants (6.10%) were labelled as having Depression, as i
 
 ### Measures
 
-**TODO** (describe BDI-II, STAI-5, PHQ-4, and other measures used but not relevant)
+<!--**TODO** (describe BDI-II, STAI-5, PHQ-4, and other measures used but not relevant) -->
 
-The total scores for the original version are 0-6 scores for depression and anxiety. The refined version creates more possible scores (0.5, 1.5, 2.5, etc.) due to the presence of an item scored 0.5.
+The BDI-II [@beck1996beck] was used to assess depressive symptoms. This self-report questionnaire consists of 21 items, each addressing a specific symptom of depression. Each item contains four response options scored from 0 to 3, reflecting the severity of the symptom. Participants are instructed to select the option that best describes how they have felt over the past two weeks. For example, the item assessing sadness includes the following response options:
+- 0: I do not feel sad.  
+- 1: I feel sad much of the time.  
+- 2: I am sad all the time.  
+- 3: I am so sad or unhappy that I can't stand it.  
+The total score is calculated by summing the scores for all 21 items, with higher scores indicating greater severity of depressive symptoms.
+
+The PHQ-4 [@kroenke2009ultra] is a brief measure of core symptoms of depression and anxiety, consisting of four items—two for depression and two for anxiety. Items are rated on a 4-point Likert scale from *Not at all* to *Nearly every day*, reflecting how participants felt over the past two week (e.g., *Feeling down, depressed, or hopeless"*). The total score, obtained by summing all item scores, is categorized as: normal (0–2), mild (3–5), moderate (6–8), and severe (9–12). A score ≥3 on the first two items indicates significant anxiety, while a score ≥3 on the last two items indicates significant depression. The total scores for the original version are 0-6 scores for depression and anxiety. The refined version creates more possible scores (0.5, 1.5, 2.5, etc.) due to the presence of an item scored 0.5.
+
+The STAIT-5 [@zsido2020development] is a brief measure of trait anxiety. It comprises 5 items rated on a 4-point Likert scale ranging from *Not at all* to *Very much so*. For example, one item states: *"I worry too much over something that really doesn't matter"*. Changes will be made in the instructions from asking *"how participants feel right now"* to *"over the past 2 weeks"* to keep it consistent with the instructions of the PHQ-4 and BDI-II Trait anxiety is assessed by summing the scores for all items, with higher total scores reflecting greater levels of trait anxiety.
+
+The Interoceptive Accuracy Scale (IAS; @murphy2020testing) was used to assess subjective interoceptive accuracy. The IAS consists of 21 items, each rated on an analogous scale from *Strongly Disagree* to *Strongly Agree*. Participants respond to statements about their ability to perceive bodily sensations (e.g., *"I can always accurately perceive when my heart is beating fast."*). The total score is calculated by summing the item responses, with higher scores indicating greater self-reported subjective interoceptive accuracy.
+
+The Multidimensional Assessment of Interoceptive Awareness - Version 2 (MAIA-2; @mehling2018multidimensional) was utilized to assess interoceptive awareness. The MAIA-2 comprises 37 items, each rated on a analogous scale ranging from *Never* to *Always.* An example of an item would be: *"I trust my body sensations"*. Interoceptive awareness is calculated by summing the item scores, with higher total scores indicating greater interoceptive awareness.
 
 ### Procedure 
 
-**TODO**
+<!--**TODO**--> 
+
+Participants will first be presented with an information and consent form. They will be asked to provide consent by clicking the button labeled "I read, understood, and I consent." Following this, they will complete demographic questions, including gender, age, educational level, country of residence, and ethnicity.
+
+Participants will then be asked about relevant medical history. They will be explicitly informed that answering these questions is optional. The questions cover whether they are currently living with any psychopathologies (e.g., Major Depressive Disorder, Borderline Personality Disorder, Panic Disorder), whether they have been previously diagnosed with any of these conditions, and whether they are currently undergoing any treatments or interventions, such as mood stabilizers (e.g., LITHIUM, LAMICTAL) or mindfulness and stress management techniques.
+
+After completing or skipping this section, participants will be randomly assigned to complete either the original or modified version of the PHQ-4, followed by the BDI-II, STAIT-5, IAS, and MAIA-2, presented in random order. At the end of the experiment, participants will be provided with a debriefing page and given a final opportunity to withdraw their participation. The experiment, implemented using jsPsych [@de2015jspsych], will take approximately 10 minutes.
+
 
 ## Results 
 
