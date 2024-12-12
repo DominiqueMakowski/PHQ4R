@@ -87,7 +87,10 @@ format:
   apaquarto-docx: default
   apaquarto-html: default
   apaquarto-pdf:
-    documentmode: jou
+    documentmode: man
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 
@@ -169,7 +172,7 @@ We excluded 194 participants (18.42\%) for failing at least one attention check,
 The experiment duration was not related to the probability of failing attention checks and was thus not used as an exclusion criterion.
 
 The final sample included 836 participants (Mean age = 25.1 +- 11.3 [18, 76]; 73.8\% women).
-This study was approved by the University of Sussex' Ethics Committee **(ER/...)**.
+This study was approved by the University of Sussex' Ethics Committee (ER/ASF25/4).
 
 In this sample, 51 participants (6.10%) were labelled as having Depression, as indexed by the self-reported presence of MDD together with the use of a treatment (antidepressent, anxiolytic and/or therapy), and 87 participants (10.41%) were labelled as having Anxiety, as indexed by the self-reported presence of GAD or Panic Disorder, also together with the use of a treatment.
 
@@ -181,7 +184,7 @@ Participants were randomly assigned to complete either the original or refined v
 The BDI-II [@beck1996beck] was used as a ground truth measure of depressive symptoms. It includes 21 items, each addressing a specific depression symptom and offering four response options scored from 0 to 3. Participants are instructed to select the option that best describes how they have felt over the past two weeks. 
 The total score is calculated by summing the scores for all 21 items, with higher scores indicating greater severity of depressive symptoms.
 
-The STAI-5 [@zsido2020development] was used as a ground truth measure of anxiety. This abridged version of the STAI (**TODO: add ref**) includes 5 items rated on a 4-point Likert scale. Changes were made in the instructions from asking *"how participants feel right now"* to *"over the past 2 weeks"* to keep it consistent with the instructions of the PHQ-4 and BDI-II. A general score of anxiety was computed by averaging all the items.
+The STAI-T5 [@zsido2020development] was used as a ground truth measure of anxiety. This abridged version of the STAI [@marteau1992development] includes 5 items rated on a 4-point Likert scale. Changes were made in the instructions from asking *"how participants feel right now"* to *"over the past 2 weeks"* to keep it consistent with the instructions of the PHQ-4 and BDI-II. A general score of anxiety was computed by averaging all the items.
 
 Participants were also asked to complete two questionnaires of interoception, namely the Interoceptive Accuracy Scale [IAS - 21 items rated on analog scales, @murphy2020testing] and the Multidimensional Assessment of Interoceptive Awareness [MAIA-2 - 37 items, @mehling2018multidimensional].
 
@@ -207,15 +210,15 @@ knitr::include_graphics("../../study2/analysis/2_analysis_files/figure-html/figu
 
 ### PHQ-4 Depression *vs.* BDI-II
 
-The linear regression predicting the BDI-II total score with the PHQ-4 depression score showed no interaction related to the PHQ-4 version ($\Delta Intercept_{\text{refined}} = TODO; \Delta \beta_{\text{refined}} = TODO$), suggesting no differences in the relationship pattern between the two versions (see @fig-two).
+The linear regression predicting the BDI-II total score with the PHQ-4 depression score showed no interaction related to the PHQ-4 version ($\Delta Intercept_{\text{refined}} =  -0.13, 95\% CI[-1.73, 1.47], t(832) =  -0.16, p = 0.871 ; \Delta \beta_{\text{refined}} = -0.05, 95\% CI[-0.70, 0.60], t(832) = -0.15 , p = 0.883$), suggesting no differences in the relationship pattern between the two versions (see @fig-two).
 
-Moreover, Bayesian *t*-tests (using *BayesFactor*'s `ttestBF()` function with default priors; **ADD REF TO PKG**) comparing the BDI-II scores between the refined and the original version at each integer score (0, 1, 2, 3) yielded no evidence in favour of a significant difference (BF > 3). In other words, having the same score on the refined version as on the original version was related to the same outcome on the BDI-II. 
+Moreover, Bayesian *t*-tests (using *BayesFactor*'s `ttestBF()` function with default priors; @moreyrouder2024) comparing the BDI-II scores between the refined and the original version at each integer score (0, 1, 2, 3) yielded no evidence in favour of a significant difference (BF > 3). In other words, having the same score on the refined version as on the original version was related to the same outcome on the BDI-II. 
 
 However, the low in-between scores from the refined version are overall capturing significantly different levels of depression compared to the adjacent scores. Scoring 0.5 was associated with a higher BDI-II score than scoring 0 (BF > 30), and lower scores than scoring 1 (BF > 30). Similarly, scoring 1.5 was associated with a higher BDI-II score than scoring 1 (BF > 30), but not lower scores than scoring 2 (BF = 0.234).
 
 ### PHQ-4 Anxiety *vs.* STAI-5
 
-The linear regression predicting the STAI-5 general score with the PHQ-4 anxiety score showed no interaction related to the PHQ-4 version ($\Delta Intercept_{\text{refined}} = TODO; \Delta \beta_{\text{refined}} = TODO$), suggesting no differences in the relationship pattern between the two versions.
+The linear regression predicting the STAI-5 general score with the PHQ-4 anxiety score showed no interaction related to the PHQ-4 version ($\Delta Intercept_{\text{refined}} =  -0.02, 95\% CI[-0.15, 0.11], t(832) =  -0.32, p = 0.750; \Delta \beta_{\text{refined}} = 0.01, 95\% CI[-0.03, 0.05], t(832) = 0.56 , p = 0.576$), suggesting no differences in the relationship pattern between the two versions.
 
 Moreover, Bayesian *t*-tests comparing the STAI-5 scores between the refined and the original version at each integer score yielded no evidence in favour of a significant difference. In other words, having the same score on the refined version as on the original version was related to the same outcome on the STAI-5.
 
