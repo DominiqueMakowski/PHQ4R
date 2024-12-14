@@ -226,9 +226,9 @@ However, comparing in-between scores with adjacent scores yielded mixed results.
 
 While the relationship pattern (i.e., the slope of the linear relationship) was not affected by the PHQ-4 version, we focused next on testing the difference in the strength (i.e., the precision) of the relationship, in particular at the lower end of the spectrum (i.e., for sub-clinical threshold scores of the BDI-II and STAI-5). We bootstrapped (2000 iterations) the difference in correlation between the refined and the original version for each of the two ground-truth measures, separately for the BDI-II subsamples (minimal to mild <= 18; moderate to severe > 18) and the STAI-5 subsamples (minimal to mild < 2; moderate to severe >= 2).
 
-The results suggested that in the subclinical range of the BDI-II, the correlation between its score and the PHQ-4 Depression score was marginally higher (although not significantly, $p_{one-sided} = 0.161$) for the refined version compared to the original one. No correlation differences were observed in the moderate to severe range of the BDI-II.
+The results suggested that in the subclinical range of the BDI-II, the correlation between its score and the PHQ-4 Depression score was marginally higher (although not significantly, $p_{one-sided} = 0.164$) for the refined version compared to the original one. No correlation differences were observed in the moderate to severe range of the BDI-II.
 
-For the STAI-5, there was no difference in the correlation between the refined and the original version in the subclinical range of the STAI-5. Surprisingly, we observed a stronger correlation between the refined PHQ-4 Anxiety score and the STAI-5 in the moderate to severe range compared to the original version ($p_{one-sided} = 0.027$).
+For the STAI-5, there was no difference in the correlation between the refined and the original version in the subclinical range of the STAI-5. Surprisingly, we observed a stronger correlation between the refined PHQ-4 Anxiety score and the STAI-5 in the moderate to severe range compared to the original version ($p_{one-sided} = 0.017$).
 
 ### Predictive Power 
 
