@@ -1,6 +1,6 @@
 ---
 title: "**Measuring Depression and Anxiety with 4 items? Adaptation of the PHQ-4 to increase its Sensitivity to Subclinical Variability**"
-shorttitle: "Short Title in Running Header"
+shorttitle: "Adaptation of the PHQ-4"
 author:
   - name: Dominique Makowski
     corresponding: true
@@ -46,6 +46,7 @@ author:
     role:
       - Data curation
       - Formal Analysis
+      - Writing – original draft
       - Writing – review & editing
     affiliations:
       - ref: "id1"
@@ -89,6 +90,7 @@ format:
   apaquarto-html: default
   apaquarto-pdf:
     documentmode: jou
+    keep-tex: true
 ---
 
 
