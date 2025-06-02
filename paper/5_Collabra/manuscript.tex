@@ -1,10 +1,10 @@
 \documentclass[
-  man,
-  floatsintext,
+  jou,
   longtable,
   nolmodern,
   notxfonts,
   notimes,
+  mask,
   colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{apa7}
 
 \usepackage{amsmath}
@@ -208,7 +208,15 @@ Te}{0000-0002-9312-5552}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{S.H. Annabel
 Chen}{0000-0002-1540-5516}} 
 \par{ }
-\par{       Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows: Dominique
+\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colframe=quarto-callout-note-color-frame, left=2mm, opacityback=0, colback=white, arc=.35mm, bottomrule=.15mm]
+
+This preprint is a non-peer-reviewed work from the
+\href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
+\begin{center}
+\includegraphics[width=0.2\textwidth,height=\textheight]{manuscript_files/mediabag/ReBeL_LogoOnly_hu114.png}
+\end{center}
+
+\end{tcolorbox}  Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows: Dominique
 Makowski:   Conceptualization, Data curation, Formal Analysis, Funding
 acquisition, Investigation, Methodology, Project
 administration, Resources, Software, Supervision, Validation, Visualization, Writing
@@ -221,18 +229,67 @@ administration, Supervision, Writing -- review \& editing}
 to Dominique Makowski, Email: D.Makowski@sussex.ac.uk}
 }
 
+\usepackage{pbalance} 
+\usepackage{float}
 \makeatletter
-\let\endoldlt\endlongtable
+\let\oldtpt\ThreePartTable
+\let\endoldtpt\endThreePartTable
+\def\ThreePartTable{\@ifnextchar[\ThreePartTable@i \ThreePartTable@ii}
+\def\ThreePartTable@i[#1]{\begin{figure}[!htbp]
+\onecolumn
+\begin{minipage}{0.5\textwidth}
+\oldtpt[#1]
+}
+\def\ThreePartTable@ii{\begin{figure}[!htbp]
+\onecolumn
+\begin{minipage}{0.5\textwidth}
+\oldtpt
+}
+\def\endThreePartTable{
+\endoldtpt
+\end{minipage}
+\twocolumn
+\end{figure}}
+\makeatother
+
+
+\makeatletter
+\let\endoldlt\endlongtable		
 \def\endlongtable{
 \hline
-\endoldlt
-}
+\endoldlt}
 \makeatother
+
+\newenvironment{twocolumntable}% environment name
+{% begin code
+\begin{table*}[!htbp]%
+\onecolumn%
+}%
+{%
+\twocolumn%
+\end{table*}%
+}% end code
 
 \urlstyle{same}
 
 
 
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -559,7 +616,8 @@ The original or refined version of the PHQ-4 was followed by the BDI-II,
 STAI-5, IAS, and MAIA-2, presented in random order. The IAS and the
 MAIA-2 were included as part of another study focused on interoception,
 and were only used in this stud as part of data quality control checks.
-\#\# Results
+
+\subsection{Results}\label{results-1}
 
 As all the scripts, analysis details and results tables are available
 open-access at https://github.com/DominiqueMakowski/PHQ4R, we will focus

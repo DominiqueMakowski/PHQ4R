@@ -83,7 +83,8 @@ abstract: |
 #   **Significance Statement**. Developing reliable and sensitive instruments for mood disorders screening is critical in a global context marked by international crises (pandemics, wars), where increasingly more surveys are done online. In this study, we show that a small modification to the widely used PHQ-4 scale (adding the "Once or twice" response option) can increase its ability to capture the mild fluctuations prevalent in subclinical samples.
 keywords: "PHQ-4, depression, anxiety, brief questionnaire validation, ultra short scale"
 numbered-lines: true
-floatsintext: true
+floatsintext: false
+mask: true
 bibliography: bibliography.bib
 format:
   apaquarto-docx: default
@@ -96,7 +97,7 @@ format:
 
 The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety [@kroenke2009ultra]. It consists of two items for depression [PHQ–2, @kroenke2003patient] and anxiety [GAD–2, @kroenke2007anxiety], each corresponding to DSM-5 diagnostic symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and populations [@christodoulaki2022validation; @mendoza2022factor; @materu2020psychometric], becoming one of the most popular screening instruments for depression and anxiety [@maurer2018depression].
 
-While the scale has been validated and used in the general population and non-clinical samples [@lowe20104; @hajek2020prevalence], its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, which does not **necessarily** entail a focus on the sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, "Not at all" and "Several days", is quite large and possibly leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of affective levels on the lower end of the spectrum, important for instance in the context of subclinical variability quantification. 
+While the scale has been validated and used in the general population and non-clinical samples [@lowe20104; @hajek2020prevalence], its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, which does not necessary entail a focus on the sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, "Not at all" and "Several days", is quite large and possibly leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of affective levels on the lower end of the spectrum, important for instance in the context of subclinical variability quantification. 
 
 This brief report aims at testing the possibility of enhancing - with minimal changes to the original scale - the PHQ-4 sensitivity to mild mood level inflections. In the first study, we will evaluate whether the new response option is prevalently used by participants, and whether it does capture a specific part of the latent measure. In the second study, we will compare the refined PHQ-4 version to the original one in terms of sensitivity to subclinical variability in depression, using the Beck Depression Inventory [BDI-II, @beck1996beck] and the State Trait Anxiety Inventory [STAI-5, @zsido2020development] as our ground-truth measures of depression and anxiety.
 
