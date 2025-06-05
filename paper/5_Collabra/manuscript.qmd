@@ -193,7 +193,7 @@ After demographic questions, participants were asked to report the current prese
 
 ### Procedure
 
-The original or refined version of the PHQ-4 was followed by the BDI-II, STAI-5, IAS, and MAIA-2, presented in random order. The IAS **(ref?)** and the MAIA-2 **(ref?)** were included as part of another focused on interoception, and were only used in this study as part of data quality control checks. 
+The original or refined version of the PHQ-4 was followed by the BDI-II, STAI-5, IAS, and MAIA-2, presented in random order. The IAS [@murphy2020testing] and the MAIA-2 [@mehling2018multidimensional] were included as part of another focused on interoception, and were only used in this study as part of data quality control checks. 
 
 
 ## Results 
