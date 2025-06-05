@@ -7,6 +7,7 @@ format:
   html:
     code-fold: true
     self-contained: false
+    toc: true
 ---
 
 ## Data Preparation
@@ -20,6 +21,7 @@ library(easystats)
 library(patchwork)
 library(ggside)
 library(ggdist)
+library(mirt)
 ```
 
 
@@ -38,7 +40,9 @@ colors <- c("Original" = "#607D8B", "Revised" = "#FF9800")
 ```
 
 
+
 ## Depression
+
 
 
 ### Relationship with BDI-2
@@ -228,6 +232,114 @@ p_mddroc <- make_roc(m)
 p_mdd / p_mddroc + plot_layout(guides="collect")
 ```
 
+### IRT
+
+These completementary analyses were suggested during review to also apply IRT to the second sample. Additionally, we also computed "empirical coverage" curves.
+
+```{r}
+dat_irt <- df |> 
+  filter(PHQ4_Condition == "Revised") |>
+  select(starts_with("PHQ4"), BDI2_Total, STAI5_General) |> 
+  mutate(Depression_3 = as.numeric(as.factor(PHQ4_Depression_3)),
+         Depression_4 = as.numeric(as.factor(PHQ4_Depression_4)),
+         Anxiety_1 = as.numeric(as.factor(PHQ4_Anxiety_1)),
+         Anxiety_2 = as.numeric(as.factor(PHQ4_Anxiety_2)))
+
+irt_model1 <- mirt::mirt(data = dat_irt[c("Depression_3", "Depression_4")],
+                  itemtype = 'graded',
+                  verbose = FALSE) 
+irt_model2 <- mirt::mirt(data = dat_irt[c("Anxiety_1", "Anxiety_2")],
+                         optimizer = "nlminb",
+                  itemtype = 'graded',
+                  verbose = FALSE) 
+
+# plot(irt_model, type = "trace", theta_lim = c(-3, 3))
+
+irt_data1  <- mirt::fscores(irt_model1, full.scores.SE = TRUE) |>
+  as.data.frame() |> 
+  mutate(Groundtruth = dat_irt$BDI2_Total,
+         PHQ4_Score = dat_irt$PHQ4_Depression,
+         Dimension = "Depression") 
+irt_data2  <- mirt::fscores(irt_model2, full.scores.SE = TRUE) |>
+  as.data.frame() |> 
+  mutate(Groundtruth = dat_irt$STAI5_General,
+         PHQ4_Score = dat_irt$PHQ4_Anxiety,
+         Dimension = "Anxiety")
+
+irt_data1$Label1 <- insight::format_value(cor(irt_data1$F1, irt_data1$Groundtruth))
+irt_data1$Label2 <- insight::format_value(cor(irt_data1$F1, irt_data1$PHQ4_Score))
+irt_data2$Label1 <- insight::format_value(cor(irt_data2$F1, irt_data2$Groundtruth))
+irt_data2$Label2 <- insight::format_value(cor(irt_data2$F1, irt_data2$PHQ4_Score))
+
+irt_data <- rbind(irt_data1, irt_data2) |> 
+  mutate(Label1 = paste("r =", Label1),
+         Label2 = paste("r =", Label2)) 
+
+irt_data |> 
+  ggplot() +
+  geom_jitter(aes(x = F1, y = Groundtruth), width = 0.05, height = 0.05) +
+  geom_smooth(aes(x = F1, y = Groundtruth), method = "lm", color = "red", formula = "y ~ x") +
+  geom_text(data = dplyr::distinct(irt_data[c("Dimension", "Label1")]), aes(label = Label1),
+    x = -1, y = c(55, 3), size = 5, color = "red"
+  ) +
+  facet_wrap(~ Dimension, scales = "free_y", ncol = 1) +
+  labs(x = "Theta latent factor extracted from IRT", y = "Ground truth score (BDI-II or STAI-5)") +
+  theme_minimal() |
+  irt_data |> 
+  ggplot() +
+  geom_jitter(aes(x = F1, y = PHQ4_Score), width = 0.05, height = 0.05) +
+  geom_smooth(aes(x = F1, y = PHQ4_Score), method = "lm", color = "blue", formula = "y ~ x", se = FALSE) +
+  geom_smooth(aes(x = F1, y = PHQ4_Score), method = "lm", color = "darkorange", formula = "y ~ poly(x, 2)", se = FALSE) +
+  geom_text(data = dplyr::distinct(irt_data[c("Dimension", "Label2")]), aes(label = Label2),
+    x = -1, y = c(6, 6), size = 5, color = "red"
+  ) +
+  facet_wrap(~ Dimension, scales = "free_y", ncol = 1) +
+  labs(x = "Theta latent factor extracted from IRT", y = "PHQ4 Score (Average)") +
+  theme_minimal()
+```
+
+```{r}
+add_labels <- function(x) {
+  x <- case_when(
+    x == 0 ~ "Not at all",
+    x == 0.5 ~ "Once or twice",
+    x == 1 ~ "Several days",
+    x == 2 ~ "More than half the days",
+    .default = "Nearly every day"
+  )
+  fct_relevel(x, c("Not at all", "Once or twice", "Several days", "More than half the days", "Nearly every day"))
+}
+
+rbind(
+  mutate(dat_irt, 
+         Item = "D1: Feeling down, depressed, or hopeless", 
+         Response = add_labels(PHQ4_Depression_3),
+         Outcome = BDI2_Total),
+  mutate(dat_irt, 
+         Item = "D2: Little interest or pleasure in doing things",
+         Response = add_labels(PHQ4_Depression_4),
+         Outcome = BDI2_Total),
+  mutate(dat_irt, 
+         Item = "A1: Feeling nervous, anxious, or on edge",
+         Response = add_labels(PHQ4_Anxiety_1),
+         Outcome = STAI5_General),
+  mutate(dat_irt, 
+         Item = "A2: Not being able to stop or control worrying",
+         Response = add_labels(PHQ4_Anxiety_2),
+         Outcome = STAI5_General)
+  ) |>
+  estimate_density(method = "KernSmooth", select = "Outcome", by = c("Item", "Response")) |> 
+  ggplot(aes(x = x, y = y, color = Response)) +
+  geom_line(linewidth = 1) +
+  labs(x = "Ground truth measure (BDI or STAI)", y = "Distribution") +
+  facet_wrap(~ Item, scales = "free") +
+  scale_y_continuous(expand = expansion(add = c(0, 0.001))) +
+  scale_x_continuous(expand = expansion(add = c(0, 0))) +
+  see::scale_color_flat_d("rainbow") +
+  see::theme_modern(axis.title.space = 5) +
+  theme(strip.background = element_rect(fill = "#EEEEEE", colour = "white"),
+        axis.text.y = element_blank())
+```
 
 ## Anxiety
 

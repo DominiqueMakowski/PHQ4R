@@ -1,0 +1,88 @@
+---
+title: "**Measuring Depression and Anxiety with 4 items? Adaptation of the PHQ-4 to increase its Sensitivity to Subclinical Variability**"
+shorttitle: "Adaptation of the PHQ-4"
+author:
+  - name: Dominique Makowski
+    corresponding: true
+    orcid: 0000-0001-5375-9967
+    email: D.Makowski@sussex.ac.uk
+    url: https://realitybending.github.io/
+    roles:
+      - Conceptualization
+      - Data curation
+      - Formal Analysis
+      - Funding acquisition
+      - Investigation
+      - Methodology
+      - Project administration
+      - Resources
+      - Software
+      - Supervision
+      - Validation
+      - Visualization
+      - Writing – original draft
+    affiliations:
+      - id: "id1"
+        name: "University of Sussex"
+        department: "School of Psychology"
+        city: "Brighton"
+        country: "UK"
+        postal-code: "BN1 9RH"
+      - name: "University of Sussex"
+        department:  "Sussex Centre for Consciousness Science"
+  - name: An Shu Te
+    #corresponding: 
+    orcid: 0000-0002-9312-5552
+    role:
+      - Project administration
+      - Resources
+      - Writing – original draft
+    affiliations:
+      - id: "id2"
+        name: "Nanyang Technological University"
+        department: "School of Social Sciences"
+  - name: Ana Neves  
+    orcid: 0009-0006-0020-7599
+    role:
+      - Data curation
+      - Formal Analysis
+      - Writing – original draft
+      - Writing – review & editing
+    affiliations:
+      - ref: "id1"
+  - name: S.H. Annabel Chen  # AnnabelChen@ntu.edu.sg
+    orcid: 0000-0002-1540-5516
+    role:
+      - Project administration
+      - Supervision
+      - Writing – review & editing
+    affiliations:
+      - ref: "id2"
+      - name: "Nanyang Technological University"
+        department: "LKC Medicine"
+      - name: "Nanyang Technological University"
+        department:  "Centre for Research and Development in Learning"
+author-note:
+  status-changes: 
+    affiliation-change: ~
+    deceased: ~
+  disclosures:
+    gratitude: ~
+    study-registration: ~
+    data-sharing: ~
+    related-report: ~
+    conflict-of-interest: ~
+    financial-support: ~
+    authorship-agreements: ~
+abstract: ""
+keywords: "PHQ-4, depression, anxiety, brief questionnaire validation, ultra short scale"
+numbered-lines: true
+floatsintext: true
+bibliography: bibliography.bib
+format:
+  apaquarto-docx: default
+  apaquarto-html: default
+  apaquarto-pdf:
+    documentmode: man
+---
+

@@ -7,6 +7,7 @@ format:
   html:
     code-fold: true
     self-contained: true
+    toc: true
     fig-dpi: 300
     fig-width: 11.33
 ---
@@ -40,6 +41,12 @@ df2 <- read.csv("../study2/data/data_raw.csv") |>
   select(Sex = Gender, Age, starts_with("PHQ4_"), -PHQ4_Duration, -PHQ4_Condition, -PHQ4_Order)
 
 names(df2) <- str_remove_all(names(df2), "PHQ4_")
+
+df2ori <- read.csv("../study2/data/data_raw.csv") |>
+  filter(PHQ4_Condition == "PHQ4 - Original") |>
+  select(Sex = Gender, Age, starts_with("PHQ4_"), -PHQ4_Duration, -PHQ4_Condition, -PHQ4_Order)
+
+names(df2ori) <- str_remove_all(names(df2ori), "PHQ4_")
 ```
 
 ## Participants
@@ -299,6 +306,16 @@ plot(m_anxiety2, type = "infoSE", theta_lim = c(-3, 3))
 plot(m_anxiety2, type = "rxx", theta_lim = c(-3, 3))
 ```
 
+Same on original version: 
+
+```{r}
+#| eval: false
+
+m_anxiety2ori <- mirt(select(df2ori, contains("Anxiety")), model = 1, itemtype = "graded", SE = TRUE, verbose = FALSE)
+
+plot(m_anxiety2ori, type = "trace", theta_lim = c(-3, 3))
+plot(m_anxiety2ori, type = "infotrace", theta_lim = c(-3, 3))
+```
 
 #### Full
 
@@ -503,6 +520,23 @@ a2 <- data.frame(
 knitr::kable(a2)
 ```
 
+```{r}
+#| eval: false
+
+plot(m_depression2, type = "trace", theta_lim = c(-3, 3))
+plot(m_depression2, type = "infotrace", theta_lim = c(-3, 3))
+```
+
+```{r}
+#| eval: false
+
+m_dep2ori <- mirt(select(df2ori, contains("Depression")), model = 1, itemtype = "graded", SE = TRUE, verbose = FALSE)
+
+plot(m_dep2ori, type = "trace", theta_lim = c(-3, 3))
+plot(m_dep2ori, type = "infotrace", theta_lim = c(-3, 3))
+```
+
+
 :::
 
 
@@ -634,7 +668,7 @@ make_scores <- function(df) {
   
   data |> 
     ggplot(aes(x=value)) + 
-    geom_area(data=estimate_density(data, at = c("Dimension", "Scoring"), method = "KernSmooth") |> 
+    geom_area(data=estimate_density(data, by = c("Dimension", "Scoring"), method = "KernSmooth") |> 
                 group_by(Scoring) |> 
                 normalize(select = "y"),
               aes(x = x, y = y, fill=Dimension), alpha = 0.05, position="identity") +
