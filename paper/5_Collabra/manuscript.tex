@@ -81,15 +81,17 @@
 
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
 
@@ -195,9 +197,9 @@ constructs on the lower end of the spectrum. In study 2 (N=836), we show
 that the refined version offers an improved sensitivity to subclinical
 variability in depression (indexed by the BDI-II) as compared to the
 original version. In conclusion, adding the ``once or twice'' response
-option is a low-cost no-downsides way of increasing the PHQ-4's
-sensitivity to subclinical variability, making it a tool of choice for
-general population research.}
+option is a low-cost way of increasing the PHQ-4's sensitivity to
+subclinical variability, making it a tool of choice for general
+population research.}
 
 \keywords{PHQ-4, depression, anxiety, brief questionnaire validation,
 ultra short scale}
@@ -208,12 +210,12 @@ Te}{0000-0002-9312-5552}}\par{\addORCIDlink{Ana
 Neves}{0009-0006-0020-7599}}\par{\addORCIDlink{S.H. Annabel
 Chen}{0000-0002-1540-5516}} 
 \par{ }
-\par{     \begin{tcolorbox}[enhanced jigsaw, breakable, rightrule=.15mm, leftrule=.75mm, toprule=.15mm, colframe=quarto-callout-note-color-frame, left=2mm, opacityback=0, colback=white, arc=.35mm, bottomrule=.15mm]
+\par{     \begin{tcolorbox}[enhanced jigsaw, colback=white, toprule=.15mm, opacityback=0, arc=.35mm, breakable, bottomrule=.15mm, colframe=quarto-callout-note-color-frame, rightrule=.15mm, left=2mm, leftrule=.75mm]
 
 This preprint is a non-peer-reviewed work from the
 \href{https://realitybending.github.io/}{\textbf{Reality Bending Lab}}.
 \begin{center}
-\includegraphics[width=0.2\textwidth,height=\textheight]{manuscript_files/mediabag/ReBeL_LogoOnly_hu114.png}
+\includegraphics[width=0.2\linewidth,height=\textheight,keepaspectratio]{manuscript_files/mediabag/ReBeL_LogoOnly_hu114.png}
 \end{center}
 
 \end{tcolorbox}  Author roles were classified using the Contributor Role Taxonomy (CRediT; https://credit.niso.org/) as follows: Dominique
@@ -393,7 +395,7 @@ and non-clinical samples (\citeproc{ref-hajek2020prevalence}{Hajek \&
 König, 2020}; \citeproc{ref-lowe20104}{Löwe et al., 2010}), its initial
 purpose was to reliably discriminate and identify potential MDD/GAD
 patients. This discriminative goal materializes in the scale's design
-and the existence of categorical cut-offs, which does not necessary
+and the existence of categorical cut-offs, which does not necessarily
 entail a focus on the sensitivity to milder mood alterations. In
 particular, the gap between the two lowest possible answers, ``Not at
 all'' and ``Several days'', is quite large and possibly leaves out the
@@ -403,15 +405,27 @@ sub-optimal discrimination of affective levels on the lower end of the
 spectrum, important for instance in the context of subclinical
 variability quantification.
 
+\textbf{Enabling a more precise assessment of low-severity alterations
+is important, as milder symptoms are significant predictors of future
+clinical disorders and are associated with present functional
+impairments and reduced quality of life
+(\citeproc{ref-cuijpers2004subthreshold}{Cuijpers \& Smit, 2004};
+\citeproc{ref-judd1998major}{Judd et al., 1998}). In addition, the
+growing reliance on large-scale, often online, psychological and
+epidemiological surveys, to monitor population-level mental health,
+evaluate interventions, or track responses to global stressors such as
+pandemics or geopolitical crises, demands tools that are both brief and
+sensitive to small but meaningful fluctuations.}
+
 This brief report aims at testing the possibility of enhancing - with
 minimal changes to the original scale - the PHQ-4 sensitivity to mild
 mood level inflections. In the first study, we will evaluate whether the
 new response option is prevalently used by participants, and whether it
-does capture a specific part of the latent measure. In the second study,
-we will compare the refined PHQ-4 version to the original one in terms
-of sensitivity to subclinical variability in depression, using the Beck
+does capture a specific part of the construct. In the second study, we
+will compare the refined PHQ-4 version to the original one in terms of
+sensitivity to subclinical variability in depression, using the Beck
 Depression Inventory (BDI-II, \citeproc{ref-beck1996beck}{Beck et al.,
-1996}) and the State Trait Anxiety Inventory (STAI-5,
+1996}) and the Trait scale of the State-Trait Anxiety Inventory (STAI-5,
 \citeproc{ref-zsido2020development}{Zsido et al., 2020}) as our
 ground-truth measures of depression and anxiety.
 
@@ -448,8 +462,7 @@ anxiety.
 For the refined version, we added a ``Once or twice'' option between
 ``Not at all'' and ``Several days''in order to better capture potential
 mild mood inflections (see \citeproc{ref-dobson1979equidistant}{Dobson
-\& Mothersill, 1979} for the choice of the label). This new option was
-scored as 0.5 to preserve the same scoring as the original version.
+\& Mothersill, 1979} for the choice of the label).
 
 \subsubsection{Procedure}\label{procedure}
 
@@ -482,41 +495,43 @@ Typically, an optimally informative item would display a large coverage
 over theta, with each response presenting a narrow coverage (high
 discrimination between different levels).}{\label{fig-one}}}}
 
-\includegraphics[width=1\textwidth,height=\textheight]{../../study1/figures/figure1.png}
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{../../study1/figures/figure1.png}
 
 \end{figure*}
 
 \subsubsection{Descriptive Statistics}\label{descriptive-statistics}
 
-The reliability of the anxiety (\(Cronbach's~\alpha = 0.903\); RMSEA =
-0.031) and depression (\(Cronbach's~\alpha = 0.841\); RMSEA = 0.044)
-subscales is excellent. The proportion of response types stratified by
-item (see Figure~\ref{fig-one}) shows that the new ``Once or twice''
-option was the most prevalent response for all items (on average
-selected in 29.12\% of cases).
+The consistency of the anxiety (\(Cronbach's~\alpha = 0.903\)) and
+depression (\(Cronbach's~\alpha = 0.841\)) subscales is excellent
+(responses were treated as ordinal). The proportion of response types
+stratified by item (see Figure~\ref{fig-one}) shows that the new ``Once
+or twice'' option was the most prevalent response for all items (on
+average selected in 29.12\% of cases).
 
 \subsubsection{Item Response Theory}\label{item-response-theory}
 
 Item Response Theory (IRT) provides insights into how well items and
 responses capture an underlying latent trait \(\theta\). For each of the
 subscales, we fitted a unidimensional graded response model (GRM,
-\citeproc{ref-samejima1997graded}{Samejima, 1997}). For anxiety, the two
-items captured 89.2\% of the variance of the latent anxiety dimension
-(\(\theta_{anxiety}\)). The discrimination parameters suggested that the
-first item was less precise (\(\alpha = 3.42\)) than the second item
-(\(\alpha = 12.55\)) in its ability to discriminate between various
-levels of anxiety (i.e., each response on the second item covers a more
-exclusive range of \(\theta_{anxiety}\), as can be seen in
-Figure~\ref{fig-one}). The two depression items captured 82.8\% of the
-variance of its latent trait (\(\theta_{depression}\)), and the opposite
-pattern was found: the first item had a higher precision
-(\(\alpha = 16.46\)) than the first (\(\alpha = 2.41\)). However, it is
-important to note that the ``less precise'' items were also the ones
-covering a larger portion of the latent space (being more sensitive
-especially on the lower end of the spectrum), offering an interesting
-trade-off between sensitivity and precision. Importantly for our
-objective, the added ``Once or twice'' option did cover a selective and
-unique portion of the latent space.
+\citeproc{ref-samejima1997graded}{Samejima, 1997}). For anxiety, the
+latent anxiety dimension (\(\theta_{anxiety}\)) captured 89.2\% of the
+total variance across the two items (RMSEA = 0.031). The discrimination
+parameters suggested that the first item was less precise
+(\(\alpha = 3.42\)) than the second item (\(\alpha = 12.55\)) in its
+ability to discriminate between various levels of anxiety (i.e., each
+response on the second item covers a more exclusive range of
+\(\theta_{anxiety}\), as can be seen in Figure~\ref{fig-one}). The
+latent depression trait (\(\theta_{depression}\)) The two depression
+items captured 82.8\% of the total variance across the two items (RMSEA
+= 0.044), and the opposite pattern was found: the first item had a
+higher precision (\(\alpha = 16.46\)) than the second
+(\(\alpha = 2.41\)). However, it is important to note that the ``less
+precise'' items were also the ones covering a larger portion of the
+latent space (being more sensitive especially on the lower end of the
+spectrum), offering an interesting trade-off between sensitivity and
+precision. Most importantly for our objective, the added ``Once or
+twice'' option did cover a selective and unique portion of the latent
+space.
 
 \subsection{Discussion}\label{discussion}
 
@@ -529,12 +544,21 @@ results suggest that adding this option response increases the scale's
 potential to discriminate average mood levels (which are superior to
 zero) from lower-end extremes (the true zero).
 
-One natural methodological limitation pertains to the interpretation of
-the latent dimensions in an IRT framework applied to pairs of items. In
-this study's context, references to for instance ``the latent anxiety
-dimension'' merely corresponds to the amalgamation of the two items of
-the anxiety subscale, and not to a more general and valid true anxiety
-factor.
+\textbf{One natural methodological limitation pertains to the
+application of the IRT framework to pairs of items. While this is
+statistically sound (the graded model utilizes the full response pattern
+information and does not solely rely on the item covariance matrix for
+parameter estimation), it is important to underline that in our study's
+context, ``the latent anxiety/depression dimension'' merely corresponds
+to the amalgamation of the two items of the anxiety or depression
+subscale, and not to a more general and independent latent anxiety or
+depression factor.}
+
+\textbf{In summary, the main take-away of this first study is that the
+``Once or twice'' response option appears as a popular choice, which
+begs the question of its usefulness in capturing more fine-grained
+variations of the underlying dimensions as measured by independent
+tools.}
 
 \section{Study 2}\label{study-2}
 
@@ -550,29 +574,36 @@ primary target for participant exclusion. We excluded 194 participants
 (18.42\%) for failing at least one attention check, and 23 (2.18\%) that
 were outliers (\(|z_{robust}| > 2.58\)) on measures significantly
 related to the probability of failing attention checks (namely, the
-standard deviation of all the items of the IAS, as well as the the
-multivariate distance obtained with the OPTICS algorithm, see
-\citeproc{ref-theriault2024check}{Thériault et al., 2024}). The
-experiment duration was not related to the probability of failing
-attention checks and was thus not used as an exclusion criterion.
+standard deviation of all the items of the Interoceptive Accuracy Scale,
+as well as the the multivariate distance obtained with the OPTICS
+algorithm, see \citeproc{ref-theriault2024check}{Thériault et al.,
+2024}). The experiment duration was not related to the probability of
+failing attention checks and was thus not used as an exclusion
+criterion.
 
 The final sample included 836 participants (Mean age = 25.1 \(\pm\) 11.3
 {[}18, 76{]}; 73.8\% women). This study was approved by the University
 of Sussex' Ethics Committee (ER/ASF25/4).
 
-In this sample, 51 participants (6.10\%) were labelled as having
+In this sample, 51 participants (6.10\%) were coded as having
 Depression, as indexed by the self-reported presence of MDD together
 with the use of a treatment (antidepressent, anxiolytic and/or therapy),
-and 87 participants (10.41\%) were labelled as having Anxiety, as
-indexed by the self-reported presence of GAD or Panic Disorder, also
-together with the use of a treatment.
+and 87 participants (10.41\%) were coded as having Anxiety, as indexed
+by the self-reported presence of GAD or Panic Disorder, also together
+with the use of a treatment.
 
 \subsubsection{Measures}\label{measures-1}
 
 Participants were randomly assigned to complete either the original or
 refined version of the PHQ-4, which included one additional response
-option (``Once or twice'') scored 0.5 (creating more possible total
-scores - 0.5, 1.5, 2.5, etc.).
+option (``Once or twice''). \textbf{To preserve comparability with the
+original PHQ-4 scoring system and avoid altering the scale's total score
+range or established cut-off thresholds, we assigned the new response
+option a value of 0.5, placing it midway between ``Not at all'' (0) and
+``Several days'' (1). While this scoring assumes equal spacing between
+response options - a common but imperfect convention in ordinal scales -
+it offers a pragmatic compromise between conceptual fidelity and applied
+utility.}
 
 Beck's Depression Inventory (BDI-II, \citeproc{ref-beck1996beck}{Beck et
 al., 1996}) was used as a ground truth measure of depressive symptoms.
@@ -583,18 +614,18 @@ over the past two weeks. The total score is calculated by summing the
 scores for all 21 items, with higher scores indicating greater severity
 of depressive symptoms.
 
-The short version of the State-Trait Anxiety Inventory (STAI-5,
-\citeproc{ref-zsido2020development}{Zsido et al., 2020}) was used as a
-ground truth measure of anxiety. This abridged version of the STAI
-(\citeproc{ref-spielberger1970manual}{Spielberger, 1970}) includes 5
-items rated on a 4-point Likert scale. Changes were made in the
-instructions from asking \emph{``how participants feel right now''} to
-\emph{``over the past 2 weeks''} to keep it consistent with the
-instructions of the PHQ-4 and BDI-II. A general score of anxiety was
+The short version of the trait subscale of the State-Trait Anxiety
+Inventory (STAI-5, \citeproc{ref-zsido2020development}{Zsido et al.,
+2020}) was used as a ground truth measure of anxiety. This abridged
+version of the STAI (\citeproc{ref-spielberger1970manual}{Spielberger,
+1970}) includes 5 items rated on a 4-point Likert scale. Changes were
+made in the instructions from asking \emph{``how participants feel right
+now''} to \emph{``over the past 2 weeks''} to keep it consistent with
+the instructions of the PHQ-4 and BDI-II. A general score of anxiety was
 computed by averaging all the items.
 
 Participants were also asked to complete two questionnaires of
-interoception, namely the Interoceptive Accuracy Scale (IAS - 21 items
+interoception, namely the Interoceptive Accuracy Scale (IAS, 21 items
 rated on analog scales, \citeproc{ref-murphy2020testing}{Murphy et al.,
 2020}) and the Multidimensional Assessment of Interoceptive Awareness
 (MAIA-2 - 37 items, \citeproc{ref-mehling2018multidimensional}{Mehling
@@ -613,9 +644,11 @@ Disorder, as well as undergoing a medical treatment.
 \subsubsection{Procedure}\label{procedure-1}
 
 The original or refined version of the PHQ-4 was followed by the BDI-II,
-STAI-5, IAS, and MAIA-2, presented in random order. The IAS and the
-MAIA-2 were included as part of another study focused on interoception,
-and were only used in this stud as part of data quality control checks.
+STAI-5, IAS, and MAIA-2, presented in random order. The IAS
+(\citeproc{ref-murphy2020testing}{Murphy et al., 2020}) and the MAIA-2
+(\citeproc{ref-mehling2018multidimensional}{Mehling et al., 2018}) were
+included as part of another focused on interoception, and were only used
+in this study as part of data quality control checks.
 
 \subsection{Results}\label{results-1}
 
@@ -647,15 +680,21 @@ regression, while the above plots represent the ROC curves (in which a
 line further away from the diagonal represents a higher combination of
 sensitivity and specificity).}{\label{fig-two}}}}
 
-\includegraphics[width=1\textwidth,height=\textheight]{../../study2/analysis/2_analysis_files/figure-html/figure-1.png}
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{../../study2/analysis/2_analysis_files/figure-html/figure-1.png}
 
 \end{figure*}
 
 \subsubsection{\texorpdfstring{PHQ-4 Depression \emph{vs.}
 BDI-II}{PHQ-4 Depression vs. BDI-II}}\label{phq-4-depression-vs.-bdi-ii}
 
-The linear regression predicting the BDI-II total score with the PHQ-4
-depression score showed no interaction related to the PHQ-4 version
+\textbf{A linear model testing the interaction effect \(\Delta\) of the
+refined condition on the intercept (representing by how much the value
+of the outcome when the PHQ score is 0 changes for the refined version
+compared the original) and slope (its increase or decrease by the
+refined version compared to the original) of the relationship between
+the PHQ-4 depression score and the BDI-II total score was fitted.} The
+model predicting the BDI-II total score with the PHQ-4 depression score
+showed no interaction related to the PHQ-4 version
 (\(\Delta Intercept_{\text{refined}} =  -0.13,~95\%~CI~[-1.73, 1.47],~t(832) =  -0.16,~p = 0.871\);
 \(\Delta \beta_{\text{refined}} = -0.05,~95\%~CI~[-0.70, 0.60],~t(832) = -0.15,~p = 0.883\)),
 suggesting no differences in the relationship pattern between the two
@@ -758,7 +797,26 @@ measure of anxiety. Indeed, we used the abridged version of the STAI,
 which only included 5 items, arguably limiting the sensitivity of the
 anxiety measure in the first place.
 
-Finally, although we used a stricter criterion for classifying
+\textbf{One of the potential limitation of our study includes the choice
+of the measures used as external ``ground-truth'' of depression and
+anxiety, namely the BDI-II and the STAI-5. For instance, there is
+ongoing debate about the STAI's discriminant validity (which might
+extend to its short form used in the present study). A recent
+meta-analysis reported that trait anxiety scores were more strongly
+associated with depressive than anxiety disorders
+(\citeproc{ref-knowles2020specificity}{Knowles \& Olatunji, 2020}),
+suggesting that the scale may rather capture general negative affect
+than specifically anxiety. Regarding the BDI-II, existing evidence that
+suggests its relative lack of sensitivity for low-severity depression
+(\citeproc{ref-olino2012measuring}{Olino et al., 2012}) - comparable to
+similar instruments of its size (e.g., CES-D), and an improvement over
+the BDI-I (\citeproc{ref-wahl2014standardization}{Wahl et al., 2014}) -
+put into question its choice for our goal of showing increased
+sub-clinical sensitivity. Thus, future studies should verify these
+findings with alternative measures of anxiety and depression and
+clinically assessed populations.}
+
+Indeed, although we used a stricter criterion for classifying
 participants as having a depression or an anxiety disorder by
 restricting it to participants also reporting undergoing a medical
 treatment, it was still based on self-reported data. Studies in
@@ -776,9 +834,17 @@ the second study, we showed that the refined version of the PHQ-4 was
 able to better differentiate lower levels of depression compared to the
 original version, while remaining comparable. Although the benefits of
 this refinement appear to be fairly minor, and particularly marked for
-the depression score compared to anxiety, this cost-free improvement
+the depression score compared to anxiety, this low-cost improvement
 appear useful to implement when measuring depression and anxiety using
 the PHQ-4 ultra-short screening questionnaire.
+
+\textbf{While adding granularity to the response format appears useful
+for the PHQ-4, it is possible that similar benefits could be found with
+other scales and measures. While the use of a limited, highly
+discriminating set of response options is understandable for specific
+applications (e.g., clinical diagnosis), we recommend future studies to
+investigate response format and its potential improvement for other
+scales used in online surveys and general population research.}
 
 \section{Acknowledgements}\label{acknowledgements}
 
@@ -799,6 +865,12 @@ Christodoulaki, A., Baralou, V., Konstantakopoulos, G., \& Touloumi, G.
 screen for depression and anxiety in the greek general population.
 \emph{Journal of Psychosomatic Research}, \emph{160}, 110970.
 
+\bibitem[\citeproctext]{ref-cuijpers2004subthreshold}
+Cuijpers, P., \& Smit, F. (2004). Subthreshold depression as a risk
+indicator for major depressive disorder: A systematic review of
+prospective studies. \emph{Acta Psychiatrica Scandinavica},
+\emph{109}(5), 325--331.
+
 \bibitem[\citeproctext]{ref-dobson1979equidistant}
 Dobson, K. S., \& Mothersill, K. J. (1979). Equidistant categorical
 labels for construction of likert-type scales. \emph{Perceptual and
@@ -811,6 +883,18 @@ in the german general population: Findings from the nationally
 representative german socio-economic panel (GSOEP). \emph{International
 Journal of Environmental Research and Public Health}, \emph{17}(21),
 7865.
+
+\bibitem[\citeproctext]{ref-judd1998major}
+Judd, L. L., Akiskal, H. S., Maser, J. D., Zeller, P. J., Endicott, J.,
+Coryell, W., Paulus, M. P., Kunovac, J. L., Leon, A. C., Mueller, T. I.,
+et al. (1998). Major depressive disorder: A prospective study of
+residual subthreshold depressive symptoms as predictor of rapid relapse.
+\emph{Journal of Affective Disorders}, \emph{50}(2-3), 97--108.
+
+\bibitem[\citeproctext]{ref-knowles2020specificity}
+Knowles, K. A., \& Olatunji, B. O. (2020). Specificity of trait anxiety
+in anxiety and depression: Meta-analysis of the state-trait anxiety
+inventory. \emph{Clinical Psychology Review}, \emph{82}, 101928.
 
 \bibitem[\citeproctext]{ref-kroenke2003patient}
 Kroenke, K., Spitzer, R. L., \& Williams, J. B. (2003). The patient
@@ -886,6 +970,13 @@ G. (2020). Testing the independence of self-reported interoceptive
 accuracy and attention. \emph{Quarterly Journal of Experimental
 Psychology}, \emph{73}(1), 115--133.
 
+\bibitem[\citeproctext]{ref-olino2012measuring}
+Olino, T. M., Yu, L., Klein, D. N., Rohde, P., Seeley, J. R., Pilkonis,
+P. A., \& Lewinsohn, P. M. (2012). Measuring depression using item
+response theory: An examination of three measures of depressive
+symptomatology. \emph{International Journal of Methods in Psychiatric
+Research}, \emph{21}(1), 76--85.
+
 \bibitem[\citeproctext]{ref-patil2022datawizard}
 Patil, I., Makowski, D., Ben-Shachar, M. S., Wiernik, B. M., Bacher, E.,
 \& Lüdecke, D. (2022). Datawizard: An r package for easy data
@@ -915,6 +1006,13 @@ Thériault, R., Ben-Shachar, M. S., Patil, I., Lüdecke, D., Wiernik, B.
 M., \& Makowski, D. (2024). Check your outliers﻿! An introduction to
 identifying statistical outliers in r with easystats. \emph{Behavior
 Research Methods}, \emph{56}(4), 4162--4172.
+
+\bibitem[\citeproctext]{ref-wahl2014standardization}
+Wahl, I., Löwe, B., Bjorner, J. B., Fischer, F., Langs, G., Voderholzer,
+U., Aita, S. A., Bergemann, N., Brähler, E., \& Rose, M. (2014).
+Standardization of depression measurement: A common metric was developed
+for 11 self-report depression measures. \emph{Journal of Clinical
+Epidemiology}, \emph{67}(1), 73--86.
 
 \bibitem[\citeproctext]{ref-wickham2019welcome}
 Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D.,

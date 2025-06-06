@@ -95,6 +95,10 @@ format:
 ---
 
 
+
+
+
+
 The Patient Health Questionnaire-4 (PHQ-4) is an ultra brief measurement of core signs of depression and anxiety [@kroenke2009ultra]. It consists of two items for depression [PHQ–2, @kroenke2003patient] and anxiety [GAD–2, @kroenke2007anxiety], each corresponding to DSM-5 diagnostic symptoms for major depressive disorder (MDD) and generalized anxiety disorder (GAD). It has been validated across many languages and populations [@christodoulaki2022validation; @mendoza2022factor; @materu2020psychometric], becoming one of the most popular screening instruments for depression and anxiety [@maurer2018depression].
 
 While the scale has been validated and used in the general population and non-clinical samples [@lowe20104; @hajek2020prevalence], its initial purpose was to reliably discriminate and identify potential MDD/GAD patients. This discriminative goal materializes in the scale's design and the existence of categorical cut-offs, which does not necessarily entail a focus on the sensitivity to milder mood alterations. In particular, the gap between the two lowest possible answers, "Not at all" and "Several days", is quite large and possibly leaves out the possibility of more subtle occurrences. While this is not necessarily an issue in clinical and diagnostic contexts, it might lead to a sub-optimal discrimination of affective levels on the lower end of the spectrum, important for instance in the context of subclinical variability quantification.
@@ -136,14 +140,19 @@ The analysis was carried out using *R 4.4* [@RCoreTeam], the *tidyverse* [@wickh
 @ludecke2020extracting; @patil2022datawizard]. 
 All reproducible scripts and complimentary analyses are available open-access at https://github.com/DominiqueMakowski/PHQ4R
 
-```{r}
-#| label: fig-one
-#| fig-cap: "A) Proportion of answers of each type to the four items. B) Prevalence of answer pairs. C) Item Information Curves from IRT showing the coverage by each item and response of the latent dimension. Typically, an optimally informative item would display a large coverage over theta, with each response presenting a narrow coverage (high discrimination between different levels)."
-#| apa-twocolumn: true  # A Figure Spanning Two Columns When in Journal Mode
-#| out-width: "100%"
 
-knitr::include_graphics("../../study1/figures/figure1.png")
-```
+
+
+
+::: {.cell apa-twocolumn='true'}
+::: {.cell-output-display}
+![A) Proportion of answers of each type to the four items. B) Prevalence of answer pairs. C) Item Information Curves from IRT showing the coverage by each item and response of the latent dimension. Typically, an optimally informative item would display a large coverage over theta, with each response presenting a narrow coverage (high discrimination between different levels).](../../study1/figures/figure1.png){#fig-one width=100%}
+:::
+:::
+
+
+
+
 
 
 ### Descriptive Statistics
@@ -205,14 +214,19 @@ The original or refined version of the PHQ-4 was followed by the BDI-II, STAI-5,
 
 As all the scripts, analysis details and results tables are available open-access at https://github.com/DominiqueMakowski/PHQ4R, we will focus on reporting the main results.
 
-```{r}
-#| label: fig-two
-#| fig-cap: "A) PHQ-4 depression and anxiety scores against their respective ground-truth measures, the BDI-22 and the STAI-5. Bayes factors in grey tell if there is a difference, for the same PHQ-4 score, between the original and the refined version (BFs < 1 suggest no difference and thus evidence for a comparability of the refined version with respect fo the original scale. Bayes factors in yellow represent how new in-between scores (0.5, 1.5, 2.5, ...) available with refined version differ from the adjacent scores (BFs > 3 suggest that half a point of difference on the refined PHQ-4 relates to a significant difference on the ground truth measure). BF < 1/3°, BF > 3\\*, BF > 10\\*\\*, BF > 30\\*\\*\\*. B) Bootstrapped distributions of the difference of correlation between the revised PHQ-4 scores and the original one for sub-clinical threshold scores of depression and anxiety. Positive differences suggest that the correlation between the ground-truth measure and the refined PHQ-4 score was stronger compared to the original version. C) Predictive power of the PHQ-4 scores on the presence of a depression or anxiety disorder. The upper plots show the relationship modelled by a logistic regression, while the above plots represent the ROC curves (in which a line further away from the diagonal represents a higher combination of sensitivity and specificity)."
-#| apa-twocolumn: true  # A Figure Spanning Two Columns When in Journal Mode
-#| out-width: "100%"
 
-knitr::include_graphics("../../study2/analysis/2_analysis_files/figure-html/figure-1.png")
-```
+
+
+
+::: {.cell apa-twocolumn='true'}
+::: {.cell-output-display}
+![A) PHQ-4 depression and anxiety scores against their respective ground-truth measures, the BDI-22 and the STAI-5. Bayes factors in grey tell if there is a difference, for the same PHQ-4 score, between the original and the refined version (BFs < 1 suggest no difference and thus evidence for a comparability of the refined version with respect fo the original scale. Bayes factors in yellow represent how new in-between scores (0.5, 1.5, 2.5, ...) available with refined version differ from the adjacent scores (BFs > 3 suggest that half a point of difference on the refined PHQ-4 relates to a significant difference on the ground truth measure). BF < 1/3°, BF > 3\*, BF > 10\*\*, BF > 30\*\*\*. B) Bootstrapped distributions of the difference of correlation between the revised PHQ-4 scores and the original one for sub-clinical threshold scores of depression and anxiety. Positive differences suggest that the correlation between the ground-truth measure and the refined PHQ-4 score was stronger compared to the original version. C) Predictive power of the PHQ-4 scores on the presence of a depression or anxiety disorder. The upper plots show the relationship modelled by a logistic regression, while the above plots represent the ROC curves (in which a line further away from the diagonal represents a higher combination of sensitivity and specificity).](../../study2/analysis/2_analysis_files/figure-html/figure-1.png){#fig-two width=100%}
+:::
+:::
+
+
+
+
 
 
 ### PHQ-4 Depression *vs.* BDI-II
@@ -274,4 +288,5 @@ We would like to thank the dissertation students from the University of Sussex f
 
 ::: {#refs}
 :::
+
 
